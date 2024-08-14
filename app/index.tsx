@@ -5,6 +5,8 @@ import CoinbaseWalletSDK from "@mobile-wallet-protocol/client";
 import Section from "@/components/coinbaseComponents/section";
 import { useQuery } from "@tanstack/react-query";
 import { getSports } from "@/utils/overtime/queries/getSports";
+import { getMarkets } from "@/utils/overtime/queries/getMarkets";
+import { CB_BET_SUPPORTED_NETWORK_IDS } from "@/constants/Constants";
 
 // exp://x.x.x.x:8000/--/
 const PREFIX_URL = Linking.createURL("/");
@@ -20,14 +22,21 @@ const sdk = new CoinbaseWalletSDK({
 const provider = sdk.makeWeb3Provider();
 
 export default function Index() {
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["sports"],
-    queryFn: getSports,
-  });
+  // const { data, isLoading, error } = useQuery({
+  //   queryKey: ["markets"],
+  //   queryFn: () => getMarkets(CB_BET_SUPPORTED_NETWORK_IDS.OPTIMISM, {
+  //     sport: "Soccer",
+  //   }),
+  // });
 
-  if (data) {
-    console.log(data);
-  }
+  // if (data) {
+  //   console.log(data);
+  // } else if (isLoading) {
+  //   console.log("Loading...");
+  // } else if (error) {
+  //   console.log("Error:", error);
+  // }
+  
   const [addresses, setAddresses] = useState<string[]>([]);
 
   const isConnected = addresses.length > 0;

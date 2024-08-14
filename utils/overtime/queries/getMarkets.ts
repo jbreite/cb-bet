@@ -1,0 +1,54 @@
+import {
+  CB_BET_SUPPORTED_NETWORK_IDS,
+  OVERTIME_API_BASE_URL,
+} from "@/constants/Constants";
+import { Market, StatusCodeEnum } from "../overtimeTypes";
+
+interface MarketResponse {
+  [sport: string]: {
+    [leagueId: string]: Market[]; // Maps league IDs to an array of Market objects
+  };
+}
+
+interface MarketFilters {
+  sport?: string;
+  leagueId?: number;
+  status?: StatusCodeEnum;
+  type?: string;
+  ungroup?: boolean;
+}
+
+// Fetch function
+export const getMarkets = async (
+  network: number = CB_BET_SUPPORTED_NETWORK_IDS.OPTIMISM,
+  filters: MarketFilters = {}
+): Promise<MarketResponse> => {
+  const params = new URLSearchParams();
+  const networkToString = network.toString();
+
+  if (filters.sport) params.append("sport", filters.sport);
+  if (filters.leagueId) params.append("leagueId", filters.leagueId.toString());
+  if (filters.status) params.append("status", filters.status);
+  if (filters.type) params.append("type", filters.type);
+  if (filters.ungroup !== undefined)
+    params.append("ungroup", filters.ungroup.toString());
+
+  const url = `${OVERTIME_API_BASE_URL}/networks/${networkToString}/markets?${params.toString()}`;
+  console.log(url);
+
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch markets: ${response.statusText}`);
+  }
+
+  return response.json();
+};
+
+// // React Query hook
+// export const useMarkets = (network: number, filters: MarketFilters = {}) => {
+//   return useQuery<MarketResponse, Error>({
+//     queryKey: ["markets", network, filters],
+//     queryFn: () => getMarkets(network, filters),
+//   });
+// };
