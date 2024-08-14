@@ -7,6 +7,7 @@ import { SportMarket, SportMarketStatusEnum } from "../types/markets";
 import { LeagueEnum, SportEnum } from "../enums/sport";
 import { MarketTypeEnum } from "../enums/marketTypes";
 
+//Check this
 interface MarketResponse {
   [sport: string]: {
     [leagueId: string]: SportMarket[]; // Maps league IDs to an array of Market objects
@@ -31,8 +32,8 @@ export const getMarkets = async (
 
   if (filters.sport) params.append("sport", filters.sport);
   if (filters.leagueId) params.append("leagueId", filters.leagueId.toString());
-  if (filters.status) params.append("status", filters.status);
-  if (filters.type) params.append("type", filters.type);
+  if (filters.status) params.append("status", filters.status.toString());
+  if (filters.type) params.append("type", filters.type.toString());
   if (filters.ungroup !== undefined)
     params.append("ungroup", filters.ungroup.toString());
 
