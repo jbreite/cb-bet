@@ -6,6 +6,8 @@ import { CB_BET_SUPPORTED_NETWORK_IDS } from "@/constants/Constants";
 import { LeagueEnum } from "@/utils/overtime/enums/sport";
 import GeneralSpinningLoader from "@/components/GeneralSpinningLoader";
 import GeneralErrorMessage from "@/components/GeneralErrorMessage";
+import { getSpecificMarket } from "@/utils/overtime/ui/helpers";
+import { MarketTypeEnum } from "@/utils/overtime/enums/marketTypes";
 
 export default function Sports() {
   const { data, isLoading, error } = useQuery({
@@ -30,22 +32,33 @@ export default function Sports() {
       <View style={{ flex: 1 }}>
         <FlashList
           data={flattenedData}
-          renderItem={({ item }) => (
-            <View style={styles.item}>
-              <Text>Type: {item.type}</Text>
-              <Text>Game ID: {item.gameId}</Text>
-              <Text>Home Team: {item.homeTeam}</Text>
-              <Text>Away Team: {item.awayTeam}</Text>
-              <Text>
-                Start Date: {new Date(item.maturityDate).toLocaleString()}
-              </Text>
-              <Text>League: {item.leagueName}</Text>
-              <Text>Sport: {item.sport}</Text>
-              {item.type === "winner" && (
-                <Text></Text>
-              )}
-            </View>
-          )}
+          renderItem={({ item }) => {
+            const totalMarket = getSpecificMarket(item, MarketTypeEnum.TOTAL);
+            const spreadMarket = getSpecificMarket(item, MarketTypeEnum.SPREAD);
+
+            return (
+              <View style={styles.item}>
+                <Text>Type: {item.type}</Text>
+                <Text>Game ID: {item.gameId}</Text>
+                <Text>Home Team: {item.homeTeam}</Text>
+                <Text>Away Team: {item.awayTeam}</Text>
+                <Text>
+                  Start Date: {new Date(item.maturityDate).toLocaleString()}
+                </Text>
+                <View>
+                  {item.type === "winner" && (
+                    <View>
+                      <Text>{item.type}</Text>
+
+                      <Text>Line: {item.line}</Text>
+                      <Text></Text>
+                      <Text></Text>
+                    </View>
+                  )}
+                </View>
+              </View>
+            );
+          }}
           estimatedItemSize={150}
           keyExtractor={(item) => item.gameId}
         />

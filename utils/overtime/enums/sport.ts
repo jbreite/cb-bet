@@ -117,7 +117,7 @@ export enum MatchResolveTypeEnum {
   EMPTY = "",
 }
 
-export enum PeriodType {
+export enum PeriodTypeEnum {
   QUARTER = "quarter",
   HALF = "half",
   PERIOD = "period",

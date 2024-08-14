@@ -1,7 +1,7 @@
 import {
   ScoringTypeEnum,
   ProviderEnum,
-  PeriodType,
+  PeriodTypeEnum,
   SportEnum,
   MatchResolveTypeEnum,
   LeagueEnum,
@@ -11,12 +11,13 @@ export interface LeagueInfo {
   sport: SportEnum;
   id: LeagueEnum;
   label: string;
-  opticOddsName?: string;
-  provider: ProviderEnum;
+  logo?: string;
+  logoClass?: string;
   scoringType: ScoringTypeEnum;
   matchResolveType: MatchResolveTypeEnum;
-  periodType: PeriodType;
+  periodType: PeriodTypeEnum;
   isDrawAvailable: boolean;
-  live: boolean;
-  isLiveTestnet: boolean;
+  hidden: boolean;
+  priority: number;
+  tooltipKey?: string;
 }
