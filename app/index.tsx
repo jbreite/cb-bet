@@ -1,13 +1,9 @@
-import { ScrollView, View } from "react-native";
+import { Pressable, ScrollView, View, Text } from "react-native";
 import * as Linking from "expo-linking";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import CoinbaseWalletSDK from "@mobile-wallet-protocol/client";
 import Section from "@/components/coinbaseComponents/section";
-import { useQuery } from "@tanstack/react-query";
-import { getSports } from "@/utils/overtime/queries/getSports";
-import { getMarkets } from "@/utils/overtime/queries/getMarkets";
-import { CB_BET_SUPPORTED_NETWORK_IDS } from "@/constants/Constants";
-import { LeagueEnum } from "@/utils/overtime/enums/sport";
+import { router } from "expo-router";
 
 // exp://x.x.x.x:8000/--/
 const PREFIX_URL = Linking.createURL("/");
@@ -23,22 +19,6 @@ const sdk = new CoinbaseWalletSDK({
 const provider = sdk.makeWeb3Provider();
 
 export default function Index() {
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["markets"],
-    queryFn: () =>
-      getMarkets(CB_BET_SUPPORTED_NETWORK_IDS.OPTIMISM, {
-        leagueId: LeagueEnum.EPL,
-      }),
-  });
-
-  if (data) {
-    console.log(data);
-  } else if (isLoading) {
-    console.log("Loading...");
-  } else if (error) {
-    console.log("Error:", error);
-  }
-
   const [addresses, setAddresses] = useState<string[]>([]);
 
   const isConnected = addresses.length > 0;
@@ -99,6 +79,9 @@ export default function Index() {
           alignItems: "center",
         }}
       >
+        <Pressable onPress={() => router.push("/sports")}>
+          <Text>Sports</Text>
+        </Pressable>
         <Section
           key="connect"
           title="eth_requestAccounts"

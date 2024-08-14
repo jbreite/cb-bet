@@ -49,6 +49,7 @@ export default function RootLayout() {
     <QueryClientProvider client={queryClient}>
       <Stack>
         <Stack.Screen name="index" />
+        <Stack.Screen name="sports" />
       </Stack>
     </QueryClientProvider>
   );

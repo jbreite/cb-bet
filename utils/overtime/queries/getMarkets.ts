@@ -10,7 +10,7 @@ import { MarketTypeEnum } from "../enums/marketTypes";
 //Check this
 interface MarketResponse {
   [sport: string]: {
-    [leagueId: string]: SportMarket[]; // Maps league IDs to an array of Market objects
+    [leagueId: string]: SportMarket[];
   };
 }
 
