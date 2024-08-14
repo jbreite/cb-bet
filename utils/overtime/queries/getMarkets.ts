@@ -2,19 +2,22 @@ import {
   CB_BET_SUPPORTED_NETWORK_IDS,
   OVERTIME_API_BASE_URL,
 } from "@/constants/Constants";
-import { Market, StatusCodeEnum } from "../overtimeTypes";
+import { StatusFilterEnum } from "../enums/markets";
+import { SportMarket, SportMarketStatusEnum } from "../types/markets";
+import { LeagueEnum, SportEnum } from "../enums/sport";
+import { MarketTypeEnum } from "../enums/marketTypes";
 
 interface MarketResponse {
   [sport: string]: {
-    [leagueId: string]: Market[]; // Maps league IDs to an array of Market objects
+    [leagueId: string]: SportMarket[]; // Maps league IDs to an array of Market objects
   };
 }
 
 interface MarketFilters {
-  sport?: string;
-  leagueId?: number;
-  status?: StatusCodeEnum;
-  type?: string;
+  sport?: SportEnum;
+  leagueId?: LeagueEnum;
+  status?: SportMarketStatusEnum;
+  type?: MarketTypeEnum;
   ungroup?: boolean;
 }
 

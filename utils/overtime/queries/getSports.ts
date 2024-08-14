@@ -1,7 +1,7 @@
 import { OVERTIME_API_BASE_URL } from "@/constants/Constants";
-import { Sport } from "../overtimeTypes";
+import { LeagueInfo } from "../types/sports";
 
-type SportsResponse = Record<string, Sport>;
+type SportsResponse = Record<string, LeagueInfo>;
 
 export const getSports = async (): Promise<SportsResponse> => {
   const response = await fetch(`${OVERTIME_API_BASE_URL}/sports`);
