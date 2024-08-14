@@ -6,7 +6,6 @@ import { CB_BET_SUPPORTED_NETWORK_IDS } from "@/constants/Constants";
 import { LeagueEnum } from "@/utils/overtime/enums/sport";
 import GeneralSpinningLoader from "@/components/GeneralSpinningLoader";
 import GeneralErrorMessage from "@/components/GeneralErrorMessage";
-import * as FileSystem from "expo-file-system";
 
 export default function Sports() {
   const { data, isLoading, error } = useQuery({
@@ -42,6 +41,9 @@ export default function Sports() {
               </Text>
               <Text>League: {item.leagueName}</Text>
               <Text>Sport: {item.sport}</Text>
+              {item.type === "winner" && (
+                <Text></Text>
+              )}
             </View>
           )}
           estimatedItemSize={150}
