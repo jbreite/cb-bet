@@ -3,6 +3,8 @@ import * as Linking from "expo-linking";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import CoinbaseWalletSDK from "@mobile-wallet-protocol/client";
 import Section from "@/components/coinbaseComponents/section";
+import { useQuery } from "@tanstack/react-query";
+import { getSports } from "@/utils/overtime/queries/getSports";
 
 // exp://x.x.x.x:8000/--/
 const PREFIX_URL = Linking.createURL("/");
@@ -18,6 +20,14 @@ const sdk = new CoinbaseWalletSDK({
 const provider = sdk.makeWeb3Provider();
 
 export default function Index() {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["sports"],
+    queryFn: getSports,
+  });
+
+  if (data) {
+    console.log(data);
+  }
   const [addresses, setAddresses] = useState<string[]>([]);
 
   const isConnected = addresses.length > 0;
