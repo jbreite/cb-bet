@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Image } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { useQuery } from "@tanstack/react-query";
 import { getMarkets } from "@/utils/overtime/queries/getMarkets";
@@ -8,6 +8,7 @@ import GeneralSpinningLoader from "@/components/GeneralSpinningLoader";
 import GeneralErrorMessage from "@/components/GeneralErrorMessage";
 import { getSpecificMarket } from "@/utils/overtime/ui/helpers";
 import { MarketTypeEnum } from "@/utils/overtime/enums/marketTypes";
+import { getImage } from "@/utils/overtime/ui/images";
 
 export default function Sports() {
   const { data, isLoading, error } = useQuery({
@@ -36,10 +37,23 @@ export default function Sports() {
             const totalMarket = getSpecificMarket(item, MarketTypeEnum.TOTAL);
             const spreadMarket = getSpecificMarket(item, MarketTypeEnum.SPREAD);
 
+            const homeTeamImage = getImage(item.homeTeam);
+            const awayTeamImage = getImage(item.awayTeam);
+
             return (
               <View style={styles.item}>
                 <Text>Type: {item.type}</Text>
                 <Text>Game ID: {item.gameId}</Text>
+                <View style={{ flexDirection: "row", gap: 24 }}>
+                  <Image
+                    source={homeTeamImage}
+                    style={{ width: 60, height: 60, objectFit: "contain" }}
+                  />
+                  <Image
+                    source={awayTeamImage}
+                    style={{ width: 60, height: 60, objectFit: "contain" }}
+                  />
+                </View>
                 <Text>Home Team: {item.homeTeam}</Text>
                 <Text>Away Team: {item.awayTeam}</Text>
                 <Text>
