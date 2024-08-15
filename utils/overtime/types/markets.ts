@@ -21,6 +21,11 @@ export enum SportMarketStatusEnum {
   RESOLVED = 10,
   CANCELLED = 255,
 }
+export type SportMarketOdds = {
+  american: number;
+  decimal: number;
+  normalizedImplied: number;
+};
 
 export type SportMarket = {
   gameId: string;
@@ -50,7 +55,7 @@ export type SportMarket = {
   isOneSidePlayerPropsMarket: boolean;
   isYesNoPlayerPropsMarket: boolean;
   playerProps: PlayerProps;
-  odds: number[];
+  odds: SportMarketOdds[];
   proof: string[];
   childMarkets: SportMarket[];
   combinedPositions: CombinedPositions[];

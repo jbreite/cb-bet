@@ -51,6 +51,13 @@ export default function Sports() {
                       <Text>{item.type}</Text>
 
                       <Text>Line: {item.line}</Text>
+                      <Text>
+                        {item.homeTeam}: {item.odds[0].american}{" "}
+                      </Text>
+                      <Text>
+                        {item.awayTeam}: {item.odds[1].american}{" "}
+                      </Text>
+                      <Text>Draw: {item.odds[2].american} </Text>
                       <Text></Text>
                       <Text></Text>
                     </View>
