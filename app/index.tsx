@@ -1,59 +1,14 @@
 import { Pressable, ScrollView, View, Text } from "react-native";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Section from "@/components/coinbaseComponents/section";
-import { router } from "expo-router";
+import { useRouter } from "expo-router";
 import { provider } from "@/cbConfig";
+import { useConnect } from "@/hooks/cbHooks/useConnect";
 
 export default function Index() {
+  const handleConnect = useConnect();
+  const router = useRouter();
   const [addresses, setAddresses] = useState<string[]>([]);
-
-  const isConnected = addresses.length > 0;
-
-  // 5. Use provider
-  useEffect(() => {
-    provider.addListener("accountsChanged", (accounts) => {
-      if (accounts && Array.isArray(accounts)) setAddresses(accounts);
-    });
-
-    provider.addListener("disconnect", () => {
-      setAddresses([]);
-    });
-
-    () => {
-      provider.removeListener("accountsChanged");
-      provider.removeListener("disconnect");
-    };
-  }, []);
-
-  const handleConnect = useCallback(async () => {
-    const result = await provider.request({ method: "eth_requestAccounts" });
-    if (result && Array.isArray(result)) {
-      setAddresses(result as string[]);
-    }
-    return stringify(result);
-  }, []);
-
-  const handleAccounts = useCallback(async () => {
-    const result = await provider.request({ method: "eth_accounts" });
-    return stringify(result);
-  }, []);
-
-  const handlePersonalSign = useCallback(async () => {
-    const result = await provider.request({
-      method: "personal_sign",
-      params: ["0x48656c6c6f2c20776f726c6421", addresses[0]],
-    });
-    return stringify(result);
-  }, [addresses]);
-
-  const handleWalletGetCapabilities = useCallback(async () => {
-    const result = await provider.request({ method: "wallet_getCapabilities" });
-    return stringify(result);
-  }, []);
-
-  const handleDisconnect = useCallback(async () => {
-    await provider.disconnect();
-  }, []);
 
   return (
     <ScrollView>
@@ -69,44 +24,15 @@ export default function Index() {
         </Pressable>
         <Section
           key="connect"
-          title="eth_requestAccounts"
+          title="Connect with handle connect"
           buttonLabel="Connect"
-          onPress={handleConnect}
+          onPress={() => {
+            console.log(addresses);
+            handleConnect();
+            console.log(addresses);
+          }}
         />
-
-        {isConnected && (
-          <>
-            <Section
-              key="disconnect"
-              title="@disconnect"
-              buttonLabel="Disconnect"
-              onPress={handleDisconnect}
-            />
-            <Section
-              key="accounts"
-              title="eth_accounts"
-              onPress={handleAccounts}
-            />
-            <Section
-              key="personal_sign"
-              title="personal_sign"
-              onPress={handlePersonalSign}
-            />
-            <Section
-              key="wallet_getCapabilities"
-              title="wallet_getCapabilities"
-              onPress={handleWalletGetCapabilities}
-            />
-          </>
-        )}
       </View>
     </ScrollView>
   );
-}
-
-function stringify(result: unknown): string {
-  if (typeof result === "string") {
-    return result;
-  }
-  return JSON.stringify(result, null, 2);
 }
