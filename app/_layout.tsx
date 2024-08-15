@@ -5,6 +5,8 @@ import * as Linking from "expo-linking";
 import { handleResponse } from "@mobile-wallet-protocol/client/dist/core/communicator/handleResponse.native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider, useAuth } from "@/components/AuthContext";
+import { Provider as JotaiProvider } from "jotai";
+import { defaultStore } from "@/lib/atom/store";
 
 const queryClient = new QueryClient();
 
@@ -75,9 +77,11 @@ function InitialLayout() {
 export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <InitialLayout />
-      </AuthProvider>
+      <JotaiProvider store={defaultStore}>
+        <AuthProvider>
+          <InitialLayout />
+        </AuthProvider>
+      </JotaiProvider>
     </QueryClientProvider>
   );
 }

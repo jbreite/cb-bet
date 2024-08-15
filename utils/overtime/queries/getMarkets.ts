@@ -2,7 +2,6 @@ import {
   CB_BET_SUPPORTED_NETWORK_IDS,
   OVERTIME_API_BASE_URL,
 } from "@/constants/Constants";
-import { StatusFilterEnum } from "../enums/markets";
 import { SportMarket, SportMarketStatusEnum } from "../types/markets";
 import { LeagueEnum, SportEnum } from "../enums/sport";
 import { MarketTypeEnum } from "../enums/marketTypes";

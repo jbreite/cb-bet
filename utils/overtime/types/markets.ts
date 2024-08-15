@@ -70,3 +70,18 @@ export type SportMarket = {
   //   liveScore?: SportMarketScore;
   positionNames?: string[];
 };
+
+export type TradeData = {
+  gameId: string;
+  sportId: number;
+  typeId: number;
+  maturity: number;
+  status: number;
+  line: number;
+  playerId: number;
+  odds: string[];
+  merkleProof: string[];
+  position: number;
+  combinedPositions: CombinedPositions[];
+  live?: boolean;
+};

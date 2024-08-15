@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, Pressable } from "react-native";
 import { useAuth } from "@/components/AuthContext";
 import { useDisconnect } from "@/hooks/cbHooks/useDisconnect";
 import CustomButton from "@/components/coinbaseComponents/button";
@@ -13,11 +13,16 @@ import { LeagueEnum } from "@/utils/overtime/enums/sport";
 import { getMarkets } from "@/utils/overtime/queries/getMarkets";
 import { useQuery } from "@tanstack/react-query";
 import { FlashList } from "@shopify/flash-list";
+import { sportMarketAtom } from "@/lib/atom/atoms";
+import { useAtom } from "jotai";
+import { SportMarket } from "@/utils/overtime/types/markets";
+import { router } from "expo-router";
 
 export default function AuthenticatedIndex() {
   const { addresses } = useAuth();
   const address = addresses[0];
   const handleDisconnect = useDisconnect();
+  const [, setSportMarketAtom] = useAtom(sportMarketAtom);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["markets"],
@@ -26,6 +31,11 @@ export default function AuthenticatedIndex() {
         leagueId: LeagueEnum.EPL,
       }),
   });
+
+  function handleMarketPress(market: SportMarket) {
+    setSportMarketAtom((prevMarkets) => [...prevMarkets, market]);
+    router.push("/(auth)/betModal");
+  }
 
   let SportView;
   if (isLoading) {
@@ -49,7 +59,8 @@ export default function AuthenticatedIndex() {
             const awayTeamImage = getImage(item.awayTeam);
 
             return (
-              <View
+              <Pressable
+                onPress={() => handleMarketPress(item)}
                 style={{
                   padding: 12,
                   borderBottomWidth: 1,
@@ -91,7 +102,7 @@ export default function AuthenticatedIndex() {
                     </View>
                   )}
                 </View>
-              </View>
+              </Pressable>
             );
           }}
           estimatedItemSize={150}
