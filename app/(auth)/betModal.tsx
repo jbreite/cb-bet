@@ -1,11 +1,13 @@
-import { View, Text } from "react-native";
+import React from "react";
+import { View, Text, Button, Alert } from "react-native";
 import { useAtom } from "jotai";
 import { sportMarketAtom } from "@/lib/atom/atoms";
 import { useQuery } from "@tanstack/react-query";
 import { getQuote } from "@/utils/overtime/queries/getQuote";
 import { CB_BET_SUPPORTED_NETWORK_IDS } from "@/constants/Constants";
 import { SportMarketOdds, TradeData } from "@/utils/overtime/types/markets";
-
+import { ethers } from "ethers";
+import { executeBet } from "@/utils/overtime/queries/makeBet";
 function convertOddsToStrings(odds: SportMarketOdds[]): string[] {
   return odds.map((odd) => odd.normalizedImplied.toString());
 }
@@ -25,9 +27,9 @@ export default function BetModal() {
     playerId: firstSportMarket.playerProps.playerId,
     odds: convertOddsToStrings(firstSportMarket.odds),
     merkleProof: firstSportMarket.proof,
-    position: 1, //Don't know waht this is... I think which in odds array
+    position: 1,
     combinedPositions: firstSportMarket.combinedPositions,
-    live: false, // Always false
+    live: false,
   };
 
   const {
@@ -43,12 +45,34 @@ export default function BetModal() {
       }),
   });
 
-  if (data) {
-    console.log("DATALOG: ", JSON.stringify(data));
-  } else if (quoteLoading) {
-    console.log("Loading");
-  } else if (isError) {
-    console.log("Error");
+  const handleBet = async () => {
+    if (!data) {
+      Alert.alert("Error", "Quote data is not available");
+      return;
+    }
+
+    try {
+      const quoteData = {
+        quoteTradeData: [formattedTradeData],
+        quoteData: data.quoteData,
+      };
+      const buyInAmount = ethers.parseUnits("100", 18).toString(); // 100 THALES
+
+      const receipt = await executeBet(quoteData, buyInAmount);
+      console.log("Bet executed successfully!", receipt);
+      Alert.alert("Success", "Bet placed successfully!");
+    } catch (error) {
+      console.error("Failed to execute bet:", error);
+      Alert.alert("Error", "Failed to place bet. Please try again.");
+    }
+  };
+
+  if (quoteLoading) {
+    return <Text>Loading...</Text>;
+  }
+
+  if (isError) {
+    return <Text>Error loading quote data</Text>;
   }
 
   return (
@@ -70,6 +94,7 @@ export default function BetModal() {
           <Text>
             Available Liquidity: ${data.liquidityData.ticketLiquidityInUsd}
           </Text>
+          <Button title="Place Bet" onPress={handleBet} />
         </View>
       )}
     </View>

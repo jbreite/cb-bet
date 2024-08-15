@@ -13,5 +13,5 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-  ]
+, "utils/overtime/abi/SportsAmmV2.js"  ]
 }
