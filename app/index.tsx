@@ -1,22 +1,8 @@
 import { Pressable, ScrollView, View, Text } from "react-native";
-import * as Linking from "expo-linking";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import CoinbaseWalletSDK from "@mobile-wallet-protocol/client";
 import Section from "@/components/coinbaseComponents/section";
 import { router } from "expo-router";
-
-// exp://x.x.x.x:8000/--/
-const PREFIX_URL = Linking.createURL("/");
-
-// 3. Initialize SDK
-const sdk = new CoinbaseWalletSDK({
-  appDeeplinkUrl: PREFIX_URL,
-  appName: "SCW Expo Example",
-  appChainIds: [8453],
-});
-
-// 4. Create EIP-1193 provider
-const provider = sdk.makeWeb3Provider();
+import { provider } from "@/cbConfig";
 
 export default function Index() {
   const [addresses, setAddresses] = useState<string[]>([]);
@@ -24,7 +10,6 @@ export default function Index() {
   const isConnected = addresses.length > 0;
 
   // 5. Use provider
-
   useEffect(() => {
     provider.addListener("accountsChanged", (accounts) => {
       if (accounts && Array.isArray(accounts)) setAddresses(accounts);
