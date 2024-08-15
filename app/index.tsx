@@ -7,8 +7,8 @@ import { useConnect } from "@/hooks/cbHooks/useConnect";
 
 export default function Index() {
   const handleConnect = useConnect();
+
   const router = useRouter();
-  const [addresses, setAddresses] = useState<string[]>([]);
 
   return (
     <ScrollView>
@@ -26,11 +26,7 @@ export default function Index() {
           key="connect"
           title="Connect with handle connect"
           buttonLabel="Connect"
-          onPress={() => {
-            console.log(addresses);
-            handleConnect();
-            console.log(addresses);
-          }}
+          onPress={handleConnect}
         />
       </View>
     </ScrollView>

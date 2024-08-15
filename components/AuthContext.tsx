@@ -1,5 +1,4 @@
-import '../polyfills'; 
-
+import "../polyfills";
 import React, {
   createContext,
   useContext,
@@ -12,7 +11,7 @@ import { provider } from "@/cbConfig";
 interface AuthContextType {
   isAuthenticated: boolean;
   isLoaded: boolean;
-  address: string | null;
+  addresses: string[];
   connect: () => Promise<void>;
   disconnect: () => Promise<void>;
 }
@@ -24,7 +23,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [address, setAddress] = useState<string | null>(null);
+  const [addresses, setAddresses] = useState<string[]>([]);
 
   useEffect(() => {
     setIsLoaded(true);
@@ -37,28 +36,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     };
   }, []);
 
-  const handleAccountsChanged = (accounts: string[]) => {
-    if (accounts.length > 0) {
-      setAddress(accounts[0]);
+  const handleAccountsChanged = (newAddresses: string[]) => {
+    if (newAddresses.length > 0) {
+      setAddresses(newAddresses);
       setIsAuthenticated(true);
     } else {
-      setAddress(null);
+      setAddresses([]);
       setIsAuthenticated(false);
     }
   };
 
   const handleDisconnect = () => {
-    setAddress(null);
+    setAddresses([]);
     setIsAuthenticated(false);
   };
 
   const connect = useCallback(async () => {
     try {
-      const accounts = (await provider.request({
+      const newAddresses = (await provider.request({
         method: "eth_requestAccounts",
       })) as string[];
-      if (accounts.length > 0) {
-        setAddress(accounts[0]);
+      if (newAddresses.length > 0) {
+        setAddresses(newAddresses);
         setIsAuthenticated(true);
       }
     } catch (error) {
@@ -69,18 +68,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const disconnect = useCallback(async () => {
     try {
+      console.log("disconnecting");
       await provider.disconnect();
+      // The handleDisconnect function will be called automatically due to the event listener
     } catch (error) {
       console.error("Disconnection failed:", error);
-    } finally {
-      setAddress(null);
-      setIsAuthenticated(false);
     }
   }, []);
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, isLoaded, address, connect, disconnect }}
+      value={{ isAuthenticated, isLoaded, addresses, connect, disconnect }}
     >
       {children}
     </AuthContext.Provider>

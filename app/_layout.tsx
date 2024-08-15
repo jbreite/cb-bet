@@ -53,7 +53,7 @@ function InitialLayout() {
       console.log("Cleaning up deeplink listener");
       subscription.remove();
     };
-  }, [router]);
+  }, []);
 
   if (!loaded) {
     return <Slot />;
@@ -76,7 +76,7 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-          <InitialLayout />
+        <InitialLayout />
       </AuthProvider>
     </QueryClientProvider>
   );
