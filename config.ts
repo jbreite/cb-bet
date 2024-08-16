@@ -6,19 +6,18 @@ import {
 } from "@mobile-wallet-protocol/wagmi-connectors";
 import { http, createConfig } from "wagmi";
 import { base } from "wagmi/chains";
+import * as Linking from "expo-linking";
 
-const metadata = {
-  appDeeplinkUrl: "https://your-app.example.com", // required
-  appName: "cb-bet",
-  appChainIds: [8453],
-  appLogoUrl: "https://example.com/logo.png",
-};
+const PREFIX_URL = Linking.createURL("/");
 
 export const config = createConfig({
   chains: [base],
   connectors: [
     createConnectorFromWallet({
-      metadata,
+      metadata: {
+        appName: "Wagmi Demo",
+        appDeeplinkUrl: PREFIX_URL,
+      },
       wallet: Wallets.CoinbaseSmartWallet,
     }),
   ],

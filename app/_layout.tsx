@@ -1,4 +1,4 @@
-import "../polyfills"
+import "../polyfills";
 
 import { Slot, SplashScreen, Stack, useRouter, useSegments } from "expo-router";
 import { useFonts } from "expo-font";
@@ -6,7 +6,6 @@ import { useEffect } from "react";
 import * as Linking from "expo-linking";
 import { handleResponse } from "@mobile-wallet-protocol/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-// import { AuthProvider, useAuth } from "@/components/AuthContext";
 import { Provider as JotaiProvider } from "jotai";
 import { defaultStore } from "@/lib/atom/store";
 import { config } from "@/config";
@@ -22,12 +21,10 @@ function InitialLayout() {
   });
 
   const router = useRouter();
-  // const { isAuthenticated } = useAuth(); // Use your auth context
-  // const segments = useSegments();
 
-  // useEffect(() => {
-  //   if (error) throw error;
-  // }, [error]);
+  useEffect(() => {
+    if (error) throw error;
+  }, [error]);
 
   useEffect(() => {
     if (loaded) {
@@ -35,32 +32,18 @@ function InitialLayout() {
     }
   }, [loaded]);
 
-  // useEffect(() => {
-  //   const inAuthGroup = segments[0] === "(auth)";
-
-  //   if (isAuthenticated && !inAuthGroup) {
-  //     router.replace("/(auth)");
-  //   } else if (!isAuthenticated && inAuthGroup) {
-  //     router.replace("/");
-  //   }
-  // }, [isAuthenticated, segments]);
-
   useEffect(() => {
     const subscription = Linking.addEventListener("url", ({ url }) => {
-      console.log("Deeplink received:", url);
-      const handled = handleResponse(url);
-      console.log("Deeplink handled:", handled);
-      if (handled) {
-        // router.back();
-      } else {
-        console.log("Deeplink not handled by handleResponse");
+      console.log("incoming deeplink:", url);
+      try {
+        handleResponse(url);
+        router.back();
+      } catch (err) {
+        console.error(err);
       }
     });
 
-    return () => {
-      console.log("Cleaning up deeplink listener");
-      subscription.remove();
-    };
+    return () => subscription.remove();
   }, []);
 
   if (!loaded) {
@@ -92,3 +75,12 @@ export default function RootLayout() {
   );
 }
 
+// useEffect(() => {
+//   const inAuthGroup = segments[0] === "(auth)";
+
+//   if (isAuthenticated && !inAuthGroup) {
+//     router.replace("/(auth)");
+//   } else if (!isAuthenticated && inAuthGroup) {
+//     router.replace("/");
+//   }
+// }, [isAuthenticated, segments]);

@@ -1,6 +1,5 @@
 import React from "react";
 import { View, Text, StyleSheet, Image, Pressable } from "react-native";
-// import { useAuth } from "@/components/AuthContext";
 import CustomButton from "@/components/coinbaseComponents/button";
 import GeneralSpinningLoader from "@/components/GeneralSpinningLoader";
 import GeneralErrorMessage from "@/components/GeneralErrorMessage";
