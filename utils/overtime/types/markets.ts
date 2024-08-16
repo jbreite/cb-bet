@@ -21,11 +21,14 @@ export enum SportMarketStatusEnum {
   RESOLVED = 10,
   CANCELLED = 255,
 }
+
 export type SportMarketOdds = {
   american: number;
   decimal: number;
   normalizedImplied: number;
 };
+
+export type OddsTypeKey = keyof SportMarketOdds;
 
 export type SportMarket = {
   gameId: string;
@@ -81,7 +84,7 @@ export type TradeData = {
   playerId: number;
   odds: string[];
   merkleProof: string[];
-  position: number;
+  position?: number; //Need this to be defined for getting a quote...
   combinedPositions: CombinedPositions[];
   live?: boolean;
 };

@@ -1,48 +1,34 @@
 import React from "react";
 import { View, Text, Button, Alert } from "react-native";
 import { useAtom } from "jotai";
-import { sportMarketAtom } from "@/lib/atom/atoms";
+import { sportMarketAtom, userBetsAtom } from "@/lib/atom/atoms";
 import { useQuery } from "@tanstack/react-query";
 import { getQuote } from "@/utils/overtime/queries/getQuote";
-import { CB_BET_SUPPORTED_NETWORK_IDS } from "@/constants/Constants";
-import { SportMarketOdds, TradeData } from "@/utils/overtime/types/markets";
 import { ethers } from "ethers";
 import { executeBet } from "@/utils/overtime/queries/makeBet";
-function convertOddsToStrings(odds: SportMarketOdds[]): string[] {
-  return odds.map((odd) => odd.normalizedImplied.toString());
-}
+
+const REFETCH_INTERVAL = 10000;
 
 export default function BetModal() {
-  const [sportMarketAtomInfo] = useAtom(sportMarketAtom);
+  const [userBetsAtomInfo] = useAtom(userBetsAtom);
+  const tradeData = userBetsAtomInfo[0].tradeData;
+  console.log("tradeData", tradeData);
 
-  const firstSportMarket = sportMarketAtomInfo[0];
-
-  const formattedTradeData: TradeData = {
-    gameId: firstSportMarket.gameId,
-    sportId: firstSportMarket.subLeagueId,
-    typeId: firstSportMarket.typeId,
-    maturity: firstSportMarket.maturity,
-    status: firstSportMarket.status,
-    line: firstSportMarket.line,
-    playerId: firstSportMarket.playerProps.playerId,
-    odds: convertOddsToStrings(firstSportMarket.odds),
-    merkleProof: firstSportMarket.proof,
-    position: 1,
-    combinedPositions: firstSportMarket.combinedPositions,
-    live: false,
-  };
+  const hasTradePosition = tradeData.position !== undefined;
 
   const {
     data,
     isLoading: quoteLoading,
     isError,
   } = useQuery({
-    queryKey: ["quoteData"],
+    queryKey: ["quoteData", tradeData.position],
     queryFn: () =>
       getQuote({
-        buyInAmount: 100,
-        tradeData: [formattedTradeData],
+        buyInAmount: 10,
+        tradeData: [tradeData],
       }),
+    enabled: hasTradePosition,
+    refetchInterval: REFETCH_INTERVAL,
   });
 
   const handleBet = async () => {
@@ -53,7 +39,7 @@ export default function BetModal() {
 
     try {
       const quoteData = {
-        quoteTradeData: [formattedTradeData],
+        quoteTradeData: [tradeData],
         quoteData: data.quoteData,
       };
       const buyInAmount = ethers.parseUnits("100", 18).toString(); // 100 THALES
