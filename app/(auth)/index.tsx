@@ -1,7 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, Image, Pressable } from "react-native";
-import { useAuth } from "@/components/AuthContext";
-import { useDisconnect } from "@/hooks/cbHooks/useDisconnect";
+// import { useAuth } from "@/components/AuthContext";
 import CustomButton from "@/components/coinbaseComponents/button";
 import GeneralSpinningLoader from "@/components/GeneralSpinningLoader";
 import GeneralErrorMessage from "@/components/GeneralErrorMessage";
@@ -18,9 +17,9 @@ import MainBetCard from "@/components/mainBetCard";
 import { getTradeDataFromSportMarket } from "@/utils/overtime/ui/helpers";
 
 export default function AuthenticatedIndex() {
-  const { addresses } = useAuth();
-  const address = addresses[0];
-  const handleDisconnect = useDisconnect();
+  // const { addresses } = useAuth();
+  // const address = addresses[0];
+  // const handleDisconnect = useDisconnect();
   const [, setUserBetsAtom] = useAtom(userBetsAtom);
 
   const { data, isLoading, error } = useQuery({
@@ -33,7 +32,8 @@ export default function AuthenticatedIndex() {
 
   function handleMarketPress(market: SportMarket, tradeData: TradeData) {
     setUserBetsAtom((prevMarkets) => [
-      ...prevMarkets,
+      // ...prevMarkets,
+      //COMNMENT FOR NOW WHEN ONLY DOING SINGLE QUOTE
       { tradeData: tradeData, sportMarket: market },
     ]);
     router.push("/(auth)/betModal");
@@ -87,8 +87,8 @@ export default function AuthenticatedIndex() {
           paddingHorizontal: 12,
         }}
       >
-        <Text style={{ flex: 1 }}>Address:{address}</Text>
-        <CustomButton title="Disconnect Wallet" onPress={handleDisconnect} />
+        {/* <Text style={{ flex: 1 }}>Address:</Text>
+        <CustomButton title="Disconnect Wallet" onPress={handleDisconnect} /> */}
       </View>
       {SportView}
     </View>
