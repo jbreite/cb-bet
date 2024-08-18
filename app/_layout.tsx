@@ -74,13 +74,3 @@ export default function RootLayout() {
     </WagmiProvider>
   );
 }
-
-// useEffect(() => {
-//   const inAuthGroup = segments[0] === "(auth)";
-
-//   if (isAuthenticated && !inAuthGroup) {
-//     router.replace("/(auth)");
-//   } else if (!isAuthenticated && inAuthGroup) {
-//     router.replace("/");
-//   }
-// }, [isAuthenticated, segments]);

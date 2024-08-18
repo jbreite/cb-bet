@@ -3,16 +3,7 @@ import {
   OVERTIME_API_BASE_URL,
 } from "@/constants/Constants";
 import { TradeData } from "../types/markets";
-
-interface QuoteResponse {
-  quoteData: {
-    error?: string;
-    // Add other expected fields here
-  };
-  liquidityData?: {
-    ticketLiquidityInUsd: number;
-  };
-}
+import { QuoteData } from "@/app/(auth)/betModal";
 
 export class QuoteError extends Error {
   constructor(
@@ -35,7 +26,7 @@ export const getQuote = async ({
   tradeData: TradeData[];
   network?: CB_BET_SUPPORTED_NETWORK_IDS;
   collateral?: string;
-}): Promise<QuoteResponse> => {
+}): Promise<QuoteData> => {
   const url = `${OVERTIME_API_BASE_URL}/networks/${network}/quote`;
 
   const body = {
@@ -55,7 +46,7 @@ export const getQuote = async ({
 
     const contentType = response.headers.get("content-type");
     if (contentType && contentType.indexOf("application/json") !== -1) {
-      const responseData: QuoteResponse = await response.json();
+      const responseData = await response.json();
       console.log("Response data:", JSON.stringify(responseData, null, 2));
 
       if (!response.ok) {

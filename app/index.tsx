@@ -1,6 +1,6 @@
 import { ScrollView, View, Text, StyleSheet } from "react-native";
 import Section from "@/components/coinbaseComponents/section";
-import { useRouter } from "expo-router";
+import { router, useRouter } from "expo-router";
 import { useMemo } from "react";
 import {
   createConnectorFromWallet,
@@ -15,7 +15,6 @@ import {
   useSignMessage,
   useDisconnect,
 } from "wagmi";
-import { base } from "wagmi/chains";
 import { useCapabilities } from "wagmi/experimental";
 import CustomButton from "@/components/coinbaseComponents/button";
 
@@ -23,7 +22,7 @@ export default function Index() {
   const { address } = useAccount();
   console.log(address);
 
-  const { connect, connectors } = useConnect();
+  const { connect, connectors, isSuccess } = useConnect();
   const { disconnect } = useDisconnect();
   const {
     data: signMessageHash,
@@ -33,6 +32,14 @@ export default function Index() {
   } = useSignMessage();
 
   const { data: capabilities, error: capabilitiesError } = useCapabilities();
+
+  const handleConnect = () => {
+    connect({ connector: connectors[1] });
+    console.log("Connecting...");
+    if (isSuccess) {
+      router.replace("/(auth)");
+    }
+  };
 
   return (
     <ScrollView
@@ -52,7 +59,7 @@ export default function Index() {
         title="useConnect"
         result={address}
         buttonLabel="Connect"
-        onPress={() => connect({ connector: connectors[0] })}
+        onPress={handleConnect}
       />
       {address && (
         <>

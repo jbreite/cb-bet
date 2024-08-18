@@ -14,12 +14,12 @@ import { SportMarket, TradeData } from "@/utils/overtime/types/markets";
 import { router } from "expo-router";
 import MainBetCard from "@/components/mainBetCard";
 import { getTradeDataFromSportMarket } from "@/utils/overtime/ui/helpers";
+import { useAccount, useSignMessage } from "wagmi";
 
 export default function AuthenticatedIndex() {
-  // const { addresses } = useAuth();
-  // const address = addresses[0];
-  // const handleDisconnect = useDisconnect();
   const [, setUserBetsAtom] = useAtom(userBetsAtom);
+
+  const { address } = useAccount();
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["markets"],
@@ -28,6 +28,13 @@ export default function AuthenticatedIndex() {
         leagueId: LeagueEnum.EPL,
       }),
   });
+
+  const {
+    data: signMessageHash,
+    error: signMessageError,
+    signMessage,
+    reset,
+  } = useSignMessage();
 
   function handleMarketPress(market: SportMarket, tradeData: TradeData) {
     setUserBetsAtom((prevMarkets) => [
@@ -86,8 +93,18 @@ export default function AuthenticatedIndex() {
           paddingHorizontal: 12,
         }}
       >
-        {/* <Text style={{ flex: 1 }}>Address:</Text>
-        <CustomButton title="Disconnect Wallet" onPress={handleDisconnect} /> */}
+        <Text style={{ flex: 1 }}>Address: {address}</Text>
+        <CustomButton
+          title="Disconnect Wallet"
+          onPress={() => console.log("Pressed")}
+        />
+      </View>
+      <View>
+        <CustomButton
+          title="Sign Message"
+          onPress={() => signMessage({ message: "hello world" })}
+        />
+        <Text>{signMessageHash ?? signMessageError}</Text>
       </View>
       {SportView}
     </View>
