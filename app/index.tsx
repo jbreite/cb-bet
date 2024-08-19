@@ -20,9 +20,20 @@ import CustomButton from "@/components/coinbaseComponents/button";
 
 export default function Index() {
   const { address } = useAccount();
-  console.log(address);
 
-  const { connect, connectors, isSuccess } = useConnect();
+  const {
+    connect,
+    connectors,
+    isSuccess,
+    isError,
+    isIdle,
+    isPaused,
+    isPending,
+    status,
+    error,
+  } = useConnect();
+
+  console.log("status:", status);
   const { disconnect } = useDisconnect();
   const {
     data: signMessageHash,
@@ -34,10 +45,19 @@ export default function Index() {
   const { data: capabilities, error: capabilitiesError } = useCapabilities();
 
   const handleConnect = () => {
-    connect({ connector: connectors[1] });
+    connect({ connector: connectors[0] });
     console.log("Connecting...");
     if (isSuccess) {
+      console.log(address);
       router.replace("/(auth)");
+    } else if (isError) {
+      console.log("Error:", error?.message || "An unknown error occurred");
+    } else if (isIdle) {
+      console.log("isIdle");
+    } else if (isPending) {
+      console.log(isPending);
+    } else if (isPaused) {
+      console.log("paused");
     }
   };
 
