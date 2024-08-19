@@ -1,28 +1,15 @@
-import { ScrollView, View, Text, StyleSheet } from "react-native";
-import Section from "@/components/coinbaseComponents/section";
-import { router, useRouter } from "expo-router";
+import { ScrollView, View, Text, StyleSheet, Pressable } from "react-native";
+import { router, useRouter, useSegments } from "expo-router";
 import { useAccount, useConnect, useSignMessage, useDisconnect } from "wagmi";
 import { useCapabilities } from "wagmi/experimental";
-import CustomButton from "@/components/coinbaseComponents/button";
+import Section from "@/components/coinbaseComponents/section";
 
 export default function Index() {
   const { address } = useAccount();
+  const { isConnected } = useAccount();
 
-  const {
-    connect,
-    connectors,
-    isSuccess,
-    isError,
-    isIdle,
-    isPaused,
-    isPending,
-    status,
-    error,
-    failureCount,
-    failureReason,
-  } = useConnect();
+  const { connect, connectors } = useConnect();
 
-  console.log("status:", status);
   const { disconnect } = useDisconnect();
   const {
     data: signMessageHash,
@@ -33,23 +20,12 @@ export default function Index() {
 
   const { data: capabilities, error: capabilitiesError } = useCapabilities();
 
+  //TODO: Hook doesn't update on the tap so need a function
+  const segments = useSegments();
+
   const handleConnect = () => {
+    console.log("Current path before connect:", segments.join("/"));
     connect({ connector: connectors[0] });
-    console.log("Connecting...");
-    if (isSuccess) {
-      console.log(address);
-      router.replace("/(auth)");
-    } else if (isError) {
-      console.log("Error:", error?.message || "An unknown error occurred");
-      console.log(failureCount);
-      console.log(failureReason);
-    } else if (isIdle) {
-      console.log("isIdle");
-    } else if (isPending) {
-      console.log(isPending);
-    } else if (isPaused) {
-      console.log("paused");
-    }
   };
 
   return (
@@ -65,6 +41,9 @@ export default function Index() {
           Connected ✅ {address}
         </Text>
       )}
+      <Pressable onPress={() => router.push("/(auth)")}>
+        <Text>Sitempa</Text>
+      </Pressable>
       <Section
         key={`connect`}
         title="useConnect"
@@ -106,3 +85,9 @@ const styles = StyleSheet.create({
     height: "100%",
   },
 });
+
+// {
+//   onSuccess() {
+//     console.log("Connected");
+//     router.replace("/(auth)/");
+//   },

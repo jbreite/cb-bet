@@ -14,12 +14,13 @@ import { SportMarket, TradeData } from "@/utils/overtime/types/markets";
 import { router } from "expo-router";
 import MainBetCard from "@/components/mainBetCard";
 import { getTradeDataFromSportMarket } from "@/utils/overtime/ui/helpers";
-import { useAccount, useSignMessage } from "wagmi";
+import { useAccount, useDisconnect, useSignMessage } from "wagmi";
 
 export default function AuthenticatedIndex() {
   const [, setUserBetsAtom] = useAtom(userBetsAtom);
 
   const { address } = useAccount();
+  const { disconnect } = useDisconnect();
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["markets"],
@@ -96,16 +97,10 @@ export default function AuthenticatedIndex() {
         <Text style={{ flex: 1 }}>Address: {address}</Text>
         <CustomButton
           title="Disconnect Wallet"
-          onPress={() => console.log("Pressed")}
+          onPress={() => disconnect()}
         />
       </View>
-      <View>
-        <CustomButton
-          title="Sign Message"
-          onPress={() => signMessage({ message: "hello world" })}
-        />
-        <Text>{signMessageHash ?? signMessageError}</Text>
-      </View>
+
       {SportView}
     </View>
   );
