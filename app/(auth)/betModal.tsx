@@ -4,7 +4,7 @@ import { useAtom } from "jotai";
 import { userBetsAtom } from "@/lib/atom/atoms";
 import { useQuery } from "@tanstack/react-query";
 import { getQuote } from "@/utils/overtime/queries/getQuote";
-import { parseEther, WriteContractErrorType } from "viem";
+import { parseEther, parseUnits, WriteContractErrorType } from "viem";
 import {
   useWriteContract,
   useWaitForTransactionReceipt,
@@ -16,7 +16,7 @@ import { ERC_20_ABI } from "@/utils/overtime/abi/ERC20_ABI";
 
 const REFETCH_INTERVAL = 10000;
 const USDC_ADDRESS = "0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85";
-const BUY_IN_AMOUNT = parseEther("5"); // USDC is only 6 so need to fix
+const BUY_IN_AMOUNT = parseUnits("5", 6); // USDC is only 6 so need to fix
 
 export interface QuoteData {
   quoteData: {

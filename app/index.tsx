@@ -1,20 +1,7 @@
 import { ScrollView, View, Text, StyleSheet } from "react-native";
 import Section from "@/components/coinbaseComponents/section";
 import { router, useRouter } from "expo-router";
-import { useMemo } from "react";
-import {
-  createConnectorFromWallet,
-  Wallets,
-} from "@mobile-wallet-protocol/wagmi-connectors";
-import * as Linking from "expo-linking";
-import {
-  http,
-  createConfig,
-  useAccount,
-  useConnect,
-  useSignMessage,
-  useDisconnect,
-} from "wagmi";
+import { useAccount, useConnect, useSignMessage, useDisconnect } from "wagmi";
 import { useCapabilities } from "wagmi/experimental";
 import CustomButton from "@/components/coinbaseComponents/button";
 
@@ -32,7 +19,7 @@ export default function Index() {
     status,
     error,
     failureCount,
-    failureReason
+    failureReason,
   } = useConnect();
 
   console.log("status:", status);
@@ -54,8 +41,8 @@ export default function Index() {
       router.replace("/(auth)");
     } else if (isError) {
       console.log("Error:", error?.message || "An unknown error occurred");
-      console.log(failureCount)
-      console.log(failureReason)
+      console.log(failureCount);
+      console.log(failureReason);
     } else if (isIdle) {
       console.log("isIdle");
     } else if (isPending) {
@@ -75,7 +62,7 @@ export default function Index() {
       </Text>
       {address && (
         <Text style={{ fontSize: 16, fontWeight: "600", textAlign: "center" }}>
-          Connected ✅
+          Connected ✅ {address}
         </Text>
       )}
       <Section
