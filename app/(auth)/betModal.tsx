@@ -1,88 +1,253 @@
 import React from "react";
 import { View, Text, Button, Alert } from "react-native";
 import { useAtom } from "jotai";
-import { sportMarketAtom, userBetsAtom } from "@/lib/atom/atoms";
+import { userBetsAtom } from "@/lib/atom/atoms";
 import { useQuery } from "@tanstack/react-query";
 import { getQuote } from "@/utils/overtime/queries/getQuote";
-import { ethers } from "ethers";
-import { executeBet } from "@/utils/overtime/queries/makeBet";
+import { parseEther, parseUnits, WriteContractErrorType } from "viem";
+import {
+  useWriteContract,
+  useWaitForTransactionReceipt,
+  useAccount,
+} from "wagmi";
+import sportsAMMV2Contract from "@/constants/overtimeContracts";
+import { CB_BET_SUPPORTED_NETWORK_IDS } from "@/constants/Constants";
+import { ERC_20_ABI } from "@/utils/overtime/abi/ERC20_ABI";
 
 const REFETCH_INTERVAL = 10000;
+const USDC_ADDRESS = "0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85";
+const BUY_IN_AMOUNT = parseUnits("5", 6); // USDC is only 6 so need to fix
+
+export interface QuoteData {
+  quoteData: {
+    totalQuote: {
+      normalizedImplied: number;
+      american: number;
+    };
+    buyInAmountInUsd: number;
+    payout: {
+      usd: number;
+    };
+    potentialProfit: {
+      usd: number;
+      percentage: number;
+    };
+  };
+  liquidityData?: {
+    ticketLiquidityInUsd: number;
+  };
+}
+
+function getTradeData(quoteTradeData: any[]) {
+  return quoteTradeData.map((data) => ({
+    ...data,
+    line: Math.round(data.line * 100), // Keep as number, multiply by 100 and round
+    odds: data.odds.map((odd: string) => parseEther(odd.toString())),
+    combinedPositions: data.combinedPositions.map((combinedPositions: any[]) =>
+      combinedPositions.map((combinedPosition) => ({
+        typeId: combinedPosition.typeId,
+        position: combinedPosition.position,
+        line: Math.round(combinedPosition.line * 100), // Keep as number, multiply by 100 and round
+      }))
+    ),
+  }));
+}
 
 export default function BetModal() {
   const [userBetsAtomInfo] = useAtom(userBetsAtom);
+  const { address } = useAccount();
+
+  console.log("address", address);
   const tradeData = userBetsAtomInfo[0].tradeData;
-  console.log("tradeData", tradeData);
 
   const hasTradePosition = tradeData.position !== undefined;
 
   const {
-    data,
+    data: quoteObject,
     isLoading: quoteLoading,
-    isError,
+    isError: quoteError,
   } = useQuery({
     queryKey: ["quoteData", tradeData.position],
     queryFn: () =>
       getQuote({
-        buyInAmount: 10,
+        buyInAmount: 5,
         tradeData: [tradeData],
       }),
     enabled: hasTradePosition,
     refetchInterval: REFETCH_INTERVAL,
   });
 
+  const {
+    writeContract,
+    data: transactionData,
+    error: writeError,
+    isPending: writePending,
+  } = useWriteContract();
+
+  const { isLoading: waitLoading, isSuccess: transactionSuccess } =
+    useWaitForTransactionReceipt({
+      hash: transactionData?.hash,
+    });
+
+  const handleApproval = async () => {
+    writeContract({
+      abi: ERC_20_ABI,
+      address: USDC_ADDRESS,
+      functionName: "approve",
+      args: [
+        sportsAMMV2Contract.addresses[CB_BET_SUPPORTED_NETWORK_IDS.OPTIMISM],
+        BUY_IN_AMOUNT,
+      ],
+    });
+  };
+
   const handleBet = async () => {
-    if (!data) {
+    if (!quoteObject) {
       Alert.alert("Error", "Quote data is not available");
       return;
     }
 
-    try {
-      const quoteData = {
-        quoteTradeData: [tradeData],
-        quoteData: data.quoteData,
-      };
-      const buyInAmount = ethers.parseUnits("100", 18).toString(); // 100 THALES
+    const buyInAmount = BUY_IN_AMOUNT;
+    const parsedTotalQuote = parseEther(
+      quoteObject.quoteData.totalQuote.normalizedImplied.toString()
+    );
+    const parsedSlippage = parseEther("0.02");
+    const REFERRAL_ADDRESS = "0x0000000000000000000000000000000000000000";
+    const COLLATERAL_ADDRESS = USDC_ADDRESS;
 
-      const receipt = await executeBet(quoteData, buyInAmount);
-      console.log("Bet executed successfully!", receipt);
-      Alert.alert("Success", "Bet placed successfully!");
-    } catch (error) {
-      console.error("Failed to execute bet:", error);
-      Alert.alert("Error", "Failed to place bet. Please try again.");
-    }
+    const preparedTradeData = getTradeData([tradeData]);
+
+    writeContract({
+      abi: sportsAMMV2Contract.abi,
+      address: sportsAMMV2Contract.addresses[
+        CB_BET_SUPPORTED_NETWORK_IDS.OPTIMISM
+      ] as `0x${string}`,
+      functionName: "trade",
+      args: [
+        preparedTradeData,
+        buyInAmount,
+        parsedTotalQuote,
+        parsedSlippage,
+        REFERRAL_ADDRESS,
+        COLLATERAL_ADDRESS,
+        false,
+      ],
+    });
   };
 
-  if (quoteLoading) {
+  if (quoteLoading || writePending || waitLoading) {
     return <Text>Loading...</Text>;
   }
 
-  if (isError) {
-    return <Text>Error loading quote data</Text>;
+  if (quoteError) {
+    return <Text>quoteError occurred</Text>;
+  }
+
+  if (writeError) {
+    logErrorDetails(writeError);
+
+    const errorMessage = getErrorMessage(writeError);
+    return (
+      <View>
+        <Text>Error occurred while placing bet:</Text>
+        <Text>{errorMessage}</Text>
+        <Text>Please try again or contact support if the issue persists.</Text>
+      </View>
+    );
+  }
+
+  if (transactionSuccess) {
+    return <Text>Bet placed successfully!</Text>;
   }
 
   return (
     <View>
       <Text>BetModal</Text>
-      {data && (
+      {quoteObject && (
         <View>
-          <Text>Bet Amount: ${data.quoteData.buyInAmountInUsd}</Text>
-          <Text>Potential Payout: ${data.quoteData.payout.usd.toFixed(2)}</Text>
           <Text>
-            Potential Profit: ${data.quoteData.potentialProfit.usd.toFixed(2)} (
-            {data.quoteData.potentialProfit.percentage.toFixed(2)}%)
+            Bet Amount: ${quoteObject.quoteData.buyInAmountInUsd.toFixed(2)}
           </Text>
           <Text>
-            Odds: {data.quoteData.totalQuote.american > 0 ? "+" : ""}
-            {data.quoteData.totalQuote.american.toFixed(0)} (
-            {(data.quoteData.totalQuote.normalizedImplied * 100).toFixed(2)}%)
+            Potential Payout: ${quoteObject.quoteData.payout.usd.toFixed(2)}
           </Text>
           <Text>
-            Available Liquidity: ${data.liquidityData.ticketLiquidityInUsd}
+            Potential Profit: $
+            {quoteObject.quoteData.potentialProfit.usd.toFixed(2)} (
+            {quoteObject.quoteData.potentialProfit.percentage.toFixed(2)}%)
           </Text>
-          <Button title="Place Bet" onPress={handleBet} />
+          <Text>
+            Odds: {quoteObject.quoteData.totalQuote.american > 0 ? "+" : ""}
+            {quoteObject.quoteData.totalQuote.american.toFixed(0)} (
+            {(quoteObject.quoteData.totalQuote.normalizedImplied * 100).toFixed(
+              2
+            )}
+            %)
+          </Text>
+          <Text>
+            Available Liquidity: $
+            {quoteObject.liquidityData?.ticketLiquidityInUsd.toFixed(2) ??
+              "N/A"}
+          </Text>
+          <Button
+            title="Handle Approval"
+            onPress={handleApproval}
+            disabled={writePending}
+          />
+          <Button
+            title="Place Bet"
+            onPress={handleBet}
+            disabled={writePending}
+          />
         </View>
       )}
     </View>
   );
+}
+
+function getErrorMessage(error: WriteContractErrorType): string {
+  if (typeof error === "string") {
+    return error;
+  }
+  if (error instanceof Error) {
+    return error.message;
+  }
+  if ("shortMessage" in error) {
+    return error.shortMessage || "An unknown error occurred";
+  }
+  if ("message" in error) {
+    return error.message || "An unknown error occurred";
+  }
+  return "An unknown error occurred";
+}
+
+function logErrorDetails(error: any): void {
+  console.error("Contract write error occurred:");
+
+  if (error instanceof Error) {
+    console.error("Error name:", error.name);
+    console.error("Error message:", error.message);
+    console.error("Error stack:", error.stack);
+  } else if (typeof error === "object" && error !== null) {
+    Object.entries(error).forEach(([key, value]) => {
+      console.error(`${key}:`, safeStringify(value));
+    });
+  } else {
+    console.error("Unexpected error type:", typeof error);
+    console.error("Error value:", error);
+  }
+
+  // Log additional context if available
+
+  console.error("Full error object:", safeStringify(error));
+}
+
+function safeStringify(obj: any): string {
+  try {
+    return JSON.stringify(obj, null, 2);
+  } catch (error) {
+    return `[Circular or Non-Serializable Object]: ${Object.keys(obj).join(
+      ", "
+    )}`;
+  }
 }
