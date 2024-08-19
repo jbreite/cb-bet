@@ -9,7 +9,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Provider as JotaiProvider } from "jotai";
 import { defaultStore } from "@/lib/atom/store";
 import { config } from "@/config";
-import { WagmiProvider } from "wagmi";
+import { useAccount, WagmiProvider } from "wagmi";
 
 const queryClient = new QueryClient();
 
@@ -20,7 +20,10 @@ function InitialLayout() {
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
 
+  const { isConnected, status } = useAccount();
+
   const router = useRouter();
+  const segments = useSegments();
 
   useEffect(() => {
     if (error) throw error;
@@ -31,6 +34,26 @@ function InitialLayout() {
       SplashScreen.hideAsync();
     }
   }, [loaded]);
+
+  useEffect(() => {
+    if (status === "connecting" || status === "reconnecting") return;
+
+    const inAuthGroup = segments[0] === "(auth)";
+    console.log("🪨 ~ useEffect ~ inAuthGroup", inAuthGroup);
+    console.log("🪨 ~ useEffect ~ isConnected", isConnected);
+
+    if (isConnected && !inAuthGroup) {
+      // Bring the user inside the auth group
+      router.replace("/(auth)/markets");
+    } else if (!isConnected && inAuthGroup) {
+      // Kick the user out of the auth group
+      router.replace("/");
+    }
+  }, [isConnected, status, segments]);
+
+  // if (!loaded || status === "connecting" || status === "reconnecting") {
+  //   return <Slot />;
+  // }
 
   useEffect(() => {
     const subscription = Linking.addEventListener("url", ({ url }) => {
