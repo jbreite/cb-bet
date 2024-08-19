@@ -31,6 +31,8 @@ export default function Index() {
     isPending,
     status,
     error,
+    failureCount,
+    failureReason
   } = useConnect();
 
   console.log("status:", status);
@@ -52,6 +54,8 @@ export default function Index() {
       router.replace("/(auth)");
     } else if (isError) {
       console.log("Error:", error?.message || "An unknown error occurred");
+      console.log(failureCount)
+      console.log(failureReason)
     } else if (isIdle) {
       console.log("isIdle");
     } else if (isPending) {
