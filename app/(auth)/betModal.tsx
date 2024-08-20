@@ -4,16 +4,11 @@ import { useAtom } from "jotai";
 import { userBetsAtom } from "@/lib/atom/atoms";
 import { useQuery } from "@tanstack/react-query";
 import { getQuote } from "@/utils/overtime/queries/getQuote";
-import { parseEther, parseUnits, WriteContractErrorType } from "viem";
-import {
-  useWriteContract,
-  useWaitForTransactionReceipt,
-  useAccount,
-} from "wagmi";
+import { useWriteContract, useAccount } from "wagmi";
 import sportsAMMV2Contract from "@/constants/overtimeContracts";
 import { CB_BET_SUPPORTED_NETWORK_IDS } from "@/constants/Constants";
 import { ERC_20_ABI } from "@/utils/overtime/abi/ERC20_ABI";
-import { usePlaceBet } from "@/hooks/bets/usePlaceBet";
+import { USDC_ADDRESS, usePlaceBet } from "@/hooks/bets/usePlaceBet";
 import { TextInput } from "react-native-gesture-handler";
 
 const REFETCH_INTERVAL = 10000;
@@ -93,17 +88,15 @@ export default function BetModal() {
   }
 
   if (quoteError) {
-    return <Text>{quoteObject?.quoteData.error}</Text>;
+    return <Text>Could not fetch quote</Text>;
   }
 
   if (writeError) {
-    logErrorDetails(writeError);
-
-    const errorMessage = getErrorMessage(writeError);
+    console.log(writeError.message);
     return (
       <View>
         <Text>Error occurred while placing bet:</Text>
-        <Text>{errorMessage}</Text>
+        <Text>{writeError.message}</Text>
         <Text>Please try again or contact support if the issue persists.</Text>
       </View>
     );
@@ -169,51 +162,4 @@ export default function BetModal() {
         ))}
     </View>
   );
-}
-
-function getErrorMessage(error: WriteContractErrorType): string {
-  if (typeof error === "string") {
-    return error;
-  }
-  if (error instanceof Error) {
-    return error.message;
-  }
-  if ("shortMessage" in error) {
-    return error.shortMessage || "An unknown error occurred";
-  }
-  if ("message" in error) {
-    return error.message || "An unknown error occurred";
-  }
-  return "An unknown error occurred";
-}
-
-function logErrorDetails(error: any): void {
-  console.error("Contract write error occurred:");
-
-  if (error instanceof Error) {
-    console.error("Error name:", error.name);
-    console.error("Error message:", error.message);
-    console.error("Error stack:", error.stack);
-  } else if (typeof error === "object" && error !== null) {
-    Object.entries(error).forEach(([key, value]) => {
-      console.error(`${key}:`, safeStringify(value));
-    });
-  } else {
-    console.error("Unexpected error type:", typeof error);
-    console.error("Error value:", error);
-  }
-
-  // Log additional context if available
-
-  console.error("Full error object:", safeStringify(error));
-}
-
-function safeStringify(obj: any): string {
-  try {
-    return JSON.stringify(obj, null, 2);
-  } catch (error) {
-    return `[Circular or Non-Serializable Object]: ${Object.keys(obj).join(
-      ", "
-    )}`;
-  }
 }
