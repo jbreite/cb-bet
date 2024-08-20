@@ -1,6 +1,6 @@
 import { memo, useCallback, useState } from "react";
 import { Platform, StyleSheet, Text, View } from "react-native";
-import CustomButton from "./button";
+import CustomButton from "./coinbaseStarterButton";
 
 type SectionProps = {
   title: string;

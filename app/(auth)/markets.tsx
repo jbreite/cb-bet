@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, Image, Pressable } from "react-native";
-import CustomButton from "@/components/coinbaseComponents/button";
 import GeneralSpinningLoader from "@/components/GeneralSpinningLoader";
+
 import GeneralErrorMessage from "@/components/GeneralErrorMessage";
 import { CB_BET_SUPPORTED_NETWORK_IDS } from "@/constants/Constants";
 import { LeagueEnum } from "@/utils/overtime/enums/sport";
@@ -15,6 +15,7 @@ import { router } from "expo-router";
 import MainBetCard from "@/components/mainBetCard";
 import { getTradeDataFromSportMarket } from "@/utils/overtime/ui/helpers";
 import { useAccount, useDisconnect, useSignMessage } from "wagmi";
+import Button from "@/components/Button";
 
 export default function AuthenticatedIndex() {
   const [, setUserBetsAtom] = useAtom(userBetsAtom);
@@ -95,10 +96,7 @@ export default function AuthenticatedIndex() {
         }}
       >
         <Text style={{ flex: 1 }}>Address: {address}</Text>
-        <CustomButton
-          title="Disconnect Wallet"
-          onPress={() => disconnect()}
-        />
+        <Button label="Disconnect Wallet" onPress={() => disconnect()} />
       </View>
 
       {SportView}

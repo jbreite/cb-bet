@@ -10,6 +10,7 @@ import { Provider as JotaiProvider } from "jotai";
 import { defaultStore } from "@/lib/atom/store";
 import { config } from "@/config";
 import { useAccount, WagmiProvider } from "wagmi";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const queryClient = new QueryClient();
 
@@ -88,12 +89,14 @@ function InitialLayout() {
 
 export default function RootLayout() {
   return (
-    <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
-        <JotaiProvider store={defaultStore}>
-          <InitialLayout />
-        </JotaiProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <WagmiProvider config={config}>
+        <QueryClientProvider client={queryClient}>
+          <JotaiProvider store={defaultStore}>
+            <InitialLayout />
+          </JotaiProvider>
+        </QueryClientProvider>
+      </WagmiProvider>
+    </GestureHandlerRootView>
   );
 }
