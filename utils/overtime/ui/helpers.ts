@@ -1,3 +1,4 @@
+import { parseEther } from "viem";
 import { OddsType } from "../enums/markets";
 import { MarketTypeEnum } from "../enums/marketTypes";
 import { SportMarket, SportMarketOdds, TradeData } from "../types/markets";
@@ -53,4 +54,19 @@ export function getTradeDataFromSportMarket(
     combinedPositions: sportMarket.combinedPositions,
     live: false,
   };
+}
+
+export function getTradeData(quoteTradeData: any[]) {
+  return quoteTradeData.map((data) => ({
+    ...data,
+    line: Math.round(data.line * 100), // Keep as number, multiply by 100 and round
+    odds: data.odds.map((odd: string) => parseEther(odd.toString())),
+    combinedPositions: data.combinedPositions.map((combinedPositions: any[]) =>
+      combinedPositions.map((combinedPosition) => ({
+        typeId: combinedPosition.typeId,
+        position: combinedPosition.position,
+        line: Math.round(combinedPosition.line * 100), // Keep as number, multiply by 100 and round
+      }))
+    ),
+  }));
 }

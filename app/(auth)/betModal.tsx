@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, Button, Alert } from "react-native";
 import { useAtom } from "jotai";
 import { userBetsAtom } from "@/lib/atom/atoms";
@@ -13,10 +13,12 @@ import {
 import sportsAMMV2Contract from "@/constants/overtimeContracts";
 import { CB_BET_SUPPORTED_NETWORK_IDS } from "@/constants/Constants";
 import { ERC_20_ABI } from "@/utils/overtime/abi/ERC20_ABI";
+import { usePlaceBet } from "@/hooks/bets/usePlaceBet";
+import { TextInput } from "react-native-gesture-handler";
 
 const REFETCH_INTERVAL = 10000;
 const USDC_ADDRESS = "0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85";
-const BUY_IN_AMOUNT = parseUnits("5", 6); // USDC is only 6 so need to fix
+// const BUY_IN_AMOUNT = parseUnits("5", 6); // USDC is only 6 so need to fix
 
 export interface QuoteData {
   quoteData: {
@@ -55,39 +57,47 @@ function getTradeData(quoteTradeData: any[]) {
 
 export default function BetModal() {
   const [userBetsAtomInfo] = useAtom(userBetsAtom);
+  const [betAmount, setBetAmount] = useState("");
   const { address } = useAccount();
 
   console.log("address", address);
   const tradeData = userBetsAtomInfo[0].tradeData;
 
   const hasTradePosition = tradeData.position !== undefined;
+  const hasBetAmount = betAmount !== "";
 
   const {
     data: quoteObject,
     isLoading: quoteLoading,
     isError: quoteError,
   } = useQuery({
-    queryKey: ["quoteData", tradeData.position],
+    queryKey: ["quoteData", tradeData.position, betAmount],
     queryFn: () =>
       getQuote({
-        buyInAmount: 5,
+        buyInAmount: parseFloat(betAmount),
         tradeData: [tradeData],
       }),
-    enabled: hasTradePosition,
+    enabled: hasTradePosition && hasBetAmount,
     refetchInterval: REFETCH_INTERVAL,
+  });
+
+  const {
+    placeBet,
+    writeError,
+    writePending,
+    waitLoading,
+    transactionSuccess,
+  } = usePlaceBet({
+    quoteObject: quoteObject,
+    tradeData,
   });
 
   const {
     writeContract,
     data: transactionData,
-    error: writeError,
-    isPending: writePending,
+    error: writeErrorApproval,
+    isPending: writePendingApproval,
   } = useWriteContract();
-
-  const { isLoading: waitLoading, isSuccess: transactionSuccess } =
-    useWaitForTransactionReceipt({
-      hash: transactionData?.hash,
-    });
 
   const handleApproval = async () => {
     writeContract({
@@ -96,7 +106,7 @@ export default function BetModal() {
       functionName: "approve",
       args: [
         sportsAMMV2Contract.addresses[CB_BET_SUPPORTED_NETWORK_IDS.OPTIMISM],
-        BUY_IN_AMOUNT,
+        betAmount,
       ],
     });
   };
@@ -107,34 +117,13 @@ export default function BetModal() {
       return;
     }
 
-    const buyInAmount = BUY_IN_AMOUNT;
-    const parsedTotalQuote = parseEther(
-      quoteObject.quoteData.totalQuote.normalizedImplied.toString()
-    );
-    const parsedSlippage = parseEther("0.02");
-    const REFERRAL_ADDRESS = "0x0000000000000000000000000000000000000000";
-    const COLLATERAL_ADDRESS = USDC_ADDRESS;
-
-    const preparedTradeData = getTradeData([tradeData]);
-
-    writeContract({
-      abi: sportsAMMV2Contract.abi,
-      address: sportsAMMV2Contract.addresses[
-        CB_BET_SUPPORTED_NETWORK_IDS.OPTIMISM
-      ] as `0x${string}`,
-      functionName: "trade",
-      args: [
-        preparedTradeData,
-        buyInAmount,
-        parsedTotalQuote,
-        parsedSlippage,
-        REFERRAL_ADDRESS,
-        COLLATERAL_ADDRESS,
-        false,
-      ],
-    });
+    try {
+      await placeBet();
+    } catch (error) {
+      console.error("Error placing bet:", error);
+      Alert.alert("Error", "Failed to place bet. Please try again.");
+    }
   };
-
   if (quoteLoading || writePending || waitLoading) {
     return <Text>Loading...</Text>;
   }
@@ -163,6 +152,13 @@ export default function BetModal() {
   return (
     <View>
       <Text>BetModal</Text>
+      <TextInput
+        value={betAmount}
+        onChangeText={(text) => setBetAmount(text.replace(/[^0-9.]/g, ""))}
+        placeholder="Enter bet amount"
+        keyboardType="numeric"
+      />
+
       {quoteObject && (
         <View>
           <Text>
