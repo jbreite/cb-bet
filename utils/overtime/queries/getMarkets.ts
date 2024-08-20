@@ -47,11 +47,3 @@ export const getMarkets = async (
 
   return response.json();
 };
-
-// // React Query hook
-// export const useMarkets = (network: number, filters: MarketFilters = {}) => {
-//   return useQuery<MarketResponse, Error>({
-//     queryKey: ["markets", network, filters],
-//     queryFn: () => getMarkets(network, filters),
-//   });
-// };

@@ -17,43 +17,6 @@ import { usePlaceBet } from "@/hooks/bets/usePlaceBet";
 import { TextInput } from "react-native-gesture-handler";
 
 const REFETCH_INTERVAL = 10000;
-const USDC_ADDRESS = "0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85";
-// const BUY_IN_AMOUNT = parseUnits("5", 6); // USDC is only 6 so need to fix
-
-export interface QuoteData {
-  quoteData: {
-    totalQuote: {
-      normalizedImplied: number;
-      american: number;
-    };
-    buyInAmountInUsd: number;
-    payout: {
-      usd: number;
-    };
-    potentialProfit: {
-      usd: number;
-      percentage: number;
-    };
-  };
-  liquidityData?: {
-    ticketLiquidityInUsd: number;
-  };
-}
-
-function getTradeData(quoteTradeData: any[]) {
-  return quoteTradeData.map((data) => ({
-    ...data,
-    line: Math.round(data.line * 100), // Keep as number, multiply by 100 and round
-    odds: data.odds.map((odd: string) => parseEther(odd.toString())),
-    combinedPositions: data.combinedPositions.map((combinedPositions: any[]) =>
-      combinedPositions.map((combinedPosition) => ({
-        typeId: combinedPosition.typeId,
-        position: combinedPosition.position,
-        line: Math.round(combinedPosition.line * 100), // Keep as number, multiply by 100 and round
-      }))
-    ),
-  }));
-}
 
 export default function BetModal() {
   const [userBetsAtomInfo] = useAtom(userBetsAtom);
@@ -66,6 +29,7 @@ export default function BetModal() {
   const hasTradePosition = tradeData.position !== undefined;
   const hasBetAmount = betAmount !== "";
 
+  //Need to add debouncing to this
   const {
     data: quoteObject,
     isLoading: quoteLoading,
@@ -129,7 +93,7 @@ export default function BetModal() {
   }
 
   if (quoteError) {
-    return <Text>quoteError occurred</Text>;
+    return <Text>{quoteObject?.quoteData.error}</Text>;
   }
 
   if (writeError) {
@@ -159,44 +123,50 @@ export default function BetModal() {
         keyboardType="numeric"
       />
 
-      {quoteObject && (
-        <View>
-          <Text>
-            Bet Amount: ${quoteObject.quoteData.buyInAmountInUsd.toFixed(2)}
-          </Text>
-          <Text>
-            Potential Payout: ${quoteObject.quoteData.payout.usd.toFixed(2)}
-          </Text>
-          <Text>
-            Potential Profit: $
-            {quoteObject.quoteData.potentialProfit.usd.toFixed(2)} (
-            {quoteObject.quoteData.potentialProfit.percentage.toFixed(2)}%)
-          </Text>
-          <Text>
-            Odds: {quoteObject.quoteData.totalQuote.american > 0 ? "+" : ""}
-            {quoteObject.quoteData.totalQuote.american.toFixed(0)} (
-            {(quoteObject.quoteData.totalQuote.normalizedImplied * 100).toFixed(
-              2
-            )}
-            %)
-          </Text>
-          <Text>
-            Available Liquidity: $
-            {quoteObject.liquidityData?.ticketLiquidityInUsd.toFixed(2) ??
-              "N/A"}
-          </Text>
-          <Button
-            title="Handle Approval"
-            onPress={handleApproval}
-            disabled={writePending}
-          />
-          <Button
-            title="Place Bet"
-            onPress={handleBet}
-            disabled={writePending}
-          />
-        </View>
-      )}
+      {quoteObject &&
+        quoteObject.quoteData &&
+        ("totalQuote" in quoteObject.quoteData ? (
+          <View>
+            <Text>
+              Bet Amount: ${quoteObject.quoteData.buyInAmountInUsd.toFixed(2)}
+            </Text>
+            <Text>
+              Potential Payout: ${quoteObject.quoteData.payout.usd.toFixed(2)}
+            </Text>
+            <Text>
+              Potential Profit: $
+              {quoteObject.quoteData.potentialProfit.usd.toFixed(2)} (
+              {quoteObject.quoteData.potentialProfit.percentage.toFixed(2)}%)
+            </Text>
+            <Text>
+              Odds: {quoteObject.quoteData.totalQuote.american > 0 ? "+" : ""}
+              {quoteObject.quoteData.totalQuote.american.toFixed(0)} (
+              {(
+                quoteObject.quoteData.totalQuote.normalizedImplied * 100
+              ).toFixed(2)}
+              %)
+            </Text>
+            <Text>
+              Available Liquidity: $
+              {quoteObject.liquidityData?.ticketLiquidityInUsd.toFixed(2) ??
+                "N/A"}
+            </Text>
+            <Button
+              title="Handle Approval"
+              onPress={handleApproval}
+              disabled={writePending}
+            />
+            <Button
+              title="Place Bet"
+              onPress={handleBet}
+              disabled={writePending}
+            />
+          </View>
+        ) : (
+          <View>
+            <Text>{quoteObject.quoteData.error}</Text>
+          </View>
+        ))}
     </View>
   );
 }
