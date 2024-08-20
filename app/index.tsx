@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import { View, Text } from "react-native";
 import { useAccount, useConnect } from "wagmi";
 import Button from "@/components/Button";
 import { CoinbaseWalletLogo } from "@/components/coinbaseComponents/coinbaseWalletLogo";

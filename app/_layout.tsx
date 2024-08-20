@@ -11,6 +11,7 @@ import { defaultStore } from "@/lib/atom/store";
 import { config } from "@/config";
 import { useAccount, WagmiProvider } from "wagmi";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 const queryClient = new QueryClient();
 
@@ -45,7 +46,7 @@ function InitialLayout() {
 
     if (isConnected && !inAuthGroup) {
       // Bring the user inside the auth group
-      router.replace("/(auth)/markets");
+      router.replace("/(auth)/(tabs)/markets");
     } else if (!isConnected && inAuthGroup) {
       // Kick the user out of the auth group
       router.replace("/");
@@ -90,13 +91,15 @@ function InitialLayout() {
 export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <WagmiProvider config={config}>
-        <QueryClientProvider client={queryClient}>
-          <JotaiProvider store={defaultStore}>
-            <InitialLayout />
-          </JotaiProvider>
-        </QueryClientProvider>
-      </WagmiProvider>
+      <BottomSheetModalProvider>
+        <WagmiProvider config={config}>
+          <QueryClientProvider client={queryClient}>
+            <JotaiProvider store={defaultStore}>
+              <InitialLayout />
+            </JotaiProvider>
+          </QueryClientProvider>
+        </WagmiProvider>
+      </BottomSheetModalProvider>
     </GestureHandlerRootView>
   );
 }
