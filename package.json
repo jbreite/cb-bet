@@ -54,7 +54,8 @@
     "viem": "^2.19.6",
     "wagmi": "^2.12.5",
     "expo-haptics": "~13.0.1",
-    "react-native-svg": "15.2.0"
+    "react-native-svg": "15.2.0",
+    "expo-clipboard": "~6.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

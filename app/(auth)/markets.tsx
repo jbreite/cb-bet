@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, Pressable } from "react-native";
+import { View } from "react-native";
 import GeneralSpinningLoader from "@/components/GeneralSpinningLoader";
 
 import GeneralErrorMessage from "@/components/GeneralErrorMessage";
@@ -14,14 +14,9 @@ import { SportMarket, TradeData } from "@/utils/overtime/types/markets";
 import { router } from "expo-router";
 import MainBetCard from "@/components/mainBetCard";
 import { getTradeDataFromSportMarket } from "@/utils/overtime/ui/helpers";
-import { useAccount, useDisconnect, useSignMessage } from "wagmi";
-import Button from "@/components/Button";
 
 export default function AuthenticatedIndex() {
   const [, setUserBetsAtom] = useAtom(userBetsAtom);
-
-  const { address } = useAccount();
-  const { disconnect } = useDisconnect();
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["markets"],
@@ -30,13 +25,6 @@ export default function AuthenticatedIndex() {
         leagueId: LeagueEnum.EPL,
       }),
   });
-
-  const {
-    data: signMessageHash,
-    error: signMessageError,
-    signMessage,
-    reset,
-  } = useSignMessage();
 
   function handleMarketPress(market: SportMarket, tradeData: TradeData) {
     setUserBetsAtom((prevMarkets) => [
@@ -85,21 +73,5 @@ export default function AuthenticatedIndex() {
     );
   }
 
-  return (
-    <View style={{ flex: 1 }}>
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          paddingVertical: 24,
-          paddingHorizontal: 12,
-        }}
-      >
-        <Text style={{ flex: 1 }}>Address: {address}</Text>
-        <Button label="Disconnect Wallet" onPress={() => disconnect()} />
-      </View>
-
-      {SportView}
-    </View>
-  );
+  return <View style={{ flex: 1 }}>{SportView}</View>;
 }

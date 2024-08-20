@@ -50,7 +50,7 @@ function InitialLayout() {
       // Kick the user out of the auth group
       router.replace("/");
     }
-  }, [isConnected, status, segments]);
+  }, [isConnected, status]);
 
   // if (!loaded || status === "connecting" || status === "reconnecting") {
   //   return <Slot />;
