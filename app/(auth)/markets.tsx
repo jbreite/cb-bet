@@ -14,16 +14,30 @@ import { SportMarket, TradeData } from "@/utils/overtime/types/markets";
 import { router } from "expo-router";
 import MainBetCard from "@/components/mainBetCard";
 import { getTradeDataFromSportMarket } from "@/utils/overtime/ui/helpers";
+import { getGamesInfo } from "@/utils/overtime/queries/getGamesInfo";
 
 export default function AuthenticatedIndex() {
   const [, setUserBetsAtom] = useAtom(userBetsAtom);
 
-  const { data, isLoading, error } = useQuery({
+  const {
+    data: marketsData,
+    isLoading: marketsIsLoading,
+    error: marketsIsError,
+  } = useQuery({
     queryKey: ["markets"],
     queryFn: () =>
       getMarkets(CB_BET_SUPPORTED_NETWORK_IDS.OPTIMISM, {
         leagueId: LeagueEnum.EPL,
       }),
+  });
+
+  const {
+    data: gameInfoData,
+    isLoading: gameInfoIsLoading,
+    error: gameInfoIsError,
+  } = useQuery({
+    queryKey: ["gameInfo"],
+    queryFn: () => getGamesInfo(),
   });
 
   function handleMarketPress(market: SportMarket, tradeData: TradeData) {
@@ -36,12 +50,12 @@ export default function AuthenticatedIndex() {
   }
 
   let SportView;
-  if (isLoading) {
+  if (marketsIsLoading) {
     SportView = <GeneralSpinningLoader />;
-  } else if (error) {
-    SportView = <GeneralErrorMessage errorMessage={error.message} />;
-  } else if (data) {
-    const flattenedData = Object.values(data)
+  } else if (marketsIsError) {
+    SportView = <GeneralErrorMessage errorMessage={marketsIsError.message} />;
+  } else if (marketsData) {
+    const flattenedData = Object.values(marketsData)
       .flatMap((league) => Object.values(league))
       .flat();
 
@@ -54,7 +68,7 @@ export default function AuthenticatedIndex() {
             return (
               <MainBetCard
                 sportMarket={item}
-                onPress={() => console.log("pressed")}
+                onPress={() => console.log(item.gameId)}
                 onPressOddsButton={(index) => {
                   console.log("index", index);
                   const tradeDataWithPosition = getTradeDataFromSportMarket(

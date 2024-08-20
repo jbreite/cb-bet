@@ -30,6 +30,17 @@ export type SportMarketOdds = {
 
 export type OddsTypeKey = keyof SportMarketOdds;
 
+export type SportMarketScore = {
+  isGameFinished?: boolean;
+  period?: number;
+  gameStatus?: GameStatusEnum;
+  displayClock?: string;
+  homeScore: number;
+  awayScore: number;
+  homeScoreByPeriod: number[];
+  awayScoreByPeriod: number[];
+};
+
 export type SportMarket = {
   gameId: string;
   sport: SportEnum;
@@ -70,7 +81,7 @@ export type SportMarket = {
   tournamentRound?: string;
   isGameFinished?: boolean;
   gameStatus?: GameStatusEnum;
-  //   liveScore?: SportMarketScore;
+  liveScore?: SportMarketScore;
   positionNames?: string[];
 };
 
