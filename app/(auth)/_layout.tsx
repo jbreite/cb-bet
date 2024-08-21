@@ -7,16 +7,10 @@ export default function RootLayout() {
     <Stack
       screenOptions={{
         contentStyle: { backgroundColor: "white" },
-        headerShadowVisible: false,
-        headerLeft: () => (
-          <TouchableOpacity onPress={() => router.push("/(auth)/accountModal")}>
-            <Ionicons name="person-circle" size={24} />
-          </TouchableOpacity>
-        ),
-        headerRight: () => <Ionicons name="ellipsis-horizontal" size={24} />,
+        headerShown: false,
       }}
     >
-      {/* <Stack.Screen name="markets" options={{ headerTitle: "" }} /> */}
+      <Stack.Screen name="(tabs)" />
       <Stack.Screen
         name="betModal"
         options={{ presentation: "modal", headerShown: false }}

@@ -1,38 +1,17 @@
-import { BottomSheetMapAtom } from "@/lib/atom/atoms";
-import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
-import { useAtom } from "jotai";
-import React, { useCallback, useEffect, useRef, useMemo } from "react";
+import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
+import { atom, useAtom } from "jotai";
+import React, { useCallback, useMemo, useRef, useEffect } from "react";
 
-// Hook to manage modal state and actions
-export function useModal(name: string) {
-  const [bottomSheetMap] = useAtom(BottomSheetMapAtom);
+// Atom to store BottomSheet references
+const BottomSheetMapAtom = atom<Map<string, React.RefObject<BottomSheet>>>(
+  new Map()
+);
 
-  const openModal = useCallback(() => {
-    const modal = bottomSheetMap.get(name);
-    if (modal) {
-      modal.present();
-    } else {
-      console.error("Modal not found in BottomSheetMap");
-    }
-  }, [bottomSheetMap, name]);
-
-  const closeModal = useCallback(() => {
-    const modal = bottomSheetMap.get(name);
-    if (modal) {
-      modal.dismiss();
-    } else {
-      console.error("Modal not found in BottomSheetMap");
-    }
-  }, [bottomSheetMap, name]);
-
-  return { openModal, closeModal };
-}
-
-export function ModalContent({
+export function BottomSheetContent({
   name,
   children,
   snapPoints: snapPointsProp = ["25%", "50%"],
-  index = 0,
+  index,
   onChange,
   ...props
 }: {
@@ -43,46 +22,74 @@ export function ModalContent({
   onChange?: (index: number) => void;
   [key: string]: any;
 }) {
-  const [, setBottomSheetRef] = useAtom(BottomSheetMapAtom);
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const [, setBottomSheetMap] = useAtom(BottomSheetMapAtom);
+  const bottomSheetRef = useRef<BottomSheet>(null);
 
   // Use useMemo for snapPoints
   const snapPoints = useMemo(() => snapPointsProp, [snapPointsProp]);
 
   useEffect(() => {
-    // console.log(`Registering modal: ${name}`);
-    setBottomSheetRef((prev) =>
-      new Map(prev).set(name, bottomSheetModalRef.current)
-    );
+    setBottomSheetMap((prev) => new Map(prev).set(name, bottomSheetRef));
     return () => {
-      // console.log(`Unregistering modal: ${name}`);
-      setBottomSheetRef((prev) => {
+      setBottomSheetMap((prev) => {
         const newMap = new Map(prev);
         newMap.delete(name);
         return newMap;
       });
     };
-  }, [name, setBottomSheetRef]);
+  }, [name, setBottomSheetMap]);
 
   const handleSheetChanges = useCallback(
     (index: number) => {
-      // console.log(`Modal ${name} changed to index:`, index);
+      console.log(`BottomSheet ${name} changed to index:`, index);
       onChange?.(index);
     },
     [name, onChange]
   );
 
-  // console.log(`Rendering ModalContent for ${name}`);
-
   return (
-    <BottomSheetModal
-      ref={bottomSheetModalRef}
+    <BottomSheet
+      ref={bottomSheetRef}
       index={index}
       snapPoints={snapPoints}
       onChange={handleSheetChanges}
       {...props}
     >
       <BottomSheetView style={{ flex: 1 }}>{children}</BottomSheetView>
-    </BottomSheetModal>
+    </BottomSheet>
   );
+}
+
+// Hook to manage BottomSheet state
+export function useBottomSheet(name: string) {
+  const [bottomSheetMap] = useAtom(BottomSheetMapAtom);
+
+  const expandSheet = useCallback(() => {
+    const sheet = bottomSheetMap.get(name);
+    if (sheet && sheet.current) {
+      sheet.current.expand();
+    } else {
+      console.error(`BottomSheet ${name} not found`);
+    }
+  }, [bottomSheetMap, name]);
+
+  const collapseSheet = useCallback(() => {
+    const sheet = bottomSheetMap.get(name);
+    if (sheet && sheet.current) {
+      sheet.current.collapse();
+    } else {
+      console.error(`BottomSheet ${name} not found`);
+    }
+  }, [bottomSheetMap, name]);
+
+  const closeSheet = useCallback(() => {
+    const sheet = bottomSheetMap.get(name);
+    if (sheet && sheet.current) {
+      sheet.current.close();
+    } else {
+      console.error(`BottomSheet ${name} not found`);
+    }
+  }, [bottomSheetMap, name]);
+
+  return { expandSheet, collapseSheet, closeSheet };
 }
