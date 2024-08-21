@@ -6,7 +6,6 @@ import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import BottomSheetLayout from "./(bottom-sheet)/_layout";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -60,7 +59,6 @@ export default function TabLayout() {
           ),
         }}
       />
-      <Tabs.Screen name="(bottom-sheet)" options={{ href: null, headerShown: false,  }} />
     </Tabs>
   );
 }

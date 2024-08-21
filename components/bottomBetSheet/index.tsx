@@ -20,6 +20,7 @@ export default function BottomBetSheet() {
   const numberBets = userBetsAtomData.length;
 
   const tradeDataArray = userBetsAtomData.map((bet) => bet.tradeData);
+  console.log(JSON.stringify(tradeDataArray));
 
   const {
     data: quoteObject,
@@ -139,7 +140,7 @@ export default function BottomBetSheet() {
           <Button
             label="Place Bet"
             onPress={handleBet}
-            disabled={writePending}
+            disabled={writePending || quoteLoading}
           />
         </View>
       </BottomSheetView>
