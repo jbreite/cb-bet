@@ -17,9 +17,6 @@ export default function Bets() {
       }}
     >
       <Text>Bets</Text>
-      <Link href="/(bottom-sheet)/" style={{ fontSize: 24 }}>
-        Open BottomSheet Tab
-      </Link>
     </View>
   );
 }
