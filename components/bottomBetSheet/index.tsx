@@ -10,7 +10,6 @@ const BORDER_RADIUS = 24;
 const VERTICAL_PADDING = 16;
 
 export default function BottomBetSheet() {
-  const { closeModal } = useBottomSheet;
   return (
     <BottomSheetContent
       name={BET_BOTTOM_SHEET_NAME}

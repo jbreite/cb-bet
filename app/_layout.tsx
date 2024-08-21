@@ -91,15 +91,13 @@ function InitialLayout() {
 export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <BottomSheetModalProvider>
-        <WagmiProvider config={config}>
-          <QueryClientProvider client={queryClient}>
-            <JotaiProvider store={defaultStore}>
-              <InitialLayout />
-            </JotaiProvider>
-          </QueryClientProvider>
-        </WagmiProvider>
-      </BottomSheetModalProvider>
+      <WagmiProvider config={config}>
+        <QueryClientProvider client={queryClient}>
+          <JotaiProvider store={defaultStore}>
+            <InitialLayout />
+          </JotaiProvider>
+        </QueryClientProvider>
+      </WagmiProvider>
     </GestureHandlerRootView>
   );
 }

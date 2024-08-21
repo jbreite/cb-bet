@@ -15,7 +15,6 @@ import { router } from "expo-router";
 import MainBetCard from "@/components/mainBetCard";
 import { getTradeDataFromSportMarket } from "@/utils/overtime/ui/helpers";
 import { getGamesInfo } from "@/utils/overtime/queries/getGamesInfo";
-import BottomBetSheet from "@/components/bottomBetSheet";
 
 export default function AuthenticatedIndex() {
   const [, setUserBetsAtom] = useAtom(userBetsAtom);
