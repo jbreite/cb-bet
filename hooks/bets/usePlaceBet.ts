@@ -15,7 +15,7 @@ export const usePlaceBet = ({
   tradeData,
 }: {
   quoteObject: QuoteData | undefined;
-  tradeData: TradeData;
+  tradeData: TradeData[];
 }) => {
   const {
     writeContract,
@@ -42,7 +42,7 @@ export const usePlaceBet = ({
       quoteObject.quoteData.totalQuote.normalizedImplied.toString()
     );
     const parsedSlippage = DEFAULT_SLIPPAGE;
-    const preparedTradeData = getTradeData([tradeData]);
+    const preparedTradeData = getTradeData(tradeData);
 
     // Parse the buyInAmount from the quoteObject
     const buyInAmount = parseUnits(

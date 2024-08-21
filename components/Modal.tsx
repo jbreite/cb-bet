@@ -1,4 +1,8 @@
-import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
+import BottomSheet, {
+  BottomSheetView,
+  useBottomSheetSpringConfigs,
+  useBottomSheetTimingConfigs,
+} from "@gorhom/bottom-sheet";
 import { atom, useAtom } from "jotai";
 import React, { useCallback, useMemo, useRef, useEffect } from "react";
 
@@ -60,36 +64,94 @@ export function BottomSheetContent({
   );
 }
 
-// Hook to manage BottomSheet state
+// Updated Hook to manage BottomSheet state
 export function useBottomSheet(name: string) {
   const [bottomSheetMap] = useAtom(BottomSheetMapAtom);
 
-  const expandSheet = useCallback(() => {
+  // These hooks provide the correct config types
+  const springConfigs = useBottomSheetSpringConfigs({});
+  const timingConfigs = useBottomSheetTimingConfigs({});
+
+  type AnimationConfigs =
+    | Partial<typeof springConfigs>
+    | Partial<typeof timingConfigs>;
+
+  const getSheet = useCallback(() => {
     const sheet = bottomSheetMap.get(name);
     if (sheet && sheet.current) {
-      sheet.current.expand();
+      return sheet.current;
     } else {
       console.error(`BottomSheet ${name} not found`);
+      return null;
     }
   }, [bottomSheetMap, name]);
 
-  const collapseSheet = useCallback(() => {
-    const sheet = bottomSheetMap.get(name);
-    if (sheet && sheet.current) {
-      sheet.current.collapse();
-    } else {
-      console.error(`BottomSheet ${name} not found`);
-    }
-  }, [bottomSheetMap, name]);
+  const snapToIndex = useCallback(
+    (index: number, animationConfigs?: AnimationConfigs) => {
+      const sheet = getSheet();
+      if (sheet) {
+        sheet.snapToIndex(index, animationConfigs);
+      }
+    },
+    [getSheet]
+  );
 
-  const closeSheet = useCallback(() => {
-    const sheet = bottomSheetMap.get(name);
-    if (sheet && sheet.current) {
-      sheet.current.close();
-    } else {
-      console.error(`BottomSheet ${name} not found`);
-    }
-  }, [bottomSheetMap, name]);
+  const snapToPosition = useCallback(
+    (position: number, animationConfigs?: AnimationConfigs) => {
+      const sheet = getSheet();
+      if (sheet) {
+        sheet.snapToPosition(position, animationConfigs);
+      }
+    },
+    [getSheet]
+  );
 
-  return { expandSheet, collapseSheet, closeSheet };
+  const expand = useCallback(
+    (animationConfigs?: AnimationConfigs) => {
+      const sheet = getSheet();
+      if (sheet) {
+        sheet.expand(animationConfigs);
+      }
+    },
+    [getSheet]
+  );
+
+  const collapse = useCallback(
+    (animationConfigs?: AnimationConfigs) => {
+      const sheet = getSheet();
+      if (sheet) {
+        sheet.collapse(animationConfigs);
+      }
+    },
+    [getSheet]
+  );
+
+  const close = useCallback(
+    (animationConfigs?: AnimationConfigs) => {
+      const sheet = getSheet();
+      if (sheet) {
+        sheet.close(animationConfigs);
+      }
+    },
+    [getSheet]
+  );
+
+  const forceClose = useCallback(
+    (animationConfigs?: AnimationConfigs) => {
+      const sheet = getSheet();
+      if (sheet) {
+        sheet.forceClose(animationConfigs);
+      }
+    },
+    [getSheet]
+  );
+
+  return {
+    snapToIndex,
+    snapToPosition,
+    expand,
+    collapse,
+    close,
+    forceClose,
+  };
 }
