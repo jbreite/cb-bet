@@ -14,16 +14,11 @@ import { router } from "expo-router";
 import MainBetCard from "@/components/mainBetCard";
 import { getTradeDataFromSportMarket } from "@/utils/overtime/ui/helpers";
 import { getGamesInfo } from "@/utils/overtime/queries/getGamesInfo";
-import BottomBetSheet, {
-  BET_BOTTOM_SHEET_NAME,
-} from "@/components/bottomBetSheet";
-import { useBottomSheet } from "@/components/Modal";
 
 export default function AuthenticatedIndex() {
   const [userBetsAtomData, setUserBetsAtom] = useAtom(userBetsAtom);
   const [BottomSheetMapAtomData] = useAtom(BottomSheetMapAtom);
   console.log(BottomSheetMapAtomData);
-  const { snapToIndex } = useBottomSheet(BET_BOTTOM_SHEET_NAME);
 
   const {
     data: marketsData,
@@ -45,10 +40,6 @@ export default function AuthenticatedIndex() {
   //   queryKey: ["gameInfo"],
   //   queryFn: () => getGamesInfo(),
   // });
-
-  if (userBetsAtomData.length > 0) {
-    snapToIndex(0);
-  }
 
   // console.log("userBets", JSON.stringify(userBetsAtomData));
 
@@ -94,8 +85,6 @@ export default function AuthenticatedIndex() {
           estimatedItemSize={150}
           keyExtractor={(item) => item.gameId}
         />
-
-        <BottomBetSheet />
       </View>
     );
   }

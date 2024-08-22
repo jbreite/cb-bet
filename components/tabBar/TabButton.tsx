@@ -1,5 +1,5 @@
 import { AnimatedPressable } from "../animated/AnimatedPressable";
-import { Text, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import House_01 from "../icons/House_01";
 import Compass from "../icons/Compass";
 import TicketVoucher from "../icons/TicketVoucher";
@@ -85,8 +85,6 @@ export default function TabButton({
 
 const styles = StyleSheet.create({
   button: {
-    paddingHorizontal: 32,
-    paddingVertical: 20,
     justifyContent: "center",
     alignItems: "center",
   },

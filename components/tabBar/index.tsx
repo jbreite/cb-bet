@@ -4,6 +4,7 @@ import { userBetsAtom } from "@/lib/atom/atoms";
 import { useAtom } from "jotai";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import TabButton from "./TabButton";
+import BetTab from "./BetTab";
 
 export default function TabBar({
   state,
@@ -13,11 +14,15 @@ export default function TabBar({
   const [userBetsAtomData, setUserBetsAtom] = useAtom(userBetsAtom);
   const { bottom } = useSafeAreaInsets();
 
-  // Define the desired order of tabs
-  const tabOrder = ["home", "markets", "explore"];
+  const numberOfBets = userBetsAtomData.length;
 
   return (
     <View style={[styles.tabBarContainer, { bottom: bottom + 12 }]}>
+      {numberOfBets !== 0 && (
+        <View>
+          <BetTab />
+        </View>
+      )}
       <View style={styles.lowerTabBarContainer}>
         {state.routes.map((route, index) => {
           const { options } = descriptors[route.key];
@@ -76,6 +81,8 @@ const styles = StyleSheet.create({
   },
   lowerTabBarContainer: {
     marginHorizontal: 48,
+    paddingHorizontal: 32,
+    paddingVertical: 20,
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "white",
