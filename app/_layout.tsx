@@ -11,7 +11,6 @@ import { defaultStore } from "@/lib/atom/store";
 import { config } from "@/config";
 import { useAccount, WagmiProvider } from "wagmi";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +36,7 @@ function InitialLayout() {
     }
   }, [loaded]);
 
+  //For some reason still goes to login first adn not just loggedd in
   useEffect(() => {
     if (status === "connecting" || status === "reconnecting") return;
 

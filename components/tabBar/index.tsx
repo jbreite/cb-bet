@@ -17,13 +17,13 @@ export default function TabBar({
   const numberOfBets = userBetsAtomData.length;
 
   return (
-    <View style={[styles.tabBarContainer, { bottom: bottom + 12 }]}>
+    <View style={[styles.tabBarContainer]}>
       {numberOfBets !== 0 && (
         <View>
           <BetTab />
         </View>
       )}
-      <View style={styles.lowerTabBarContainer}>
+      <View style={[styles.lowerTabBarContainer]}>
         {state.routes.map((route, index) => {
           const { options } = descriptors[route.key];
           const label =
@@ -78,18 +78,17 @@ const styles = StyleSheet.create({
   tabBarContainer: {
     position: "absolute",
     width: "100%",
+    bottom: 0,
   },
   lowerTabBarContainer: {
-    marginHorizontal: 48,
-    paddingHorizontal: 32,
-    paddingVertical: 20,
+    paddingHorizontal: 48,
+    paddingBottom: 40,
+    paddingTop: 20,
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "white",
-    justifyContent: "space-between",
-    borderRadius: 32,
-    borderCurve: "continuous",
-    borderWidth: 3,
-    borderColor: "#D3D3D3",
+    justifyContent: "space-around",
+    borderTopWidth: 1,
+    borderTopColor: "#D3D3D3",
   },
 });
