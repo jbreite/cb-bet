@@ -15,7 +15,7 @@ export const usePlaceBet = ({
   tradeData,
 }: {
   quoteObject: QuoteData | undefined;
-  tradeData: TradeData;
+  tradeData: TradeData[];
 }) => {
   const {
     writeContract,
@@ -42,7 +42,7 @@ export const usePlaceBet = ({
       quoteObject.quoteData.totalQuote.normalizedImplied.toString()
     );
     const parsedSlippage = DEFAULT_SLIPPAGE;
-    const preparedTradeData = getTradeData([tradeData]);
+    const preparedTradeData = getTradeData(tradeData);
 
     // Parse the buyInAmount from the quoteObject
     const buyInAmount = parseUnits(
@@ -77,3 +77,42 @@ export const usePlaceBet = ({
     transactionData,
   };
 };
+
+//DETAILED LOGS IF NEEDED
+// const detailedLog = (obj) => {
+//   const seen = new WeakSet();
+//   return JSON.stringify(
+//     obj,
+//     (key, value) => {
+//       if (typeof value === "bigint") {
+//         return value.toString();
+//       }
+//       if (typeof value === "object" && value !== null) {
+//         if (seen.has(value)) {
+//           return "[Circular]";
+//         }
+//         seen.add(value);
+//       }
+//       return value;
+//     },
+//     2
+//   );
+// };
+
+// console.log(
+//   "Detailed Payload for placeBet:",
+//   detailedLog({
+//     contractAddress:
+//       sportsAMMV2Contract.addresses[CB_BET_SUPPORTED_NETWORK_IDS.OPTIMISM],
+//     functionName: "trade",
+//     args: [
+//       preparedTradeData,
+//       buyInAmount,
+//       parsedTotalQuote,
+//       parsedSlippage,
+//       REFERRAL_ADDRESS,
+//       USDC_ADDRESS,
+//       false,
+//     ],
+//   })
+// );

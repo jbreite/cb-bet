@@ -1,6 +1,7 @@
 import { MarketTypeEnum } from "@/utils/overtime/enums/marketTypes";
 import { LeagueEnum, SportEnum } from "@/utils/overtime/enums/sport";
-import { GameStatusEnum } from "@/utils/overtime/enums/markets";
+import { GameStatusEnum, PositionEnum } from "@/utils/overtime/enums/markets";
+import { Coins } from "./tokents";
 
 type PlayerProps = {
   playerId: number;
@@ -98,4 +99,36 @@ export type TradeData = {
   position?: number; //Need this to be defined for getting a quote...
   combinedPositions: CombinedPositions[];
   live?: boolean;
+};
+
+export type TicketMarket = SportMarket & {
+  position: PositionEnum;
+  odd: number;
+  isWinning?: boolean;
+};
+
+export type Ticket = {
+  id: string;
+  timestamp: number;
+  txHash: string;
+  sportMarkets: TicketMarket[];
+  collateral: Coins;
+  account: string;
+  buyInAmount: number;
+  fees: number;
+  totalQuote: number;
+  payout: number;
+  numOfMarkets: number;
+  expiry: number;
+  isResolved: boolean;
+  isPaused: boolean;
+  isCancelled: boolean;
+  isLost: boolean;
+  isUserTheWinner: boolean;
+  isExercisable: boolean;
+  isClaimable: boolean;
+  isOpen: boolean;
+  finalPayout: number;
+  isLive: boolean;
+  isFreeBet: boolean;
 };

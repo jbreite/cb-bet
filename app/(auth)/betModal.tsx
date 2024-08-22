@@ -10,6 +10,7 @@ import { CB_BET_SUPPORTED_NETWORK_IDS } from "@/constants/Constants";
 import { ERC_20_ABI } from "@/utils/overtime/abi/ERC20_ABI";
 import { USDC_ADDRESS, usePlaceBet } from "@/hooks/bets/usePlaceBet";
 import { TextInput } from "react-native-gesture-handler";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const REFETCH_INTERVAL = 10000;
 
@@ -17,6 +18,7 @@ export default function BetModal() {
   const [userBetsAtomInfo] = useAtom(userBetsAtom);
   const [betAmount, setBetAmount] = useState("");
   const { address } = useAccount();
+  const { top } = useSafeAreaInsets();
 
   console.log("address", address);
   const tradeData = userBetsAtomInfo[0].tradeData;
@@ -107,7 +109,7 @@ export default function BetModal() {
   }
 
   return (
-    <View>
+    <View style={{ marginTop: top }}>
       <Text>BetModal</Text>
       <TextInput
         value={betAmount}

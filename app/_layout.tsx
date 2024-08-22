@@ -36,6 +36,7 @@ function InitialLayout() {
     }
   }, [loaded]);
 
+  //For some reason still goes to login first adn not just loggedd in
   useEffect(() => {
     if (status === "connecting" || status === "reconnecting") return;
 
@@ -45,7 +46,7 @@ function InitialLayout() {
 
     if (isConnected && !inAuthGroup) {
       // Bring the user inside the auth group
-      router.replace("/(auth)/markets");
+      router.replace("/(auth)/(tabs)/home");
     } else if (!isConnected && inAuthGroup) {
       // Kick the user out of the auth group
       router.replace("/");

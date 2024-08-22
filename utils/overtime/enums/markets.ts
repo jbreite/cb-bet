@@ -41,7 +41,7 @@ export enum OddsType {
   AMM = "normalized-implied-odds",
 }
 
-export enum Position {
+export enum PositionEnum {
   HOME = 0,
   AWAY = 1,
   DRAW = 2,

@@ -1,14 +1,13 @@
 import React from "react";
 import { View } from "react-native";
 import GeneralSpinningLoader from "@/components/GeneralSpinningLoader";
-
 import GeneralErrorMessage from "@/components/GeneralErrorMessage";
 import { CB_BET_SUPPORTED_NETWORK_IDS } from "@/constants/Constants";
 import { LeagueEnum } from "@/utils/overtime/enums/sport";
 import { getMarkets } from "@/utils/overtime/queries/getMarkets";
 import { useQuery } from "@tanstack/react-query";
 import { FlashList } from "@shopify/flash-list";
-import { userBetsAtom } from "@/lib/atom/atoms";
+import { BottomSheetMapAtom, userBetsAtom } from "@/lib/atom/atoms";
 import { useAtom } from "jotai";
 import { SportMarket, TradeData } from "@/utils/overtime/types/markets";
 import { router } from "expo-router";
@@ -17,7 +16,9 @@ import { getTradeDataFromSportMarket } from "@/utils/overtime/ui/helpers";
 import { getGamesInfo } from "@/utils/overtime/queries/getGamesInfo";
 
 export default function AuthenticatedIndex() {
-  const [, setUserBetsAtom] = useAtom(userBetsAtom);
+  const [userBetsAtomData, setUserBetsAtom] = useAtom(userBetsAtom);
+  const [BottomSheetMapAtomData] = useAtom(BottomSheetMapAtom);
+  console.log(BottomSheetMapAtomData);
 
   const {
     data: marketsData,
@@ -31,22 +32,22 @@ export default function AuthenticatedIndex() {
       }),
   });
 
-  const {
-    data: gameInfoData,
-    isLoading: gameInfoIsLoading,
-    error: gameInfoIsError,
-  } = useQuery({
-    queryKey: ["gameInfo"],
-    queryFn: () => getGamesInfo(),
-  });
+  // const {
+  //   data: gameInfoData,
+  //   isLoading: gameInfoIsLoading,
+  //   error: gameInfoIsError,
+  // } = useQuery({
+  //   queryKey: ["gameInfo"],
+  //   queryFn: () => getGamesInfo(),
+  // });
+
+  // console.log("userBets", JSON.stringify(userBetsAtomData));
 
   function handleMarketPress(market: SportMarket, tradeData: TradeData) {
     setUserBetsAtom((prevMarkets) => [
       // ...prevMarkets,
-      //COMNMENT FOR NOW WHEN ONLY DOING SINGLE QUOTE
       { tradeData: tradeData, sportMarket: market },
     ]);
-    router.push("/(auth)/betModal");
   }
 
   let SportView;
@@ -71,6 +72,7 @@ export default function AuthenticatedIndex() {
                 onPress={() => console.log(item.gameId)}
                 onPressOddsButton={(index) => {
                   console.log("index", index);
+                  const { childMarkets, ...itemWithoutChildren } = item;
                   const tradeDataWithPosition = getTradeDataFromSportMarket(
                     item,
                     index
