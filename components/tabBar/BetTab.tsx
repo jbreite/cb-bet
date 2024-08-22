@@ -1,11 +1,5 @@
 import { useAtom } from "jotai";
-import {
-  Alert,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import { userBetsAtom } from "@/lib/atom/atoms";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
@@ -104,6 +98,12 @@ export default function BetTab() {
     }
   };
 
+  const clearBets = () => {
+    setUserBetsAtom([]);
+    setBetAmount("");
+    setIsKeyboardVisible(false);
+  };
+
   return (
     <View>
       <View
@@ -111,10 +111,20 @@ export default function BetTab() {
           flex: 1,
           backgroundColor: "white",
           padding: 16,
-          borderWidth: 1,
-          borderColor: "red",
+          borderTopWidth: 1,
+          borderLeftWidth: 1,
+          borderRightWidth: 1,
+          borderTopColor: "#D3D3D3",
+          borderLeftColor: "#D3D3D3",
+          borderRightColor: "#D3D3D3",
+          borderTopLeftRadius: 20,
+          borderTopRightRadius: 20,
+          borderCurve: "continuous",
         }}
       >
+        <Pressable onPress={clearBets}>
+          <Text>Clear Bets</Text>
+        </Pressable>
         <View style={styles.heading}>
           <Text>{numberBets} Betslip</Text>
           <Text>$10</Text>
