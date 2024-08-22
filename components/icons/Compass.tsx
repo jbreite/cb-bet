@@ -12,6 +12,7 @@ const Compass: React.FC<IconProps> = (props) => (
     />
     <Path
       stroke={props.color || "#fff"}
+      //fill={"blue" || "#fff"}
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={(props.strokeWidth || 2) / (Number(props.scale) || 1)}

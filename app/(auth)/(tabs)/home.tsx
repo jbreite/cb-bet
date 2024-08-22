@@ -1,7 +1,6 @@
 import React from "react";
 import { View } from "react-native";
 import GeneralSpinningLoader from "@/components/GeneralSpinningLoader";
-
 import GeneralErrorMessage from "@/components/GeneralErrorMessage";
 import { CB_BET_SUPPORTED_NETWORK_IDS } from "@/constants/Constants";
 import { LeagueEnum } from "@/utils/overtime/enums/sport";

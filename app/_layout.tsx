@@ -46,7 +46,7 @@ function InitialLayout() {
 
     if (isConnected && !inAuthGroup) {
       // Bring the user inside the auth group
-      router.replace("/(auth)/(tabs)/markets");
+      router.replace("/(auth)/(tabs)/home");
     } else if (!isConnected && inAuthGroup) {
       // Kick the user out of the auth group
       router.replace("/");
