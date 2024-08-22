@@ -1,17 +1,18 @@
 import { router, Tabs } from "expo-router";
 import React from "react";
 
-import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import TabBar from "@/components/tabBar";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
 
   return (
     <Tabs
+      tabBar={(props) => <TabBar {...props} />}
       sceneContainerStyle={{ backgroundColor: "white" }}
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
@@ -34,8 +35,12 @@ export default function TabLayout() {
           </TouchableOpacity>
         ),
       }}
-    >
-      <Tabs.Screen
+    />
+  );
+}
+
+{
+  /* <Tabs.Screen
         name="markets"
         options={{
           title: "Home",
@@ -58,7 +63,5 @@ export default function TabLayout() {
             />
           ),
         }}
-      />
-    </Tabs>
-  );
+      /> */
 }
