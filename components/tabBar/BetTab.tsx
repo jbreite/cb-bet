@@ -1,6 +1,5 @@
 import { useAtom } from "jotai";
 import { Alert, StyleSheet, Text, TextInput, View } from "react-native";
-import { BottomSheetTextInput, BottomSheetView } from "@gorhom/bottom-sheet";
 import { userBetsAtom } from "@/lib/atom/atoms";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
@@ -14,16 +13,16 @@ export default function BetTab() {
   const [userBetsAtomData, setUserBetsAtom] = useAtom(userBetsAtom);
   const [betAmount, setBetAmount] = useState("");
   const betAmountForFirstQuote = "10";
+  const [isBetAmountFocused, setIsBetAmountFocused] = useState(false);
 
   const numberBets = userBetsAtomData.length;
 
   const tradeDataArray = userBetsAtomData.map((bet) => bet.tradeData);
-  console.log(JSON.stringify(tradeDataArray));
 
   const {
     data: quoteObject,
     isLoading: quoteLoading,
-    isError: quoteError,
+    isError: quoteErXror,
   } = useQuery({
     queryKey: ["quoteData", betAmount, numberBets],
     queryFn: () =>
@@ -119,13 +118,31 @@ export default function BetTab() {
             placeholder="Enter bet amount"
             keyboardType="numeric"
             style={{ flex: 1, padding: 8, borderColor: "grey", borderWidth: 1 }}
+            onFocus={() => setIsBetAmountFocused(true)}
+            onBlur={() => setIsBetAmountFocused(false)}
           />
           <Button
             label="Place Bet"
             onPress={handleBet}
+            isLoading={writePending || quoteLoading}
+            isLoadingText={"Getting quote"}
             disabled={writePending || quoteLoading}
+            style={{ flex: 1 / 2 }}
           />
         </View>
+        {isBetAmountFocused && (
+          <View>
+            <Text>Keyboard</Text>
+            <Text>Keyboard</Text>
+            <Text>Keyboard</Text>
+            <Text>Keyboard</Text>
+            <Text>Keyboard</Text>
+            <Text>Keyboard</Text>
+            <Text>Keyboard</Text>
+            <Text>Keyboard</Text>
+            <Text>Keyboard</Text>
+          </View>
+        )}
       </View>
     </View>
   );

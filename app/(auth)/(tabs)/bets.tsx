@@ -1,10 +1,4 @@
-import BottomBetSheet, {
-  BET_BOTTOM_SHEET_NAME,
-} from "@/components/bottomBetSheet";
-import { useBottomSheet } from "@/components/Modal";
 import { Text, View } from "react-native";
-import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-import { Link } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import { useAccount } from "wagmi";
 import { getUserHistory } from "@/utils/overtime/queries/getUserHistory";
