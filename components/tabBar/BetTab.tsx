@@ -7,12 +7,13 @@ import { getQuote } from "@/utils/overtime/queries/getQuote";
 import { usePlaceBet } from "@/hooks/bets/usePlaceBet";
 import Button from "../Button";
 import { ButtonGrid, KeyboardButtonItemType } from "../keyboard";
+import BetInput from "./BetInput";
 
 const REFETCH_INTERVAL = 50000;
 
 export default function BetTab() {
   const [userBetsAtomData, setUserBetsAtom] = useAtom(userBetsAtom);
-  const [betAmount, setBetAmount] = useState("");
+  const [betAmount, setBetAmount] = useState("$");
   const betAmountForFirstQuote = "10";
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
@@ -29,7 +30,7 @@ export default function BetTab() {
     queryFn: () =>
       getQuote({
         buyInAmount:
-          betAmount === ""
+          betAmount === "$"
             ? parseFloat(betAmountForFirstQuote)
             : parseFloat(betAmount),
         tradeData: tradeDataArray,
@@ -61,14 +62,18 @@ export default function BetTab() {
   const firstBet = userBetsAtomData[0];
   const outcomeText = firstBet ? getOutcomeText(firstBet) : "";
 
-  const handleButtonPress = (value: KeyboardButtonItemType) => {
+  const handleKeyboardButtonPress = (value: KeyboardButtonItemType) => {
     setBetAmount((prev) => {
       if (value === "backspace") {
+        if (prev === "$") {
+          return prev;
+        }
         return prev.slice(0, -1);
       }
       if (value === "." && prev.includes(".")) {
         return prev;
       }
+
       return prev + value;
     });
   };
@@ -136,26 +141,19 @@ export default function BetTab() {
             {numberBets > 1 ? "Parlay" : userBetsAtomData[0].sportMarket.type}
           </Text>
         </View>
-        <View style={styles.inputContainer}>
-          <Pressable
-            style={styles.pressableInput}
-            onPress={() => setIsKeyboardVisible(!isKeyboardVisible)}
-          >
-            <Text>{betAmount || "Enter bet amount"}</Text>
-          </Pressable>
-          <Button
-            label="Place Bet"
-            onPress={handleBet}
-            isLoading={writePending || quoteLoading}
-            isLoadingText={"Getting quote"}
-            disabled={writePending || quoteLoading}
-            style={styles.betButton}
-          />
-        </View>
+        <BetInput
+          buttonLabel={`To Win: $` }
+          betAmount={betAmount ?? "$"}
+          setBetAmount={setBetAmount}
+          onInputPress={() => setIsKeyboardVisible(!isKeyboardVisible)}
+          onButtonPress={handleBet}
+          isLoading={writePending}
+          isDisabled={writePending || quoteLoading || betAmount == "$"}
+        />
       </View>
       {isKeyboardVisible && (
         <View style={{ flex: 1, backgroundColor: "white" }}>
-          <ButtonGrid onButtonPressed={handleButtonPress} />
+          <ButtonGrid onButtonPressed={handleKeyboardButtonPress} />
         </View>
       )}
     </View>

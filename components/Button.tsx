@@ -51,7 +51,12 @@ export default function Button({
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
       disabled={disabled}
-      style={[styles.button, rButtonStyle, style]}
+      style={[
+        styles.button,
+        rButtonStyle,
+        style,
+        { backgroundColor: disabled ? "#ccc" : "#0073FB" },
+      ]}
     >
       {isLoading && <ActivityIndicator size="small" color="white" />}
       <Text style={styles.buttonText}>{isLoading ? isLoadingText : label}</Text>
@@ -61,14 +66,12 @@ export default function Button({
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: "#0073FB",
     padding: 16,
     borderRadius: 100,
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",
     gap: 8,
-    // width: "100%",
   },
   buttonText: {
     color: "white",

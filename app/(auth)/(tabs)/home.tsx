@@ -84,6 +84,9 @@ export default function AuthenticatedIndex() {
           }}
           estimatedItemSize={150}
           keyExtractor={(item) => item.gameId}
+          contentContainerStyle={{
+            paddingBottom: 100, //Should do this with the tab bar height
+          }}
         />
       </View>
     );

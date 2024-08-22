@@ -4,8 +4,6 @@ import Button from "@/components/Button";
 import { CoinbaseWalletLogo } from "@/components/coinbaseComponents/coinbaseWalletLogo";
 
 export default function Index() {
-  const { address } = useAccount();
-
   const { connect, connectors, isPending } = useConnect();
 
   const handleConnect = () => {

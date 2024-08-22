@@ -18,7 +18,15 @@ SplashScreen.preventAutoHideAsync();
 
 function InitialLayout() {
   const [loaded, error] = useFonts({
-    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+    "SF-Pro-Rounded-Black": require("../assets/fonts/SF-Pro-Rounded-Black.otf"),
+    "SF-Pro-Rounded-Bold": require("../assets/fonts/SF-Pro-Rounded-Bold.otf"),
+    "SF-Pro-Rounded-Heavy": require("../assets/fonts/SF-Pro-Rounded-Heavy.otf"),
+    "SF-Pro-Rounded-Light": require("../assets/fonts/SF-Pro-Rounded-Light.otf"),
+    "SF-Pro-Rounded-Medium": require("../assets/fonts/SF-Pro-Rounded-Medium.otf"),
+    "SF-Pro-Rounded-Regular": require("../assets/fonts/SF-Pro-Rounded-Regular.otf"),
+    "SF-Pro-Rounded-Semibold": require("../assets/fonts/SF-Pro-Rounded-Semibold.otf"),
+    "SF-Pro-Rounded-Thin": require("../assets/fonts/SF-Pro-Rounded-Thin.otf"),
+    "SF-Pro-Rounded-Ultralight": require("../assets/fonts/SF-Pro-Rounded-Ultralight.otf"),
   });
 
   const { isConnected, status } = useAccount();
@@ -53,10 +61,6 @@ function InitialLayout() {
     }
   }, [isConnected, status]);
 
-  // if (!loaded || status === "connecting" || status === "reconnecting") {
-  //   return <Slot />;
-  // }
-
   useEffect(() => {
     const subscription = Linking.addEventListener("url", ({ url }) => {
       console.log("incoming deeplink:", url);
@@ -71,7 +75,7 @@ function InitialLayout() {
     return () => subscription.remove();
   }, []);
 
-  if (!loaded) {
+  if (!loaded || status === "connecting" || status === "reconnecting") {
     return <Slot />;
   }
 
