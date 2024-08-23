@@ -11,10 +11,6 @@ export default function RootLayout() {
       }}
     >
       <Stack.Screen name="(tabs)" />
-      <Stack.Screen
-        name="betModal"
-        options={{ presentation: "modal", headerShown: false }}
-      />
       <Stack.Screen name="accountModal" options={{ presentation: "modal" }} />
     </Stack>
   );

@@ -15,8 +15,10 @@ import MainBetCard from "@/components/mainBetCard";
 import { getTradeDataFromSportMarket } from "@/utils/overtime/ui/helpers";
 import { getGamesInfo } from "@/utils/overtime/queries/getGamesInfo";
 
+//TODO: Selected to show state if bet is selected
+
 export default function AuthenticatedIndex() {
-  const [userBetsAtomData, setUserBetsAtom] = useAtom(userBetsAtom);
+  const [, setUserBetsAtom] = useAtom(userBetsAtom);
   const [BottomSheetMapAtomData] = useAtom(BottomSheetMapAtom);
   console.log(BottomSheetMapAtomData);
 
@@ -65,14 +67,12 @@ export default function AuthenticatedIndex() {
         <FlashList
           data={flattenedData}
           renderItem={({ item }) => {
-            const tradeDataNoPosition = getTradeDataFromSportMarket(item);
             return (
               <MainBetCard
                 sportMarket={item}
                 onPress={() => console.log(item.gameId)}
                 onPressOddsButton={(index) => {
                   console.log("index", index);
-                  const { childMarkets, ...itemWithoutChildren } = item;
                   const tradeDataWithPosition = getTradeDataFromSportMarket(
                     item,
                     index
