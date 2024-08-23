@@ -96,7 +96,7 @@ export type TradeData = {
   playerId: number;
   odds: string[];
   merkleProof: string[];
-  position?: number; //Need this to be defined for getting a quote...
+  position: number; //Need this to be defined for getting a quote...
   combinedPositions: CombinedPositions[];
   live?: boolean;
 };

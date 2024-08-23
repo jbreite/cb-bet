@@ -38,7 +38,7 @@ function convertOddsToStrings(odds: SportMarketOdds[]): string[] {
 
 export function getTradeDataFromSportMarket(
   sportMarket: SportMarket,
-  pickedPosition?: number | undefined
+  pickedPosition: number
 ): TradeData {
   return {
     gameId: sportMarket.gameId,

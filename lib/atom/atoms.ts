@@ -2,10 +2,14 @@ import { SportMarket, TradeData } from "@/utils/overtime/types/markets";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { atom } from "jotai";
 
-//Might be better to have thsi withougt child markets
-export const userBetsAtom = atom<
-  Array<{ tradeData: TradeData; sportMarket: SportMarket }>
->([]);
+// Define the type for a single bet
+export type UserBet = {
+  tradeData: TradeData;
+  sportMarket: SportMarket;
+};
+
+// Export the atom with the defined type
+export const userBetsAtom = atom<UserBet[]>([]);
 
 export const sportMarketAtom = atom<SportMarket[]>([]);
 

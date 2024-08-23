@@ -21,7 +21,7 @@ export type sfTextProps = TextProps & {
     | "ultralight";
 };
 
-export function sfText({
+export function SfText({
   style,
   familyType = "regular",
   ...rest

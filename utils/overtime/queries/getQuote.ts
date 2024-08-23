@@ -14,7 +14,7 @@ export class QuoteError extends Error {
     this.name = "QuoteError";
   }
 }
-interface SuccessfulQuoteData {
+export interface SuccessfulQuoteData {
   totalQuote: {
     normalizedImplied: number;
     american: number;

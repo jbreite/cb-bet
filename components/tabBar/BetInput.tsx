@@ -8,6 +8,7 @@ export default function BetInput({
   isLoading,
   isDisabled,
   buttonLabel,
+  isLoadingText,
 }: {
   betAmount: string;
   setBetAmount: (betAmount: string) => void;
@@ -16,6 +17,7 @@ export default function BetInput({
   isLoading: boolean;
   isDisabled: boolean;
   buttonLabel: string;
+  isLoadingText: string;
 }) {
   return (
     <View style={styles.container}>
@@ -24,10 +26,11 @@ export default function BetInput({
       </Pressable>
       <Button
         label={buttonLabel}
+        isLoadingText={isLoadingText}
         onPress={onButtonPress}
         isLoading={isLoading}
         disabled={isDisabled}
-        style={{ flex: 1 / 2, padding: 8 }}
+        style={{ flex: 1, padding: 12 }}
       />
     </View>
   );
