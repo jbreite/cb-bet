@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     width: "33.333%",
     height: "25%",
-    padding: 4,
+    padding: 8,
   },
   buttonStyle: {
     flex: 1,
