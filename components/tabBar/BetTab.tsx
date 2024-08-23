@@ -142,7 +142,7 @@ export default function BetTab() {
   const buttonText =
     quoteObject && isSuccessfulQuoteObject(quoteObject.quoteData)
       ? `To Win: ${formatCurrency({
-          amount: quoteObject.quoteData.payout.usd,
+          amount: quoteObject.quoteData.potentialProfit.usd,
           omitDecimalsForWholeNumbers: true,
         })}`
       : "To Win";
