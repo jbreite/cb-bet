@@ -1,11 +1,14 @@
 import { useAtom } from "jotai";
-import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
+import { Alert, StyleSheet, Text, View } from "react-native";
 import { userBetsAtom } from "@/lib/atom/atoms";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { getQuote } from "@/utils/overtime/queries/getQuote";
+import {
+  ErrorQuoteData,
+  getQuote,
+  SuccessfulQuoteData,
+} from "@/utils/overtime/queries/getQuote";
 import { usePlaceBet } from "@/hooks/bets/usePlaceBet";
-import Button from "../Button";
 import { ButtonGrid, KeyboardButtonItemType } from "../keyboard";
 import BetInput from "./BetInput";
 import {
@@ -16,12 +19,13 @@ import {
 } from "@/utils/overtime/ui/beyTabHelpers";
 import { SfText } from "../SfThemedText";
 
+//TODO: Not sure I need the quote fetch and can just do myself honestly
+
 const REFETCH_INTERVAL = 50000;
 
 export default function BetTab() {
   const [userBetsAtomData, setUserBetsAtom] = useAtom(userBetsAtom);
   const [betAmount, setBetAmount] = useState("$");
-  // const betAmountForFirstQuote = "10";
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
   const numberBets = userBetsAtomData.length;
@@ -110,36 +114,38 @@ export default function BetTab() {
     }
   };
 
+  if (writeError) {
+    console.log("writeError:", writeError);
+  }
+
   const clearBets = () => {
     setUserBetsAtom([]);
     setBetAmount("");
     setIsKeyboardVisible(false);
   };
 
-  const isSuccessfulQuoteObject =
-    quoteObject &&
-    !quoteLoading &&
-    quoteObject.quoteData &&
-    "totalQuote" in quoteObject.quoteData;
+  const isSuccessfulQuoteObject = (
+    quoteData: SuccessfulQuoteData | ErrorQuoteData
+  ): quoteData is SuccessfulQuoteData => {
+    return "totalQuote" in quoteData;
+  };
 
-  const americanOdds = isSuccessfulQuoteObject
-    ? quoteObject.quoteData.totalQuote.american
-    : extractAmericanOddsFromBets(userBetsAtomData);
+  const americanOdds =
+    quoteObject && isSuccessfulQuoteObject(quoteObject.quoteData)
+      ? quoteObject.quoteData.totalQuote.american
+      : extractAmericanOddsFromBets(userBetsAtomData);
   console.log(americanOdds);
 
   const formattedAmericanOdds = formatAmericanOdds(americanOdds);
   const tenDollarBetOutcome = calculateBetOutcome(americanOdds, 10);
-  const betOutcome = calculateBetOutcome(
-    americanOdds,
-    betAmount === "$" ? 10 : numberBetAmount
-  );
 
-  const buttonText = isSuccessfulQuoteObject
-    ? `To Win: ${formatCurrency({
-        amount: parseFloat(quoteObject.quoteData.payout.usd),
-        omitDecimalsForWholeNumbers: true,
-      })}`
-    : "To Win";
+  const buttonText =
+    quoteObject && isSuccessfulQuoteObject(quoteObject.quoteData)
+      ? `To Win: ${formatCurrency({
+          amount: quoteObject.quoteData.payout.usd,
+          omitDecimalsForWholeNumbers: true,
+        })}`
+      : "To Win";
 
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>

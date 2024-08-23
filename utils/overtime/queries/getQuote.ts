@@ -30,7 +30,7 @@ export interface SuccessfulQuoteData {
 }
 
 // Define the structure for an error response
-interface ErrorQuoteData {
+export interface ErrorQuoteData {
   error: string;
 }
 
