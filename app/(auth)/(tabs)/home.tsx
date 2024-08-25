@@ -14,6 +14,7 @@ import { router } from "expo-router";
 import MainBetCard from "@/components/mainBetCard";
 import { getTradeDataFromSportMarket } from "@/utils/overtime/ui/helpers";
 import { getGamesInfo } from "@/utils/overtime/queries/getGamesInfo";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
 //TODO: Selected to show state if bet is selected
 
@@ -21,6 +22,8 @@ export default function AuthenticatedIndex() {
   const [, setUserBetsAtom] = useAtom(userBetsAtom);
   const [BottomSheetMapAtomData] = useAtom(BottomSheetMapAtom);
   console.log(BottomSheetMapAtomData);
+  const tabBarHeight = useBottomTabBarHeight();
+  console.log("tabBarHeight", tabBarHeight);
 
   const {
     data: marketsData,
@@ -85,7 +88,7 @@ export default function AuthenticatedIndex() {
           estimatedItemSize={150}
           keyExtractor={(item) => item.gameId}
           contentContainerStyle={{
-            paddingBottom: 100, //Should do this with the tab bar height
+            paddingBottom: tabBarHeight + 32, //Should do this with the tab bar height
           }}
         />
       </View>

@@ -13,11 +13,17 @@ import BetInput from "./BetInput";
 import {
   calculateBetOutcome,
   extractAmericanOddsFromBets,
+  extractFailureReason,
   formatAmericanOdds,
   formatCurrency,
 } from "@/utils/overtime/ui/beyTabHelpers";
 import { SfText } from "../SfThemedText";
 import { SharedValue } from "react-native-reanimated";
+
+//TODO: Need a failure reason and show the error message.
+//TODO: When refetching quote or changing input needs to clear the error.
+//TODO: Need to BetTab have two states
+//TODO: Need a success state.
 
 const REFETCH_INTERVAL = 50000;
 
@@ -76,6 +82,7 @@ export default function BetTab({
     placeBet,
     writeError,
     writePending,
+    writeFailureReason,
     waitLoading,
     transactionSuccess,
   } = usePlaceBet({
@@ -124,6 +131,11 @@ export default function BetTab({
           omitDecimalsForWholeNumbers: true,
         })}`
       : "To Win";
+
+  if (writeError) {
+    console.log("writeError", writeError);
+    console.log("writeFailureReason", writeFailureReason);
+  }
 
   return (
     <View style={styles.container}>
@@ -192,6 +204,13 @@ export default function BetTab({
         isLoading={writePending || quoteLoading}
         isDisabled={writePending || quoteLoading || betAmount == "$"}
       />
+      {quoteObject && !isSuccessfulQuoteObject(quoteObject.quoteData) && (
+        <SfText>{quoteObject.quoteData.error}</SfText>
+      )}
+
+      {writeFailureReason && (
+        <SfText>{extractFailureReason(writeFailureReason.toString())}</SfText>
+      )}
     </View>
   );
 }

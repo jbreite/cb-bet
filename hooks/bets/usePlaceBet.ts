@@ -22,6 +22,7 @@ export const usePlaceBet = ({
     data: transactionData,
     error: writeError,
     isPending: writePending,
+    failureReason: writeFailureReason,
   } = useWriteContract();
 
   const { isLoading: waitLoading, isSuccess: transactionSuccess } =
@@ -75,6 +76,7 @@ export const usePlaceBet = ({
     waitLoading,
     transactionSuccess,
     transactionData,
+    writeFailureReason,
   };
 };
 
