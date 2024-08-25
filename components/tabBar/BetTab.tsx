@@ -194,23 +194,25 @@ export default function BetTab({
             : userBetsAtomData[0].sportMarket.type.toUpperCase()}
         </Text>
       </View>
-      <BetInput
-        buttonLabel={buttonText}
-        isLoadingText={buttonText}
-        betAmount={betAmount ?? "$"}
-        setBetAmount={setBetAmount}
-        onInputPress={() => setIsKeyboardVisible(!isKeyboardVisible.value)}
-        onButtonPress={handleBet}
-        isLoading={writePending || quoteLoading}
-        isDisabled={writePending || quoteLoading || betAmount == "$"}
-      />
-      {quoteObject && !isSuccessfulQuoteObject(quoteObject.quoteData) && (
-        <SfText>{quoteObject.quoteData.error}</SfText>
-      )}
+      <View style={{ gap: 8 }}>
+        <BetInput
+          buttonLabel={buttonText}
+          isLoadingText={buttonText}
+          betAmount={betAmount ?? "$"}
+          setBetAmount={setBetAmount}
+          onInputPress={() => setIsKeyboardVisible(!isKeyboardVisible.value)}
+          onButtonPress={handleBet}
+          isLoading={writePending || quoteLoading}
+          isDisabled={writePending || quoteLoading || betAmount == "$"}
+        />
+        {quoteObject && !isSuccessfulQuoteObject(quoteObject.quoteData) && (
+          <SfText>{quoteObject.quoteData.error}</SfText>
+        )}
 
-      {writeFailureReason && (
-        <SfText>{extractFailureReason(writeFailureReason.toString())}</SfText>
-      )}
+        {writeFailureReason && (
+          <SfText>{extractFailureReason(writeFailureReason.toString())}</SfText>
+        )}
+      </View>
     </View>
   );
 }
