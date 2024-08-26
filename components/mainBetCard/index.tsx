@@ -17,14 +17,14 @@ export default function MainBetCard({
   const homeTeamImage = getImage(sportMarket.homeTeam);
   const awayTeamImage = getImage(sportMarket.awayTeam);
 
-  const { homeOdds, awayOdds, drawOdds } = getOddsOfGame(
-    "american",
-    sportMarket.odds
-  );
+  // const { homeOdds, awayOdds, drawOdds } = getOddsOfGame(
+  //   "american",
+  //   sportMarket.odds
+  // );
 
-  const formattedHomeOdds = formatAmericanOdds(homeOdds);
-  const formattedAwayOdds = formatAmericanOdds(awayOdds);
-  const formattedDrawOdds = formatAmericanOdds(drawOdds);
+  // const formattedHomeOdds = formatAmericanOdds(homeOdds);
+  // const formattedAwayOdds = formatAmericanOdds(awayOdds);
+  // const formattedDrawOdds = formatAmericanOdds(drawOdds);
 
   return (
     <Pressable
@@ -35,7 +35,6 @@ export default function MainBetCard({
         padding: 16,
         borderRadius: 12,
         borderCurve: "continuous",
-        marginHorizontal: 24,
         marginVertical: 12,
         gap: 16,
       }}
@@ -59,7 +58,7 @@ export default function MainBetCard({
           gap: 12,
         }}
       >
-        <OddsButton
+        {/* <OddsButton
           index={0}
           number={formattedHomeOdds}
           onPress={() => onPressOddsButton(0)}
@@ -76,7 +75,7 @@ export default function MainBetCard({
           number={formattedAwayOdds}
           onPress={() => onPressOddsButton(1)}
           label="Away"
-        />
+        /> */}
       </View>
     </Pressable>
   );

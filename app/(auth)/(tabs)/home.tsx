@@ -1,9 +1,9 @@
 import React from "react";
-import { View } from "react-native";
+import { View, Text } from "react-native";
 import GeneralSpinningLoader from "@/components/GeneralSpinningLoader";
 import GeneralErrorMessage from "@/components/GeneralErrorMessage";
 import { CB_BET_SUPPORTED_NETWORK_IDS } from "@/constants/Constants";
-import { LeagueEnum } from "@/utils/overtime/enums/sport";
+import { LeagueEnum, SportEnum } from "@/utils/overtime/enums/sport";
 import { getMarkets } from "@/utils/overtime/queries/getMarkets";
 import { useQuery } from "@tanstack/react-query";
 import { FlashList } from "@shopify/flash-list";
@@ -15,8 +15,11 @@ import MainBetCard from "@/components/mainBetCard";
 import { getTradeDataFromSportMarket } from "@/utils/overtime/ui/helpers";
 import { getGamesInfo } from "@/utils/overtime/queries/getGamesInfo";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { LeagueMap } from "@/constants/sports";
 
 //TODO: Selected to show state if bet is selected
+//TODO: Need to make sure that this is the correct way to filter the data
+const supportedLeagues = [LeagueEnum.NCAAF, LeagueEnum.NFL, LeagueEnum.EPL];
 
 export default function AuthenticatedIndex() {
   const [, setUserBetsAtom] = useAtom(userBetsAtom);
@@ -33,7 +36,7 @@ export default function AuthenticatedIndex() {
     queryKey: ["markets"],
     queryFn: () =>
       getMarkets(CB_BET_SUPPORTED_NETWORK_IDS.OPTIMISM, {
-        leagueId: LeagueEnum.EPL,
+        // leagueId: LeagueEnum.EPL,
       }),
   });
 
@@ -45,8 +48,6 @@ export default function AuthenticatedIndex() {
   //   queryKey: ["gameInfo"],
   //   queryFn: () => getGamesInfo(),
   // });
-
-  // console.log("userBets", JSON.stringify(userBetsAtomData));
 
   function handleMarketPress(market: SportMarket, tradeData: TradeData) {
     setUserBetsAtom((prevMarkets) => [
@@ -61,34 +62,52 @@ export default function AuthenticatedIndex() {
   } else if (marketsIsError) {
     SportView = <GeneralErrorMessage errorMessage={marketsIsError.message} />;
   } else if (marketsData) {
-    const flattenedData = Object.values(marketsData)
-      .flatMap((league) => Object.values(league))
-      .flat();
+    // Transform data into a structure with league IDs as keys and markets as values
+    const transformedData = supportedLeagues.reduce((acc, league) => {
+      const sport = LeagueMap[league].sport;
+      const leagueData = marketsData[sport]?.[league] || [];
+
+      if (leagueData.length > 0) {
+        acc[league] = leagueData;
+      }
+
+      return acc;
+    }, {} as Record<LeagueEnum, SportMarket[]>);
+
+    // Filter out leagues with no data
+    const leaguesWithData = supportedLeagues.filter(
+      (league) => transformedData[league]?.length > 0
+    );
 
     SportView = (
       <View style={{ flex: 1 }}>
         <FlashList
-          data={flattenedData}
-          renderItem={({ item }) => {
-            return (
-              <MainBetCard
-                sportMarket={item}
-                onPress={() => console.log(item.gameId)}
-                onPressOddsButton={(index) => {
-                  console.log("index", index);
-                  const tradeDataWithPosition = getTradeDataFromSportMarket(
-                    item,
-                    index
-                  );
-                  handleMarketPress(item, tradeDataWithPosition);
-                }}
-              />
-            );
-          }}
-          estimatedItemSize={150}
-          keyExtractor={(item) => item.gameId}
+          data={leaguesWithData}
+          renderItem={({ item: leagueId }) => (
+            <View>
+              <Text style={{ fontSize: 24 }}>{LeagueMap[leagueId].label}</Text>
+              {transformedData[leagueId].map((market) => (
+                <MainBetCard
+                  key={market.gameId}
+                  sportMarket={market}
+                  onPress={() => console.log(market.gameId)}
+                  onPressOddsButton={(index) => {
+                    console.log("index", index);
+                    const tradeDataWithPosition = getTradeDataFromSportMarket(
+                      market,
+                      index
+                    );
+                    handleMarketPress(market, tradeDataWithPosition);
+                  }}
+                />
+              ))}
+            </View>
+          )}
+          estimatedItemSize={200}
+          keyExtractor={(leagueId) => leagueId.toString()}
           contentContainerStyle={{
-            paddingBottom: tabBarHeight + 32, //Should do this with the tab bar height
+            paddingBottom: tabBarHeight + 32,
+            paddingHorizontal: 24,
           }}
         />
       </View>
