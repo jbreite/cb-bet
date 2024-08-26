@@ -5,10 +5,12 @@ export default function OddsButton({
   line,
   onPress,
   label,
+  selected,
 }: {
   line: string;
   onPress: () => void;
   label?: string;
+  selected?: boolean;
 }) {
   return (
     <Pressable
@@ -22,6 +24,7 @@ export default function OddsButton({
         borderWidth: 2,
         borderColor: "#E6E6E6",
         borderCurve: "continuous",
+        backgroundColor: selected ? "#E6E6E6" : "transparent",
       }}
     >
       {label && (

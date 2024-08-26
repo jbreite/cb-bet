@@ -7,6 +7,8 @@ import { getLeagueIsDrawAvailable } from "@/utils/overtime/ui/sportsHelpers";
 import TeamInfo from "./teamInfo";
 import TeamDivider from "./teamDivider";
 import { MarketTypeEnum } from "@/utils/overtime/enums/marketTypes";
+import { userBetsAtom } from "@/lib/atom/atoms";
+import { useAtom } from "jotai";
 
 export default function MainBetCard({
   sportMarket,
@@ -17,6 +19,8 @@ export default function MainBetCard({
   onPress: () => void;
   onPressOddsButton: (index: number, marketType: MarketTypeEnum) => void;
 }) {
+  const [userBets] = useAtom(userBetsAtom);
+
   const homeTeamImage = getImage(sportMarket.homeTeam);
   const awayTeamImage = getImage(sportMarket.awayTeam);
 
@@ -29,6 +33,15 @@ export default function MainBetCard({
   const spreadGameOdds = gameOdds[MarketTypeEnum.SPREAD];
   console.log("spreadGameOdds", spreadGameOdds);
   const totalGameOdds = gameOdds[MarketTypeEnum.TOTAL];
+
+  const isSelected = (index: number, marketType: MarketTypeEnum) => {
+    return userBets.some(
+      (bet) =>
+        bet.sportMarket.gameId === sportMarket.gameId &&
+        bet.tradeData.position === index &&
+        bet.tradeData.typeId === marketType
+    );
+  };
 
   return (
     <Pressable
@@ -61,6 +74,10 @@ export default function MainBetCard({
                   MarketTypeEnum.WINNER
                 )
               }
+              selected={isSelected(
+                winnerGameOdds.homeOdds.index,
+                MarketTypeEnum.WINNER
+              )}
             />
             <OddsButton
               line={winnerGameOdds.awayOdds.odds}
@@ -70,6 +87,10 @@ export default function MainBetCard({
                   MarketTypeEnum.WINNER
                 )
               }
+              selected={isSelected(
+                winnerGameOdds.awayOdds.index,
+                MarketTypeEnum.WINNER
+              )}
             />
             {winnerGameOdds.drawOdds && (
               <OddsButton
@@ -80,6 +101,10 @@ export default function MainBetCard({
                     MarketTypeEnum.WINNER
                   )
                 }
+                selected={isSelected(
+                  winnerGameOdds.drawOdds.index,
+                  MarketTypeEnum.WINNER
+                )}
               />
             )}
           </View>
@@ -95,6 +120,10 @@ export default function MainBetCard({
                     MarketTypeEnum.WINNER
                   )
                 }
+                selected={isSelected(
+                  winnerGameOdds.awayOdds.index,
+                  MarketTypeEnum.WINNER
+                )}
               />
               <OddsButton
                 line={winnerGameOdds.homeOdds.odds}
@@ -104,6 +133,10 @@ export default function MainBetCard({
                     MarketTypeEnum.WINNER
                   )
                 }
+                selected={isSelected(
+                  winnerGameOdds.homeOdds.index,
+                  MarketTypeEnum.WINNER
+                )}
               />
             </View>
 
@@ -118,6 +151,10 @@ export default function MainBetCard({
                       MarketTypeEnum.SPREAD
                     )
                   }
+                  selected={isSelected(
+                    spreadGameOdds.awayOdds.index,
+                    MarketTypeEnum.SPREAD
+                  )}
                   label={spreadLineHelper(-1 * spreadGameOdds.line)}
                 />
                 <OddsButton
@@ -128,6 +165,10 @@ export default function MainBetCard({
                       MarketTypeEnum.SPREAD
                     )
                   }
+                  selected={isSelected(
+                    spreadGameOdds.homeOdds.index,
+                    MarketTypeEnum.SPREAD
+                  )}
                   label={spreadLineHelper(spreadGameOdds.line)}
                 />
               </View>
@@ -145,6 +186,10 @@ export default function MainBetCard({
                     )
                   }
                   label={totalGameOdds.line.toString()}
+                  selected={isSelected(
+                    totalGameOdds.overOdds.index,
+                    MarketTypeEnum.TOTAL
+                  )}
                 />
                 <OddsButton
                   line={totalGameOdds.underOdds.odds}
@@ -155,6 +200,10 @@ export default function MainBetCard({
                     )
                   }
                   label={totalGameOdds.line.toString()}
+                  selected={isSelected(
+                    totalGameOdds.underOdds.index,
+                    MarketTypeEnum.TOTAL
+                  )}
                 />
               </View>
             )}

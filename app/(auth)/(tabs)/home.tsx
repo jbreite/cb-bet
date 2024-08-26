@@ -24,7 +24,7 @@ import { MarketTypeEnum } from "@/utils/overtime/enums/marketTypes";
 const supportedLeagues = [LeagueEnum.NCAAF, LeagueEnum.NFL, LeagueEnum.EPL];
 
 export default function AuthenticatedIndex() {
-  const [, setUserBetsAtom] = useAtom(userBetsAtom);
+  const [, setUserBets] = useAtom(userBetsAtom);
   const [BottomSheetMapAtomData] = useAtom(BottomSheetMapAtom);
   console.log(BottomSheetMapAtomData);
   const tabBarHeight = useBottomTabBarHeight();
@@ -49,12 +49,25 @@ export default function AuthenticatedIndex() {
   // });
 
   function handleMarketPress(market: SportMarket, tradeData: TradeData) {
-    setUserBetsAtom((prevMarkets) => [
-      // ...prevMarkets,
-      { tradeData: tradeData, sportMarket: market },
-    ]);
-  }
+    setUserBets((prevBets) => {
+      const existingBetIndex = prevBets.findIndex(
+        (bet) =>
+          bet.sportMarket.gameId === market.gameId &&
+          bet.tradeData.typeId === tradeData.typeId
+      );
 
+      if (existingBetIndex !== -1) {
+        // If the bet already exists, remove it (toggle off)
+        return prevBets.filter((_, index) => index !== existingBetIndex);
+      } else {
+        // If the bet doesn't exist, add it
+        return [
+          // ...prevBets,
+          { tradeData, sportMarket: market },
+        ];
+      }
+    });
+  }
   let SportView;
   if (marketsIsLoading) {
     SportView = <GeneralSpinningLoader />;
