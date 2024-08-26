@@ -1,5 +1,10 @@
 import React, { useCallback, useState } from "react";
-import { View, StyleSheet, LayoutChangeEvent } from "react-native";
+import {
+  View,
+  StyleSheet,
+  LayoutChangeEvent,
+  TouchableWithoutFeedback,
+} from "react-native";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { userBetsAtom } from "@/lib/atom/atoms";
 import { useAtom } from "jotai";
@@ -78,6 +83,10 @@ export default function TabBar({
     },
     []
   );
+
+  const hideKeyboard = () => {
+    isKeyboardVisible.value = false;
+  };
 
   return (
     <View style={styles.container}>

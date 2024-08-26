@@ -30,7 +30,7 @@ import {
 //TODO: Need a success state.
 //TODO: Need to clean up error messages after another fetch.
 
-const REFETCH_INTERVAL = 50000;
+const REFETCH_INTERVAL = 500000;
 
 interface BetTabProps {
   isKeyboardVisible: SharedValue<boolean>;
@@ -64,8 +64,9 @@ export default function BetTab({
       }),
     refetchInterval: REFETCH_INTERVAL,
     enabled:
-      (tradeDataArray.length !== 0 && !isNaN(numberBetAmount)) ||
-      numberBetAmount !== 0,
+      !isNaN(numberBetAmount) &&
+      numberBetAmount > 0 &&
+      tradeDataArray.length > 0,
   });
 
   //TODO: Need to handle the case where there are an array of bets.
@@ -99,16 +100,15 @@ export default function BetTab({
 
     try {
       await placeBet();
+
+      //Clean ups after a bet is placed
+      setUserBetsAtom([]);
+      setBetAmount("$0");
+      setIsKeyboardVisible(false);
     } catch (error) {
       console.error("Error placing bet:", error);
       Alert.alert("Error", "Failed to place bet. Please try again.");
     }
-  };
-
-  const clearBets = () => {
-    setUserBetsAtom([]);
-    setBetAmount("$");
-    setIsKeyboardVisible(false);
   };
 
   const isSuccessfulQuoteObject = (
