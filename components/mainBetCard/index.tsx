@@ -183,6 +183,10 @@ export default function MainBetCard({
                     )
                   }
                   label={spreadLineHelper(spreadGameOdds.line)}
+                  selected={isSelected(
+                    spreadGameOdds.homeOdds.index,
+                    MarketTypeEnum.SPREAD
+                  )}
                 />
               </View>
             )}

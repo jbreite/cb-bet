@@ -21,14 +21,18 @@ import { MarketTypeEnum } from "@/utils/overtime/enums/marketTypes";
 //TODO: Selected to show state if bet is selected
 //TODO: Need to make sure that this is the correct way to filter the data
 //TODO: Add Refetching and refreshing the data
+//TODO: Add in game data with getGamesInfo()
+
 const supportedLeagues = [LeagueEnum.NCAAF, LeagueEnum.NFL, LeagueEnum.EPL];
 
 export default function AuthenticatedIndex() {
-  const [, setUserBets] = useAtom(userBetsAtom);
+  const [userBets, setUserBets] = useAtom(userBetsAtom);
   const [BottomSheetMapAtomData] = useAtom(BottomSheetMapAtom);
   console.log(BottomSheetMapAtomData);
   const tabBarHeight = useBottomTabBarHeight();
   console.log("tabBarHeight", tabBarHeight);
+
+  const bottomPadding = userBets.length > 0 ? 240 : 32; //TODO: Make this dynamic
 
   const {
     data: marketsData,
@@ -38,15 +42,6 @@ export default function AuthenticatedIndex() {
     queryKey: ["markets"],
     queryFn: () => getMarkets(CB_BET_SUPPORTED_NETWORK_IDS.OPTIMISM, {}),
   });
-
-  // const {
-  //   data: gameInfoData,
-  //   isLoading: gameInfoIsLoading,
-  //   error: gameInfoIsError,
-  // } = useQuery({
-  //   queryKey: ["gameInfo"],
-  //   queryFn: () => getGamesInfo(),
-  // });
 
   function handleMarketPress(market: SportMarket, tradeData: TradeData) {
     setUserBets((prevBets) => {
@@ -125,7 +120,7 @@ export default function AuthenticatedIndex() {
           estimatedItemSize={200}
           keyExtractor={(leagueId) => leagueId.toString()}
           contentContainerStyle={{
-            paddingBottom: tabBarHeight + 32,
+            paddingBottom: tabBarHeight + bottomPadding,
             paddingHorizontal: 24,
           }}
         />
