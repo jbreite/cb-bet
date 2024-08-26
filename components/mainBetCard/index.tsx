@@ -9,6 +9,10 @@ import TeamDivider from "./teamDivider";
 import { MarketTypeEnum } from "@/utils/overtime/enums/marketTypes";
 import { userBetsAtom } from "@/lib/atom/atoms";
 import { useAtom } from "jotai";
+import { SfText } from "../SfThemedText";
+import { getMarketTypeName } from "@/utils/overtime/ui/markets";
+
+const ODDS_GRID_GAP = 4;
 
 export default function MainBetCard({
   sportMarket,
@@ -48,70 +52,81 @@ export default function MainBetCard({
       onPress={onPress}
       style={{
         marginVertical: 12,
-        gap: 16,
       }}
     >
       <View
         style={{
           flex: 1,
           flexDirection: "row",
-          justifyContent: "space-between",
+          gap: 4,
         }}
       >
-        <View style={{ flex: 1 / 3, gap: 8 }}>
+        <View style={{ flex: 1, maxWidth: "35%" }}>
           <TeamInfo teamImage={awayTeamImage} teamName={sportMarket.awayTeam} />
           <TeamDivider />
           <TeamInfo teamImage={homeTeamImage} teamName={sportMarket.homeTeam} />
         </View>
 
         {isLeagueDrawAvailable ? (
-          <View style={{ flex: 1 / 2, flexDirection: "row" }}>
-            <OddsButton
-              line={winnerGameOdds.homeOdds.odds}
-              onPress={() =>
-                onPressOddsButton(
-                  winnerGameOdds.homeOdds.index,
-                  MarketTypeEnum.WINNER
-                )
-              }
-              selected={isSelected(
-                winnerGameOdds.homeOdds.index,
-                MarketTypeEnum.WINNER
-              )}
-            />
-            <OddsButton
-              line={winnerGameOdds.awayOdds.odds}
-              onPress={() =>
-                onPressOddsButton(
-                  winnerGameOdds.awayOdds.index,
-                  MarketTypeEnum.WINNER
-                )
-              }
-              selected={isSelected(
-                winnerGameOdds.awayOdds.index,
-                MarketTypeEnum.WINNER
-              )}
-            />
-            {winnerGameOdds.drawOdds && (
+          <View style={styles.oddsGridContainer}>
+            <View style={styles.oddsCol}>
+              <SfText style={styles.oddsColText}>Home</SfText>
               <OddsButton
-                line={winnerGameOdds.drawOdds?.odds}
+                line={winnerGameOdds.homeOdds.odds}
                 onPress={() =>
                   onPressOddsButton(
-                    winnerGameOdds.drawOdds?.index ?? 2,
+                    winnerGameOdds.homeOdds.index,
                     MarketTypeEnum.WINNER
                   )
                 }
                 selected={isSelected(
-                  winnerGameOdds.drawOdds.index,
+                  winnerGameOdds.homeOdds.index,
                   MarketTypeEnum.WINNER
                 )}
               />
+            </View>
+            <View style={styles.oddsCol}>
+              <SfText style={styles.oddsColText}>Away</SfText>
+
+              <OddsButton
+                line={winnerGameOdds.awayOdds.odds}
+                onPress={() =>
+                  onPressOddsButton(
+                    winnerGameOdds.awayOdds.index,
+                    MarketTypeEnum.WINNER
+                  )
+                }
+                selected={isSelected(
+                  winnerGameOdds.awayOdds.index,
+                  MarketTypeEnum.WINNER
+                )}
+              />
+            </View>
+            {winnerGameOdds.drawOdds && (
+              <View style={styles.oddsCol}>
+                <SfText style={styles.oddsColText}>Draw</SfText>
+                <OddsButton
+                  line={winnerGameOdds.drawOdds?.odds}
+                  onPress={() =>
+                    onPressOddsButton(
+                      winnerGameOdds.drawOdds?.index ?? 2,
+                      MarketTypeEnum.WINNER
+                    )
+                  }
+                  selected={isSelected(
+                    winnerGameOdds.drawOdds.index,
+                    MarketTypeEnum.WINNER
+                  )}
+                />
+              </View>
             )}
           </View>
         ) : (
-          <View style={{ flexDirection: "row", gap: 12 }}>
-            <View>
-              <Text>winner</Text>
+          <View style={styles.oddsGridContainer}>
+            <View style={styles.oddsCol}>
+              <SfText style={styles.oddsColText}>
+                {getMarketTypeName(MarketTypeEnum.WINNER)}
+              </SfText>
               <OddsButton
                 line={winnerGameOdds.awayOdds.odds}
                 onPress={() =>
@@ -141,8 +156,10 @@ export default function MainBetCard({
             </View>
 
             {spreadGameOdds && (
-              <View>
-                <Text>spread</Text>
+              <View style={styles.oddsCol}>
+                <SfText style={styles.oddsColText}>
+                  {getMarketTypeName(MarketTypeEnum.SPREAD)}
+                </SfText>
                 <OddsButton
                   line={spreadGameOdds.awayOdds.odds}
                   onPress={() =>
@@ -165,18 +182,16 @@ export default function MainBetCard({
                       MarketTypeEnum.SPREAD
                     )
                   }
-                  selected={isSelected(
-                    spreadGameOdds.homeOdds.index,
-                    MarketTypeEnum.SPREAD
-                  )}
                   label={spreadLineHelper(spreadGameOdds.line)}
                 />
               </View>
             )}
 
             {totalGameOdds && (
-              <View>
-                <Text>Over/Under</Text>
+              <View style={styles.oddsCol}>
+                <SfText style={styles.oddsColText}>
+                  {getMarketTypeName(MarketTypeEnum.TOTAL)}
+                </SfText>
                 <OddsButton
                   line={totalGameOdds.overOdds.odds}
                   onPress={() =>
@@ -186,10 +201,6 @@ export default function MainBetCard({
                     )
                   }
                   label={totalGameOdds.line.toString()}
-                  selected={isSelected(
-                    totalGameOdds.overOdds.index,
-                    MarketTypeEnum.TOTAL
-                  )}
                 />
                 <OddsButton
                   line={totalGameOdds.underOdds.odds}
@@ -200,10 +211,6 @@ export default function MainBetCard({
                     )
                   }
                   label={totalGameOdds.line.toString()}
-                  selected={isSelected(
-                    totalGameOdds.underOdds.index,
-                    MarketTypeEnum.TOTAL
-                  )}
                 />
               </View>
             )}
@@ -215,9 +222,16 @@ export default function MainBetCard({
 }
 
 const styles = StyleSheet.create({
-  imageStyle: {
-    width: 50,
-    height: 50,
-    objectFit: "contain",
+  oddsCol: {
+    flex: 1,
+    gap: ODDS_GRID_GAP,
+  },
+  oddsColText: {
+    textAlign: "center",
+  },
+  oddsGridContainer: {
+    flex: 1,
+    flexDirection: "row",
+    gap: ODDS_GRID_GAP,
   },
 });

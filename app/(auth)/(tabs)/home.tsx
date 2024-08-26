@@ -53,7 +53,8 @@ export default function AuthenticatedIndex() {
       const existingBetIndex = prevBets.findIndex(
         (bet) =>
           bet.sportMarket.gameId === market.gameId &&
-          bet.tradeData.typeId === tradeData.typeId
+          bet.tradeData.typeId === tradeData.typeId &&
+          bet.tradeData.position === tradeData.position
       );
 
       if (existingBetIndex !== -1) {

@@ -9,9 +9,11 @@ export default function TeamInfo({
   teamName: string;
 }) {
   return (
-    <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+    <View
+      style={{ flex: 1, flexDirection: "row", alignItems: "center", gap: 4 }}
+    >
       <Image source={teamImage} style={styles.imageStyle} />
-      <SfText familyType="medium" style={{ fontSize: 14 }}>
+      <SfText familyType="medium" style={{ fontSize: 14, flex: 1 }}>
         {teamName}
       </SfText>
     </View>
@@ -20,8 +22,8 @@ export default function TeamInfo({
 
 const styles = StyleSheet.create({
   imageStyle: {
-    width: 40,
-    height: 40,
+    width: 32,
+    aspectRatio: 1,
     objectFit: "contain",
   },
 });

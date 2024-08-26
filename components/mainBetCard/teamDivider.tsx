@@ -9,7 +9,7 @@ export default function TeamDivider() {
       </SfText>
       <View
         style={{
-          flex: 1,
+          flex: 1/2,
           height: 2,
           borderRadius: 100,
           backgroundColor: "grey",

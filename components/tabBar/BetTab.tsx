@@ -49,6 +49,7 @@ export default function BetTab({
   const numberBets = userBetsAtomData.length;
   const tradeDataArray = userBetsAtomData.map((bet) => bet.tradeData);
   const numberBetAmount = parseFloat(betAmount.slice(1));
+  console.log("numberBetAmount", numberBetAmount);
 
   const {
     data: quoteObject,
@@ -64,7 +65,7 @@ export default function BetTab({
     refetchInterval: REFETCH_INTERVAL,
     enabled:
       (tradeDataArray.length !== 0 && !isNaN(numberBetAmount)) ||
-      numberBetAmount === 0,
+      numberBetAmount !== 0,
   });
 
   //TODO: Need to handle the case where there are an array of bets.
