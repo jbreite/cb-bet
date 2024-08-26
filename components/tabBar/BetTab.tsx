@@ -25,6 +25,8 @@ import { SharedValue } from "react-native-reanimated";
 //TODO: Need to BetTab have two states
 //TODO: Need a success state.
 
+//TODO: Need to clean up error messages after another fetch.
+
 const REFETCH_INTERVAL = 50000;
 
 interface BetTabProps {

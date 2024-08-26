@@ -1,27 +1,42 @@
 {
   "expo": {
-    "name": "cb-bet",
+    "name": "bsquared",
     "slug": "cb-bet",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/backupBookIcon.png",
-    "scheme": "myapp",
+    "scheme": "comjbreitecbbet",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splashBackupBook.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#1A88F8"
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.jbreite.cbbet"
+      "bundleIdentifier": "com.jbreite.cbbet",
+      "associatedDomains": ["applinks:bsquared.world"]
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#1A88F8"
       },
-      "package": "com.jbreite.cbbet"
+      "package": "com.jbreite.cbbet",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "bsquared.world",
+              "pathPrefix": "/"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
     },
     "web": {
       "bundler": "metro",

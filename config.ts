@@ -1,6 +1,5 @@
 polyfillForWagmi();
 
-
 import {
   createConnectorFromWallet,
   Wallets,
@@ -16,7 +15,7 @@ export const config = createConfig({
   connectors: [
     createConnectorFromWallet({
       metadata: {
-        appName: "Wagmi Demo",
+        appName: "B Squared",
         appDeeplinkUrl: PREFIX_URL,
       },
       wallet: Wallets.CoinbaseSmartWallet,
