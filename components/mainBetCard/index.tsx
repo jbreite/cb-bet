@@ -1,16 +1,13 @@
 import { SportMarket } from "@/utils/overtime/types/markets";
-import { formatAmericanOdds } from "@/utils/overtime/ui/helpers";
+import { getGameOdds, spreadLineHelper } from "@/utils/overtime/ui/helpers";
 import { getImage } from "@/utils/overtime/ui/images";
-import { View, Image, StyleSheet, Text, Pressable } from "react-native";
+import { View, StyleSheet, Text, Pressable } from "react-native";
 import OddsButton from "./oddsButton";
-import { SfText } from "../SfThemedText";
 import { getLeagueIsDrawAvailable } from "@/utils/overtime/ui/sportsHelpers";
 import TeamInfo from "./teamInfo";
 import TeamDivider from "./teamDivider";
 import { MarketTypeEnum } from "@/utils/overtime/enums/marketTypes";
-import { GameOdds } from "@/utils/overtime/types/odds";
 
-//TODO: Add in if there is a tie based on the leage
 export default function MainBetCard({
   sportMarket,
   onPress,
@@ -26,21 +23,17 @@ export default function MainBetCard({
   const isLeagueDrawAvailable = getLeagueIsDrawAvailable(sportMarket.leagueId);
 
   const gameOdds = getGameOdds(sportMarket);
-  console.log("gameOdds", gameOdds);
 
   const winnerGameOdds = gameOdds[MarketTypeEnum.WINNER];
+  console.log("winnerGameOdds", winnerGameOdds);
   const spreadGameOdds = gameOdds[MarketTypeEnum.SPREAD];
+  console.log("spreadGameOdds", spreadGameOdds);
   const totalGameOdds = gameOdds[MarketTypeEnum.TOTAL];
 
   return (
     <Pressable
       onPress={onPress}
       style={{
-        borderWidth: 2,
-        borderColor: "#E6E6E6",
-        padding: 16,
-        borderRadius: 12,
-        borderCurve: "continuous",
         marginVertical: 12,
         gap: 16,
       }}
@@ -59,37 +52,34 @@ export default function MainBetCard({
         </View>
 
         {isLeagueDrawAvailable ? (
-          <View>
+          <View style={{ flex: 1 / 2, flexDirection: "row" }}>
             <OddsButton
-              number={winnerGameOdds.homeOdds.odds}
+              line={winnerGameOdds.homeOdds.odds}
               onPress={() =>
                 onPressOddsButton(
                   winnerGameOdds.homeOdds.index,
                   MarketTypeEnum.WINNER
                 )
               }
-              label="Home"
             />
             <OddsButton
-              number={winnerGameOdds.awayOdds.odds}
+              line={winnerGameOdds.awayOdds.odds}
               onPress={() =>
                 onPressOddsButton(
                   winnerGameOdds.awayOdds.index,
                   MarketTypeEnum.WINNER
                 )
               }
-              label="Away"
             />
             {winnerGameOdds.drawOdds && (
               <OddsButton
-                number={winnerGameOdds.drawOdds?.odds}
+                line={winnerGameOdds.drawOdds?.odds}
                 onPress={() =>
                   onPressOddsButton(
                     winnerGameOdds.drawOdds?.index ?? 2,
                     MarketTypeEnum.WINNER
                   )
                 }
-                label="Draw"
               />
             )}
           </View>
@@ -98,24 +88,22 @@ export default function MainBetCard({
             <View>
               <Text>winner</Text>
               <OddsButton
-                number={winnerGameOdds.awayOdds.odds}
+                line={winnerGameOdds.awayOdds.odds}
                 onPress={() =>
                   onPressOddsButton(
                     winnerGameOdds.awayOdds.index,
                     MarketTypeEnum.WINNER
                   )
                 }
-                label="away"
               />
               <OddsButton
-                number={winnerGameOdds.homeOdds.odds}
+                line={winnerGameOdds.homeOdds.odds}
                 onPress={() =>
                   onPressOddsButton(
                     winnerGameOdds.homeOdds.index,
                     MarketTypeEnum.WINNER
                   )
                 }
-                label="Home"
               />
             </View>
 
@@ -123,24 +111,24 @@ export default function MainBetCard({
               <View>
                 <Text>spread</Text>
                 <OddsButton
-                  number={spreadGameOdds.awayOdds.odds}
+                  line={spreadGameOdds.awayOdds.odds}
                   onPress={() =>
                     onPressOddsButton(
                       spreadGameOdds.awayOdds.index,
                       MarketTypeEnum.SPREAD
                     )
                   }
-                  label={spreadGameOdds.line.toString()}
+                  label={spreadLineHelper(-1 * spreadGameOdds.line)}
                 />
                 <OddsButton
-                  number={spreadGameOdds.homeOdds.odds}
+                  line={spreadGameOdds.homeOdds.odds}
                   onPress={() =>
                     onPressOddsButton(
                       spreadGameOdds.homeOdds.index,
                       MarketTypeEnum.SPREAD
                     )
                   }
-                  label={spreadGameOdds.line.toString()}
+                  label={spreadLineHelper(spreadGameOdds.line)}
                 />
               </View>
             )}
@@ -149,7 +137,7 @@ export default function MainBetCard({
               <View>
                 <Text>Over/Under</Text>
                 <OddsButton
-                  number={totalGameOdds.overOdds.odds}
+                  line={totalGameOdds.overOdds.odds}
                   onPress={() =>
                     onPressOddsButton(
                       totalGameOdds.overOdds.index,
@@ -159,7 +147,7 @@ export default function MainBetCard({
                   label={totalGameOdds.line.toString()}
                 />
                 <OddsButton
-                  number={totalGameOdds.underOdds.odds}
+                  line={totalGameOdds.underOdds.odds}
                   onPress={() =>
                     onPressOddsButton(
                       totalGameOdds.underOdds.index,
@@ -184,65 +172,3 @@ const styles = StyleSheet.create({
     objectFit: "contain",
   },
 });
-
-export function getGameOdds(sportMarket: SportMarket): GameOdds {
-  const isDrawAvailable = getLeagueIsDrawAvailable(sportMarket.leagueId);
-
-  const result: GameOdds = {
-    [MarketTypeEnum.WINNER]: {
-      homeOdds: {
-        odds: formatAmericanOdds(sportMarket.odds[0].american),
-        index: 0,
-      },
-      awayOdds: {
-        odds: formatAmericanOdds(sportMarket.odds[1].american),
-        index: 1,
-      },
-    },
-  };
-
-  if (isDrawAvailable && sportMarket.odds.length > 2) {
-    result[MarketTypeEnum.WINNER].drawOdds = {
-      odds: formatAmericanOdds(sportMarket.odds[2].american),
-      index: 2,
-    };
-  }
-
-  const spreadMarket = sportMarket.childMarkets.find(
-    (market: SportMarket) => market.typeId === MarketTypeEnum.SPREAD
-  );
-
-  if (spreadMarket) {
-    result[MarketTypeEnum.SPREAD] = {
-      homeOdds: {
-        odds: formatAmericanOdds(spreadMarket.odds[0].american),
-        index: 0,
-      },
-      awayOdds: {
-        odds: formatAmericanOdds(spreadMarket.odds[1].american),
-        index: 1,
-      },
-      line: spreadMarket.line,
-    };
-  }
-
-  const totalMarket = sportMarket.childMarkets.find(
-    (market: SportMarket) => market.typeId === MarketTypeEnum.TOTAL
-  );
-
-  if (totalMarket) {
-    result[MarketTypeEnum.TOTAL] = {
-      overOdds: {
-        odds: formatAmericanOdds(totalMarket.odds[0].american),
-        index: 0,
-      },
-      underOdds: {
-        odds: formatAmericanOdds(totalMarket.odds[1].american),
-        index: 1,
-      },
-      line: totalMarket.line,
-    };
-  }
-
-  return result;
-}

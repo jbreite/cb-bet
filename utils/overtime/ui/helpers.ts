@@ -1,7 +1,8 @@
 import { parseEther } from "viem";
-import { OddsType } from "../enums/markets";
 import { MarketTypeEnum } from "../enums/marketTypes";
 import { SportMarket, SportMarketOdds, TradeData } from "../types/markets";
+import { getLeagueIsDrawAvailable } from "./sportsHelpers";
+import { GameOdds } from "../types/odds";
 
 export function getSpecificMarket(
   market: SportMarket,
@@ -73,3 +74,69 @@ export function getTradeData(quoteTradeData: any[]) {
     ),
   }));
 }
+
+export function getGameOdds(sportMarket: SportMarket): GameOdds {
+  const isDrawAvailable = getLeagueIsDrawAvailable(sportMarket.leagueId);
+
+  const result: GameOdds = {
+    [MarketTypeEnum.WINNER]: {
+      homeOdds: {
+        odds: formatAmericanOdds(sportMarket.odds[0].american),
+        index: 0,
+      },
+      awayOdds: {
+        odds: formatAmericanOdds(sportMarket.odds[1].american),
+        index: 1,
+      },
+    },
+  };
+
+  if (isDrawAvailable && sportMarket.odds.length > 2) {
+    result[MarketTypeEnum.WINNER].drawOdds = {
+      odds: formatAmericanOdds(sportMarket.odds[2].american),
+      index: 2,
+    };
+  }
+
+  const spreadMarket = sportMarket.childMarkets.find(
+    (market: SportMarket) => market.typeId === MarketTypeEnum.SPREAD
+  );
+
+  if (spreadMarket) {
+    result[MarketTypeEnum.SPREAD] = {
+      homeOdds: {
+        odds: formatAmericanOdds(spreadMarket.odds[0].american),
+        index: 0,
+      },
+      awayOdds: {
+        odds: formatAmericanOdds(spreadMarket.odds[1].american),
+        index: 1,
+      },
+      line: spreadMarket.line, // This is already correct for the home team
+    };
+  }
+
+  const totalMarket = sportMarket.childMarkets.find(
+    (market: SportMarket) => market.typeId === MarketTypeEnum.TOTAL
+  );
+
+  if (totalMarket) {
+    result[MarketTypeEnum.TOTAL] = {
+      overOdds: {
+        odds: formatAmericanOdds(totalMarket.odds[0].american),
+        index: 0,
+      },
+      underOdds: {
+        odds: formatAmericanOdds(totalMarket.odds[1].american),
+        index: 1,
+      },
+      line: totalMarket.line,
+    };
+  }
+
+  return result;
+}
+
+export const spreadLineHelper = (line: number): string => {
+  return line > 0 ? `+${line}` : `${line}`;
+};

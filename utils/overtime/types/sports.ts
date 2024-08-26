@@ -1,6 +1,5 @@
 import {
   ScoringTypeEnum,
-  ProviderEnum,
   PeriodTypeEnum,
   SportEnum,
   MatchResolveTypeEnum,

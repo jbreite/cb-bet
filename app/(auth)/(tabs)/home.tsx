@@ -1,16 +1,15 @@
 import React from "react";
-import { View, Text } from "react-native";
+import { View } from "react-native";
 import GeneralSpinningLoader from "@/components/GeneralSpinningLoader";
 import GeneralErrorMessage from "@/components/GeneralErrorMessage";
 import { CB_BET_SUPPORTED_NETWORK_IDS } from "@/constants/Constants";
-import { LeagueEnum, SportEnum } from "@/utils/overtime/enums/sport";
+import { LeagueEnum } from "@/utils/overtime/enums/sport";
 import { getMarkets } from "@/utils/overtime/queries/getMarkets";
 import { useQuery } from "@tanstack/react-query";
 import { FlashList } from "@shopify/flash-list";
 import { BottomSheetMapAtom, userBetsAtom } from "@/lib/atom/atoms";
 import { useAtom } from "jotai";
 import { SportMarket, TradeData } from "@/utils/overtime/types/markets";
-import { router } from "expo-router";
 import MainBetCard from "@/components/mainBetCard";
 import { getTradeDataFromSportMarket } from "@/utils/overtime/ui/helpers";
 import { getGamesInfo } from "@/utils/overtime/queries/getGamesInfo";
@@ -21,6 +20,7 @@ import { MarketTypeEnum } from "@/utils/overtime/enums/marketTypes";
 
 //TODO: Selected to show state if bet is selected
 //TODO: Need to make sure that this is the correct way to filter the data
+//TODO: Add Refetching and refreshing the data
 const supportedLeagues = [LeagueEnum.NCAAF, LeagueEnum.NFL, LeagueEnum.EPL];
 
 export default function AuthenticatedIndex() {
