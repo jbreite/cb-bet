@@ -1,39 +1,51 @@
-import { useAtom } from "jotai";
+import React, { useState } from "react";
 import { Alert, StyleSheet, Text, View } from "react-native";
+import { useAtom } from "jotai";
 import { userBetsAtom } from "@/lib/atom/atoms";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
 import {
   ErrorQuoteData,
   getQuote,
   SuccessfulQuoteData,
 } from "@/utils/overtime/queries/getQuote";
 import { usePlaceBet } from "@/hooks/bets/usePlaceBet";
-import { ButtonGrid, KeyboardButtonItemType } from "../keyboard";
 import BetInput from "./BetInput";
 import {
   calculateBetOutcome,
   extractAmericanOddsFromBets,
+  extractFailureReason,
   formatAmericanOdds,
   formatCurrency,
 } from "@/utils/overtime/ui/beyTabHelpers";
 import { SfText } from "../SfThemedText";
+import { SharedValue } from "react-native-reanimated";
 
-//TODO: Not sure I need the quote fetch and can just do myself honestly
+//TODO: Need a failure reason and show the error message.
+//TODO: When refetching quote or changing input needs to clear the error.
+//TODO: Need to BetTab have two states
+//TODO: Need a success state.
+
+//TODO: Need to clean up error messages after another fetch.
 
 const REFETCH_INTERVAL = 50000;
 
-export default function BetTab() {
+interface BetTabProps {
+  isKeyboardVisible: SharedValue<boolean>;
+  setIsKeyboardVisible: (visible: boolean) => void;
+  betAmount: string;
+  setBetAmount: (amount: string) => void;
+}
+
+export default function BetTab({
+  isKeyboardVisible,
+  setIsKeyboardVisible,
+  betAmount,
+  setBetAmount,
+}: BetTabProps) {
   const [userBetsAtomData, setUserBetsAtom] = useAtom(userBetsAtom);
-  const [betAmount, setBetAmount] = useState("$");
-  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-
   const numberBets = userBetsAtomData.length;
-
   const tradeDataArray = userBetsAtomData.map((bet) => bet.tradeData);
-
   const numberBetAmount = parseFloat(betAmount.slice(1));
-  console.log(numberBetAmount);
 
   const {
     data: quoteObject,
@@ -47,16 +59,10 @@ export default function BetTab() {
         tradeData: tradeDataArray,
       }),
     refetchInterval: REFETCH_INTERVAL,
-    enabled: tradeDataArray.length !== 0 && !isNaN(numberBetAmount),
+    enabled:
+      (tradeDataArray.length !== 0 && !isNaN(numberBetAmount)) ||
+      numberBetAmount === 0,
   });
-
-  if (quoteObject) {
-    console.log("quoteObject:", quoteObject);
-  } else if (quoteLoading) {
-    console.log("loading quote");
-  } else if (quoteError) {
-    console.log("Couldn't fetch quotre");
-  }
 
   const getOutcomeText = (bet: any) => {
     switch (bet.tradeData.position) {
@@ -70,29 +76,15 @@ export default function BetTab() {
         return "Unknown";
     }
   };
+
   const firstBet = userBetsAtomData[0];
   const outcomeText = firstBet ? getOutcomeText(firstBet) : "";
-
-  const handleKeyboardButtonPress = (value: KeyboardButtonItemType) => {
-    setBetAmount((prev) => {
-      if (value === "backspace") {
-        if (prev === "$") {
-          return prev;
-        }
-        return prev.slice(0, -1);
-      }
-      if (value === "." && prev.includes(".")) {
-        return prev;
-      }
-
-      return prev + value;
-    });
-  };
 
   const {
     placeBet,
     writeError,
     writePending,
+    writeFailureReason,
     waitLoading,
     transactionSuccess,
   } = usePlaceBet({
@@ -114,13 +106,9 @@ export default function BetTab() {
     }
   };
 
-  if (writeError) {
-    console.log("writeError:", writeError);
-  }
-
   const clearBets = () => {
     setUserBetsAtom([]);
-    setBetAmount("");
+    setBetAmount("$");
     setIsKeyboardVisible(false);
   };
 
@@ -134,7 +122,6 @@ export default function BetTab() {
     quoteObject && isSuccessfulQuoteObject(quoteObject.quoteData)
       ? quoteObject.quoteData.totalQuote.american
       : extractAmericanOddsFromBets(userBetsAtomData);
-  console.log(americanOdds);
 
   const formattedAmericanOdds = formatAmericanOdds(americanOdds);
   const tenDollarBetOutcome = calculateBetOutcome(americanOdds, 10);
@@ -142,94 +129,98 @@ export default function BetTab() {
   const buttonText =
     quoteObject && isSuccessfulQuoteObject(quoteObject.quoteData)
       ? `To Win: ${formatCurrency({
-          amount: quoteObject.quoteData.payout.usd,
+          amount: quoteObject.quoteData.potentialProfit.usd,
           omitDecimalsForWholeNumbers: true,
         })}`
       : "To Win";
 
+  if (writeError) {
+    console.log("writeError", writeError);
+    console.log("writeFailureReason", writeFailureReason);
+  }
+
   return (
-    <View style={{ flex: 1, backgroundColor: "white" }}>
-      <View style={styles.container}>
-        <View style={styles.heading}>
-          <View
-            style={{
-              flex: 1,
-              flexDirection: "row",
-              gap: 8,
-              alignItems: "center",
-            }}
-          >
-            <View style={[styles.betslipNumber]}>
-              <SfText
-                familyType={"bold"}
-                style={{
-                  fontSize: 16,
-                  color: "white",
-                }}
-              >
-                {numberBets}
-              </SfText>
-            </View>
+    <View style={styles.container}>
+      <View style={styles.heading}>
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "row",
+            gap: 8,
+            alignItems: "center",
+          }}
+        >
+          <View style={styles.betslipNumber}>
             <SfText
               familyType={"bold"}
               style={{
                 fontSize: 16,
-                color: "#1A88F8",
+                color: "white",
               }}
             >
-              Bet Slip
+              {numberBets}
             </SfText>
           </View>
-
-          <SfText familyType="medium" style={{ fontSize: 16 }}>
-            $10 to win{" "}
-            {formatCurrency({
-              amount: tenDollarBetOutcome.profit,
-              omitDecimalsForWholeNumbers: true,
-            })}
+          <SfText
+            familyType={"bold"}
+            style={{
+              fontSize: 16,
+              color: "#1A88F8",
+            }}
+          >
+            Bet Slip
           </SfText>
         </View>
 
-        <View style={{ gap: 4 }}>
-          <View
-            style={{ flexDirection: "row", justifyContent: "space-between" }}
-          >
-            <SfText familyType="semibold" style={{ fontSize: 18 }}>
-              {outcomeText}
-            </SfText>
-            <SfText familyType="semibold" style={{ fontSize: 18 }}>
-              {formattedAmericanOdds}
-            </SfText>
-          </View>
-          <Text>
-            {numberBets > 1
-              ? "Parlay".toUpperCase()
-              : userBetsAtomData[0].sportMarket.type.toUpperCase()}
-          </Text>
+        <SfText familyType="medium" style={{ fontSize: 16 }}>
+          $10 to win{" "}
+          {formatCurrency({
+            amount: tenDollarBetOutcome.profit,
+            omitDecimalsForWholeNumbers: true,
+          })}
+        </SfText>
+      </View>
+
+      <View style={{ gap: 4 }}>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <SfText familyType="semibold" style={{ fontSize: 18 }}>
+            {outcomeText}
+          </SfText>
+          <SfText familyType="semibold" style={{ fontSize: 18 }}>
+            {formattedAmericanOdds}
+          </SfText>
         </View>
+        <Text>
+          {numberBets > 1
+            ? "Parlay".toUpperCase()
+            : userBetsAtomData[0].sportMarket.type.toUpperCase()}
+        </Text>
+      </View>
+      <View style={{ gap: 8 }}>
         <BetInput
           buttonLabel={buttonText}
           isLoadingText={buttonText}
           betAmount={betAmount ?? "$"}
           setBetAmount={setBetAmount}
-          onInputPress={() => setIsKeyboardVisible(!isKeyboardVisible)}
+          onInputPress={() => setIsKeyboardVisible(!isKeyboardVisible.value)}
           onButtonPress={handleBet}
           isLoading={writePending || quoteLoading}
           isDisabled={writePending || quoteLoading || betAmount == "$"}
         />
+        {quoteObject && !isSuccessfulQuoteObject(quoteObject.quoteData) && (
+          <SfText>{quoteObject.quoteData.error}</SfText>
+        )}
+
+        {writeFailureReason && (
+          <SfText>{extractFailureReason(writeFailureReason.toString())}</SfText>
+        )}
       </View>
-      {isKeyboardVisible && (
-        <View style={{ flex: 1, backgroundColor: "white", paddingBottom: 16 }}>
-          <ButtonGrid onButtonPressed={handleKeyboardButtonPress} />
-        </View>
-      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: "white",
     padding: 16,
     borderTopWidth: 1,
@@ -244,38 +235,17 @@ const styles = StyleSheet.create({
     gap: 24,
   },
   heading: {
-    flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-  },
-  inputContainer: {
-    flexDirection: "row",
-    gap: 24,
-  },
-  pressableInput: {
-    flex: 1,
-    padding: 8,
-    borderColor: "grey",
-    borderWidth: 1,
-    justifyContent: "center",
-  },
-  betButton: {
-    flex: 1,
   },
   betslipNumber: {
     borderRadius: 100,
     alignItems: "center",
     justifyContent: "center",
     borderCurve: "continuous",
-    height: "150%",
-    aspectRatio: 1,
+    height: 24,
+    width: 24,
     backgroundColor: "#1A88F8",
   },
 });
-
-{
-  /* <Pressable onPress={clearBets}>
-<Text style={{ textAlign: "right" }}>Clear Bets</Text>
-</Pressable> */
-}

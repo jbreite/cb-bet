@@ -90,3 +90,22 @@ export function formatCurrency({
 
   return formattedValue;
 }
+
+export function extractFailureReason(logText: string): string {
+  const startPhrase = "reason:";
+  const endPhrase = "Contract Call:";
+
+  const startIndex = logText.indexOf(startPhrase);
+  if (startIndex === -1) {
+    return "Reason not found in the log.";
+  }
+
+  const reasonStartIndex = startIndex + startPhrase.length;
+  const endIndex = logText.indexOf(endPhrase, reasonStartIndex);
+
+  if (endIndex === -1) {
+    return logText.slice(reasonStartIndex).trim();
+  }
+
+  return logText.slice(reasonStartIndex, endIndex).trim();
+}
