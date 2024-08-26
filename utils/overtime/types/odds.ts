@@ -10,7 +10,6 @@ interface OddsItem {
   odds: string;
   index: number;
 }
-ƒ
 interface SpreadMarketOdds {
   homeOdds: OddsItem;
   awayOdds: OddsItem;
@@ -28,16 +27,3 @@ interface TotalMarketOdds {
   underOdds: OddsItem;
   line: number;
 }
-
-// export interface UnifiedMarketOdds {
-//   homeOdds: OddsItem;
-//   awayOdds: OddsItem;
-//   drawOdds?: OddsItem;
-//   overOdds?: OddsItem;
-//   underOdds?: OddsItem;
-//   line: number;
-// }
-
-// export type GameOdds = {
-//   [key in MarketTypeEnum]: UnifiedMarketOdds;
-// };
