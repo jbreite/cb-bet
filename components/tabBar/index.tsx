@@ -23,7 +23,7 @@ export default function TabBar({
   navigation,
 }: BottomTabBarProps) {
   const [userBetsAtomData] = useAtom(userBetsAtom);
-  const [betAmount, setBetAmount] = useState("$");
+  const [betAmount, setBetAmount] = useState("$0");
   const { bottom } = useSafeAreaInsets();
   const tabBarHeight = useSharedValue(0);
   const keyboardHeight = useSharedValue(0);

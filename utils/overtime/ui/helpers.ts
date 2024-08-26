@@ -1,7 +1,8 @@
 import { parseEther } from "viem";
-import { OddsType } from "../enums/markets";
 import { MarketTypeEnum } from "../enums/marketTypes";
 import { SportMarket, SportMarketOdds, TradeData } from "../types/markets";
+import { getLeagueIsDrawAvailable } from "./sportsHelpers";
+import { GameOdds } from "../types/odds";
 
 export function getSpecificMarket(
   market: SportMarket,
@@ -10,18 +11,6 @@ export function getSpecificMarket(
   return market.childMarkets.find(
     (childMarket) => childMarket.typeId === marketTypeId
   );
-}
-
-export function getOddsOfGame(oddsType: any, odds: SportMarketOdds[]) {
-  const homeOdds = odds[0][oddsType];
-  const awayOdds = odds[1][oddsType];
-  const drawOdds = odds[2][oddsType];
-
-  return {
-    homeOdds,
-    awayOdds,
-    drawOdds,
-  };
 }
 
 export function formatAmericanOdds(odds: number) {
@@ -38,20 +27,35 @@ function convertOddsToStrings(odds: SportMarketOdds[]): string[] {
 
 export function getTradeDataFromSportMarket(
   sportMarket: SportMarket,
-  pickedPosition: number
-): TradeData {
+  pickedPosition: number,
+  marketType: MarketTypeEnum
+): TradeData | null {
+  let targetMarket: SportMarket = sportMarket;
+
+  // If it's not the main WINNER market, find the corresponding child market
+  if (marketType !== MarketTypeEnum.WINNER) {
+    const childMarket = sportMarket.childMarkets.find(
+      (market) => market.typeId === marketType
+    );
+    if (!childMarket) {
+      console.error(`Child market with typeId ${marketType} not found`);
+      return null;
+    }
+    targetMarket = childMarket;
+  }
+
   return {
     gameId: sportMarket.gameId,
     sportId: sportMarket.subLeagueId,
-    typeId: sportMarket.typeId,
+    typeId: targetMarket.typeId,
     maturity: sportMarket.maturity,
-    status: sportMarket.status,
-    line: sportMarket.line,
+    status: targetMarket.status,
+    line: targetMarket.line,
     playerId: sportMarket.playerProps.playerId,
-    odds: convertOddsToStrings(sportMarket.odds),
-    merkleProof: sportMarket.proof,
+    odds: convertOddsToStrings(targetMarket.odds),
+    merkleProof: targetMarket.proof,
     position: pickedPosition,
-    combinedPositions: sportMarket.combinedPositions,
+    combinedPositions: targetMarket.combinedPositions,
     live: false,
   };
 }
@@ -70,3 +74,69 @@ export function getTradeData(quoteTradeData: any[]) {
     ),
   }));
 }
+
+export function getGameOdds(sportMarket: SportMarket): GameOdds {
+  const isDrawAvailable = getLeagueIsDrawAvailable(sportMarket.leagueId);
+
+  const result: GameOdds = {
+    [MarketTypeEnum.WINNER]: {
+      homeOdds: {
+        odds: formatAmericanOdds(sportMarket.odds[0].american),
+        index: 0,
+      },
+      awayOdds: {
+        odds: formatAmericanOdds(sportMarket.odds[1].american),
+        index: 1,
+      },
+    },
+  };
+
+  if (isDrawAvailable && sportMarket.odds.length > 2) {
+    result[MarketTypeEnum.WINNER].drawOdds = {
+      odds: formatAmericanOdds(sportMarket.odds[2].american),
+      index: 2,
+    };
+  }
+
+  const spreadMarket = sportMarket.childMarkets.find(
+    (market: SportMarket) => market.typeId === MarketTypeEnum.SPREAD
+  );
+
+  if (spreadMarket) {
+    result[MarketTypeEnum.SPREAD] = {
+      homeOdds: {
+        odds: formatAmericanOdds(spreadMarket.odds[0].american),
+        index: 0,
+      },
+      awayOdds: {
+        odds: formatAmericanOdds(spreadMarket.odds[1].american),
+        index: 1,
+      },
+      line: spreadMarket.line, // This is already correct for the home team
+    };
+  }
+
+  const totalMarket = sportMarket.childMarkets.find(
+    (market: SportMarket) => market.typeId === MarketTypeEnum.TOTAL
+  );
+
+  if (totalMarket) {
+    result[MarketTypeEnum.TOTAL] = {
+      overOdds: {
+        odds: formatAmericanOdds(totalMarket.odds[0].american),
+        index: 0,
+      },
+      underOdds: {
+        odds: formatAmericanOdds(totalMarket.odds[1].american),
+        index: 1,
+      },
+      line: totalMarket.line,
+    };
+  }
+
+  return result;
+}
+
+export const spreadLineHelper = (line: number): string => {
+  return line > 0 ? `+${line}` : `${line}`;
+};

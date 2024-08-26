@@ -19,12 +19,15 @@ import {
 } from "@/utils/overtime/ui/beyTabHelpers";
 import { SfText } from "../SfThemedText";
 import { SharedValue } from "react-native-reanimated";
+import {
+  getMarketOutcomeText,
+  getMarketTypeName,
+} from "@/utils/overtime/ui/markets";
 
 //TODO: Need a failure reason and show the error message.
 //TODO: When refetching quote or changing input needs to clear the error.
 //TODO: Need to BetTab have two states
 //TODO: Need a success state.
-
 //TODO: Need to clean up error messages after another fetch.
 
 const REFETCH_INTERVAL = 50000;
@@ -46,6 +49,7 @@ export default function BetTab({
   const numberBets = userBetsAtomData.length;
   const tradeDataArray = userBetsAtomData.map((bet) => bet.tradeData);
   const numberBetAmount = parseFloat(betAmount.slice(1));
+  console.log("numberBetAmount", numberBetAmount);
 
   const {
     data: quoteObject,
@@ -61,24 +65,19 @@ export default function BetTab({
     refetchInterval: REFETCH_INTERVAL,
     enabled:
       (tradeDataArray.length !== 0 && !isNaN(numberBetAmount)) ||
-      numberBetAmount === 0,
+      numberBetAmount !== 0,
   });
 
-  const getOutcomeText = (bet: any) => {
-    switch (bet.tradeData.position) {
-      case 0:
-        return bet.sportMarket.homeTeam;
-      case 1:
-        return bet.sportMarket.awayTeam;
-      case 2:
-        return "Draw";
-      default:
-        return "Unknown";
-    }
-  };
-
+  //TODO: Need to handle the case where there are an array of bets.
   const firstBet = userBetsAtomData[0];
-  const outcomeText = firstBet ? getOutcomeText(firstBet) : "";
+
+  const betTypeName = firstBet
+    ? getMarketTypeName(firstBet.tradeData.typeId)
+    : "";
+
+  const marketOutcomeText = firstBet
+    ? getMarketOutcomeText(firstBet.sportMarket, firstBet.tradeData)
+    : "";
 
   const {
     placeBet,
@@ -184,18 +183,15 @@ export default function BetTab({
       <View style={{ gap: 4 }}>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <SfText familyType="semibold" style={{ fontSize: 18 }}>
-            {outcomeText}
+            {marketOutcomeText}
           </SfText>
           <SfText familyType="semibold" style={{ fontSize: 18 }}>
             {formattedAmericanOdds}
           </SfText>
         </View>
-        <Text>
-          {numberBets > 1
-            ? "Parlay".toUpperCase()
-            : userBetsAtomData[0].sportMarket.type.toUpperCase()}
-        </Text>
+        <Text>{numberBets > 1 ? "Parlay".toUpperCase() : betTypeName}</Text>
       </View>
+
       <View style={{ gap: 8 }}>
         <BetInput
           buttonLabel={buttonText}
