@@ -16,6 +16,8 @@ import { getTradeDataFromSportMarket } from "@/utils/overtime/ui/helpers";
 import { getGamesInfo } from "@/utils/overtime/queries/getGamesInfo";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { LeagueMap } from "@/constants/sports";
+import { SfText } from "@/components/SfThemedText";
+import { MarketTypeEnum } from "@/utils/overtime/enums/marketTypes";
 
 //TODO: Selected to show state if bet is selected
 //TODO: Need to make sure that this is the correct way to filter the data
@@ -34,10 +36,7 @@ export default function AuthenticatedIndex() {
     error: marketsIsError,
   } = useQuery({
     queryKey: ["markets"],
-    queryFn: () =>
-      getMarkets(CB_BET_SUPPORTED_NETWORK_IDS.OPTIMISM, {
-        // leagueId: LeagueEnum.EPL,
-      }),
+    queryFn: () => getMarkets(CB_BET_SUPPORTED_NETWORK_IDS.OPTIMISM, {}),
   });
 
   // const {
@@ -85,19 +84,25 @@ export default function AuthenticatedIndex() {
           data={leaguesWithData}
           renderItem={({ item: leagueId }) => (
             <View>
-              <Text style={{ fontSize: 24 }}>{LeagueMap[leagueId].label}</Text>
+              <SfText familyType="semibold" style={{ fontSize: 24 }}>
+                {LeagueMap[leagueId].label}
+              </SfText>
               {transformedData[leagueId].map((market) => (
                 <MainBetCard
                   key={market.gameId}
                   sportMarket={market}
-                  onPress={() => console.log(market.gameId)}
-                  onPressOddsButton={(index) => {
+                  onPress={() => console.log(JSON.stringify(market))}
+                  onPressOddsButton={(index, marketType) => {
                     console.log("index", index);
                     const tradeDataWithPosition = getTradeDataFromSportMarket(
                       market,
-                      index
+                      index,
+                      marketType
                     );
-                    handleMarketPress(market, tradeDataWithPosition);
+                    console.log("tradeDataWithPosition", tradeDataWithPosition);
+                    if (tradeDataWithPosition) {
+                      handleMarketPress(market, tradeDataWithPosition);
+                    }
                   }}
                 />
               ))}

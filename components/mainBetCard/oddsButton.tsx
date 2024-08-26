@@ -1,12 +1,11 @@
+import { MarketTypeEnum } from "@/utils/overtime/enums/marketTypes";
 import { Text, Pressable } from "react-native";
 
 export default function OddsButton({
-  index,
   number,
   onPress,
   label,
 }: {
-  index: number;
   number: string;
   onPress: () => void;
   label: string;
@@ -26,7 +25,6 @@ export default function OddsButton({
     >
       <Text>{label}</Text>
       <Text>{number}</Text>
-      <Text>{index}</Text>
     </Pressable>
   );
 }

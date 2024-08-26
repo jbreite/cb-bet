@@ -12,18 +12,6 @@ export function getSpecificMarket(
   );
 }
 
-export function getOddsOfGame(oddsType: any, odds: SportMarketOdds[]) {
-  const homeOdds = odds[0][oddsType];
-  const awayOdds = odds[1][oddsType];
-  const drawOdds = odds[2][oddsType];
-
-  return {
-    homeOdds,
-    awayOdds,
-    drawOdds,
-  };
-}
-
 export function formatAmericanOdds(odds: number) {
   if (odds > 0) {
     return `+${odds.toFixed(0)}`;
@@ -38,20 +26,35 @@ function convertOddsToStrings(odds: SportMarketOdds[]): string[] {
 
 export function getTradeDataFromSportMarket(
   sportMarket: SportMarket,
-  pickedPosition: number
-): TradeData {
+  pickedPosition: number,
+  marketType: MarketTypeEnum
+): TradeData | null {
+  let targetMarket: SportMarket = sportMarket;
+
+  // If it's not the main WINNER market, find the corresponding child market
+  if (marketType !== MarketTypeEnum.WINNER) {
+    const childMarket = sportMarket.childMarkets.find(
+      (market) => market.typeId === marketType
+    );
+    if (!childMarket) {
+      console.error(`Child market with typeId ${marketType} not found`);
+      return null;
+    }
+    targetMarket = childMarket;
+  }
+
   return {
     gameId: sportMarket.gameId,
     sportId: sportMarket.subLeagueId,
-    typeId: sportMarket.typeId,
+    typeId: targetMarket.typeId,
     maturity: sportMarket.maturity,
-    status: sportMarket.status,
-    line: sportMarket.line,
+    status: targetMarket.status,
+    line: targetMarket.line,
     playerId: sportMarket.playerProps.playerId,
-    odds: convertOddsToStrings(sportMarket.odds),
-    merkleProof: sportMarket.proof,
+    odds: convertOddsToStrings(targetMarket.odds),
+    merkleProof: targetMarket.proof,
     position: pickedPosition,
-    combinedPositions: sportMarket.combinedPositions,
+    combinedPositions: targetMarket.combinedPositions,
     live: false,
   };
 }
