@@ -17,6 +17,9 @@ import Animated, {
   FadeIn,
   FadeOut,
   LinearTransition,
+  SlideInUp,
+  SlideInDown,
+  SlideOutDown,
 } from "react-native-reanimated";
 import TabButton from "./TabButton";
 import BetTab from "./BetTab";
@@ -27,6 +30,7 @@ import { handleBetAmountChange } from "../keyboard/handleKeyboardInput";
 // See - https://www.notion.so/Bet-Tab-Animations-ac77704a6dd44060a67f75fe8100e4e5?pvs=4
 
 //TODO: Just make sure after placing bet everything is reset
+//TODO: Clean up the animations
 
 export default function TabBar({
   state,
@@ -108,8 +112,13 @@ export default function TabBar({
           exiting={FadeOut}
         />
       )}
+      {/* Might be a better way to do this for animation, but works... It doesn't match the animation of the keyboard */}
       {numberOfBets !== 0 && (
-        <Animated.View style={[styles.betTabContainer, rBetTabStyle]}>
+        <Animated.View
+          style={[styles.betTabContainer, rBetTabStyle]}
+          entering={SlideInDown}
+          exiting={SlideOutDown}
+        >
           <BetTab
             isKeyboardVisible={isKeyboardVisible}
             setIsKeyboardVisible={toggleKeyboardVisibility}
