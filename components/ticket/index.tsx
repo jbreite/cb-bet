@@ -42,6 +42,7 @@ export default function TicketView({ ticket }: { ticket: Ticket }) {
 
   const homeTeamImage = getImage(homeTeam, ticket.sportMarkets[0].leagueId);
   const awayTeamImage = getImage(awayTeam, ticket.sportMarkets[0].leagueId);
+  const leagueName = ticket.sportMarkets[0].leagueName;
 
   const betTypeName =
     numberOfMarkets > 1
@@ -49,59 +50,63 @@ export default function TicketView({ ticket }: { ticket: Ticket }) {
       : getMarketTypeName(ticket.sportMarkets[0].typeId);
 
   return (
-    <View
-      style={{
-        borderWidth: 2,
-        borderColor: "#E3E3E3",
-        borderRadius: 20,
-        borderCurve: "continuous",
-        padding: 16,
-      }}
-    >
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <View style={styles.indHeadingTextContainer}>
-          <SfText
-            familyType="semibold"
-            style={{ fontSize: 20, flex: 1 }}
-            numberOfLines={1}
-            ellipsizeMode="middle"
-          >
-            {ticketTitle}
-          </SfText>
-          <SfText familyType="medium" style={{ fontSize: 16 }}>
-            {betTypeName}
-          </SfText>
-        </View>
+    <View style={{ gap: 16 }}>
+      <View>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <View style={styles.indHeadingTextContainer}>
+            <SfText
+              familyType="semibold"
+              style={{ fontSize: 20, flex: 1 }}
+              numberOfLines={1}
+              ellipsizeMode="middle"
+            >
+              {ticketTitle}
+            </SfText>
+            <SfText familyType="medium" style={{ fontSize: 16 }}>
+              {betTypeName}
+            </SfText>
+          </View>
 
-        <View style={styles.indHeadingTextContainer}>
-          <SfText
-            familyType="medium"
-            style={{ fontSize: 16, textAlign: "right" }}
-          >
-            To win {formattedPayout}
-          </SfText>
-          <SfText style={{ fontSize: 16, textAlign: "right" }}>
-            {americanOdds}
-          </SfText>
+          <View style={styles.indHeadingTextContainer}>
+            <SfText
+              familyType="medium"
+              style={{ fontSize: 16, textAlign: "right" }}
+            >
+              To win {formattedPayout}
+            </SfText>
+            <SfText style={{ fontSize: 16, textAlign: "right" }}>
+              {americanOdds}
+            </SfText>
+          </View>
         </View>
       </View>
       <View
         style={{
-          gap: 4,
-          alignItems: "center",
+          borderWidth: 2,
+          borderColor: "#E3E3E3",
+          borderRadius: 20,
+          borderCurve: "continuous",
+          padding: 16,
         }}
       >
-        <TeamMatchup teamName={awayTeam} teamImage={awayTeamImage} />
-        <SfText familyType="medium" style={{ fontSize: 16 }}>
-          @
-        </SfText>
-        <TeamMatchup teamName={homeTeam} teamImage={homeTeamImage} />
+        <View style={{ gap: 16 }}>
+          <SfText style={{ textAlign: "center", fontSize: 16 }}>
+            {leagueName}
+          </SfText>
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-around" }}
+          >
+            <TeamMatchup teamName={homeTeam} teamImage={homeTeamImage} />
+
+            <TeamMatchup teamName={awayTeam} teamImage={awayTeamImage} />
+          </View>
+        </View>
       </View>
     </View>
   );
