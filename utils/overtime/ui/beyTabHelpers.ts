@@ -1,6 +1,6 @@
 import { UserBet } from "@/lib/atom/atoms";
 
-function convertNormalizedImpliedToAmerican(
+export function convertNormalizedImpliedToAmerican(
   normalizedImpliedOdds: number
 ): number {
   // Step 1: Convert normalized implied odds to probability

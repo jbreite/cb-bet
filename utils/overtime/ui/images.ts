@@ -37,7 +37,10 @@ const teamLogos: { [key: string]: ImageSourcePropType } = {
 // Default logo to use if a team's logo is not found
 const defaultLogo: ImageSourcePropType = require("../../../assets/images/icon.png");
 
-export function getImage(teamName: string): ImageSourcePropType {
+export function getImage(
+  teamName: string,
+  league: string
+): ImageSourcePropType {
   const formattedName = teamName.toLowerCase().replace(/\s+/g, "-");
   return teamLogos[formattedName] || defaultLogo;
 }

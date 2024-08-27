@@ -1,5 +1,5 @@
 import { SportMarket } from "@/utils/overtime/types/markets";
-import { getGameOdds, spreadLineHelper } from "@/utils/overtime/ui/helpers";
+import { getGameOdds, negativePlusHelper } from "@/utils/overtime/ui/helpers";
 import { getImage } from "@/utils/overtime/ui/images";
 import { View, StyleSheet, Text, Pressable } from "react-native";
 import OddsButton from "./oddsButton";
@@ -172,7 +172,7 @@ export default function MainBetCard({
                     spreadGameOdds.awayOdds.index,
                     MarketTypeEnum.SPREAD
                   )}
-                  label={spreadLineHelper(-1 * spreadGameOdds.line)}
+                  label={negativePlusHelper(-1 * spreadGameOdds.line)}
                 />
                 <OddsButton
                   line={spreadGameOdds.homeOdds.odds}
@@ -182,7 +182,7 @@ export default function MainBetCard({
                       MarketTypeEnum.SPREAD
                     )
                   }
-                  label={spreadLineHelper(spreadGameOdds.line)}
+                  label={negativePlusHelper(spreadGameOdds.line)}
                   selected={isSelected(
                     spreadGameOdds.homeOdds.index,
                     MarketTypeEnum.SPREAD
