@@ -204,7 +204,11 @@ export default function MainBetCard({
                       MarketTypeEnum.TOTAL
                     )
                   }
-                  label={totalGameOdds.line.toString()}
+                  label={`O${totalGameOdds.line}`}
+                  selected={isSelected(
+                    totalGameOdds.overOdds.index,
+                    MarketTypeEnum.TOTAL
+                  )}
                 />
                 <OddsButton
                   line={totalGameOdds.underOdds.odds}
@@ -214,7 +218,11 @@ export default function MainBetCard({
                       MarketTypeEnum.TOTAL
                     )
                   }
-                  label={totalGameOdds.line.toString()}
+                  label={`U${totalGameOdds.line}`}
+                  selected={isSelected(
+                    totalGameOdds.underOdds.index,
+                    MarketTypeEnum.TOTAL
+                  )}
                 />
               </View>
             )}

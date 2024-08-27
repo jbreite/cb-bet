@@ -13,7 +13,7 @@ export default function TeamInfo({
       style={{ flex: 1, flexDirection: "row", alignItems: "center", gap: 4 }}
     >
       <Image source={teamImage} style={styles.imageStyle} />
-      <SfText familyType="medium" style={{ fontSize: 14, flex: 1 }}>
+      <SfText familyType="medium" style={{ fontSize: 14, flex: 1,  }} numberOfLines={2}>
         {teamName}
       </SfText>
     </View>

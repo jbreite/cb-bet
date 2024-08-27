@@ -23,6 +23,7 @@ import {
   getMarketOutcomeText,
   getMarketTypeName,
 } from "@/utils/overtime/ui/markets";
+import { router } from "expo-router";
 
 //TODO: Need a failure reason and show the error message.
 //TODO: When refetching quote or changing input needs to clear the error.
@@ -102,9 +103,6 @@ export default function BetTab({
       await placeBet();
 
       //Clean ups after a bet is placed
-      setUserBetsAtom([]);
-      setBetAmount("$0");
-      setIsKeyboardVisible(false);
     } catch (error) {
       console.error("Error placing bet:", error);
       Alert.alert("Error", "Failed to place bet. Please try again.");
@@ -136,6 +134,13 @@ export default function BetTab({
   if (writeError) {
     console.log("writeError", writeError);
     console.log("writeFailureReason", writeFailureReason);
+  }
+
+  if (transactionSuccess) {
+    setUserBetsAtom([]);
+    setBetAmount("$0");
+    setIsKeyboardVisible(false);
+    router.push("/(auth)/(tabs)/bets");
   }
 
   return (
