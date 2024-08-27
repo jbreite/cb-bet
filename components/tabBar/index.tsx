@@ -4,6 +4,7 @@ import {
   StyleSheet,
   LayoutChangeEvent,
   TouchableWithoutFeedback,
+  useWindowDimensions,
 } from "react-native";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { userBetsAtom } from "@/lib/atom/atoms";
@@ -13,6 +14,9 @@ import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
+  FadeIn,
+  FadeOut,
+  LinearTransition,
 } from "react-native-reanimated";
 import TabButton from "./TabButton";
 import BetTab from "./BetTab";
@@ -21,6 +25,8 @@ import { handleBetAmountChange } from "../keyboard/handleKeyboardInput";
 
 //TODO: Need to make an interpoltation of the tab bar and keyboard so they move together...
 // See - https://www.notion.so/Bet-Tab-Animations-ac77704a6dd44060a67f75fe8100e4e5?pvs=4
+
+//TODO: Just make sure after placing bet everything is reset
 
 export default function TabBar({
   state,
@@ -32,7 +38,9 @@ export default function TabBar({
   const { bottom } = useSafeAreaInsets();
   const tabBarHeight = useSharedValue(0);
   const keyboardHeight = useSharedValue(0);
+  const [isKeyboardVisibleState, setIsKeyboardVisibleState] = useState(false);
   const isKeyboardVisible = useSharedValue(false);
+  const { height: screenHeight } = useWindowDimensions();
 
   const numberOfBets = userBetsAtomData.length;
 
@@ -49,6 +57,7 @@ export default function TabBar({
 
   const toggleKeyboardVisibility = () => {
     isKeyboardVisible.value = !isKeyboardVisible.value;
+    setIsKeyboardVisibleState(!isKeyboardVisibleState);
   };
 
   const rBetTabStyle = useAnimatedStyle(() => {
@@ -77,6 +86,7 @@ export default function TabBar({
       ],
     };
   });
+
   const handleKeyboardButtonPress = useCallback(
     (value: KeyboardButtonItemType) => {
       setBetAmount((prev) => handleBetAmountChange(prev, value));
@@ -84,13 +94,20 @@ export default function TabBar({
     []
   );
 
-  const hideKeyboard = () => {
-    isKeyboardVisible.value = false;
-  };
-
   return (
     <View style={styles.container}>
-      {/* This isn't going to work since when it goes away then it would need a exiting or something */}
+      {isKeyboardVisibleState === true && (
+        <Animated.View
+          style={{
+            height: screenHeight,
+            backgroundColor: "rgba(0, 0, 0, 0.2)",
+          }}
+          onTouchEnd={toggleKeyboardVisibility}
+          layout={LinearTransition}
+          entering={FadeIn}
+          exiting={FadeOut}
+        />
+      )}
       {numberOfBets !== 0 && (
         <Animated.View style={[styles.betTabContainer, rBetTabStyle]}>
           <BetTab
@@ -111,6 +128,7 @@ export default function TabBar({
       >
         <ButtonGrid onButtonPressed={handleKeyboardButtonPress} />
       </Animated.View>
+
       <Animated.View style={[styles.tabBarContainer]} onLayout={onTabBarLayout}>
         <View
           style={[styles.lowerTabBarContainer, { paddingBottom: bottom + 20 }]}
