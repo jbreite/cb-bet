@@ -1,13 +1,17 @@
 import { ImageSourcePropType } from "react-native";
+import { LeagueEnum } from "../enums/sport";
 
 // Import all team logos
 
 const pathToEplLogos = "../../../assets/images/sportsLogos/epl";
+const pathToNcaafLogos = "../../../assets/images/sportsLogos/ncaaf";
 
 const teamLogos: { [key: string]: ImageSourcePropType } = {
+  //EPL
+  "11-default": require(`${pathToEplLogos}/11-default.png`),
   "afc-bournemouth": require(`${pathToEplLogos}/afc-bournemouth.webp`),
   "arsenal-fc": require(`${pathToEplLogos}/arsenal-fc.webp`),
-  "aston-villa": require(`${pathToEplLogos}/aston-villa-fc.webp`),
+  "aston-villa-fc": require(`${pathToEplLogos}/aston-villa-fc.webp`),
   bournemouth: require(`${pathToEplLogos}/bournemouth.webp`),
   "brentford-fc": require(`${pathToEplLogos}/brentford-fc.webp`),
   brentford: require(`${pathToEplLogos}/brentford.webp`),
@@ -32,12 +36,109 @@ const teamLogos: { [key: string]: ImageSourcePropType } = {
   "west-ham-united-fc": require(`${pathToEplLogos}/west-ham-united-fc.webp`),
   "wolverhampton-wanderers-fc": require(`${pathToEplLogos}/wolverhampton-wanderers-fc.webp`),
   wolverhampton: require(`${pathToEplLogos}/wolverhampton.webp`),
-};
 
+  //NCAAF
+  "1-default": require(`${pathToNcaafLogos}/1-default.png`),
+  "texas-state-bobcats": require(`${pathToNcaafLogos}/texas-state-bobcats.webp`),
+  "charlotte-49ers": require(`${pathToNcaafLogos}/charlotte-49ers.webp`),
+  "troy-trojans": require(`${pathToNcaafLogos}/troy-trojans.webp`),
+  "washington-huskies": require(`${pathToNcaafLogos}/washington-huskies.webp`),
+  "iowa-state-cyclones": require(`${pathToNcaafLogos}/iowa-state-cyclones.webp`),
+  "smu-mustangs": require(`${pathToNcaafLogos}/smu-mustangs.webp`),
+  "wake-forest-demon-deacons": require(`${pathToNcaafLogos}/wake-forest-demon-deacons.webp`),
+  "ole-miss-rebels": require(`${pathToNcaafLogos}/ole-miss-rebels.webp`),
+  "kansas-jayhawks": require(`${pathToNcaafLogos}/kansas-jayhawks.webp`),
+  "georgia-tech": require(`${pathToNcaafLogos}/georgia-tech.webp`),
+  "clemson-tigers": require(`${pathToNcaafLogos}/clemson-tigers.webp`),
+  "missouri-tigers": require(`${pathToNcaafLogos}/missouri-tigers.webp`),
+  // "san-josé-state-spartans": require(`${pathToNcaafLogos}/san-josé-state-spartans.webp`),
+  "louisiana-tech-bulldogs": require(`${pathToNcaafLogos}/louisiana-tech-bulldogs.webp`),
+  "california-golden-bears": require(`${pathToNcaafLogos}/california-golden-bears.webp`),
+  "texas-a&m-aggies": require(`${pathToNcaafLogos}/texas-a&m-aggies.webp`),
+  "nebraska-cornhuskers": require(`${pathToNcaafLogos}/nebraska-cornhuskers.webp`),
+  "utep-miners": require(`${pathToNcaafLogos}/utep-miners.webp`),
+  "rutgers-scarlet-knights": require(`${pathToNcaafLogos}/rutgers-scarlet-knights.webp`),
+  "cincinnati-bearcats": require(`${pathToNcaafLogos}/cincinnati-bearcats.webp`),
+  "marshall-thundering-herd": require(`${pathToNcaafLogos}/marshall-thundering-herd.webp`),
+  "ohio-bobcats": require(`${pathToNcaafLogos}/ohio-bobcats.webp`),
+  "louisville-cardinals": require(`${pathToNcaafLogos}/louisville-cardinals.webp`),
+  "south-alabama-jaguars": require(`${pathToNcaafLogos}/south-alabama-jaguars.webp`),
+  "lsu-tigers": require(`${pathToNcaafLogos}/lsu-tigers.webp`),
+  "san-diego-state-aztecs": require(`${pathToNcaafLogos}/san-diego-state-aztecs.webp`),
+  "south-carolina-gamecocks": require(`${pathToNcaafLogos}/south-carolina-gamecocks.webp`),
+  "temple-owls": require(`${pathToNcaafLogos}/temple-owls.webp`),
+  "kentucky-wildcats": require(`${pathToNcaafLogos}/kentucky-wildcats.webp`),
+  "north-texas-mean-green": require(`${pathToNcaafLogos}/north-texas-mean-green.webp`),
+  "ucla-bruins": require(`${pathToNcaafLogos}/ucla-bruins.webp`),
+  "texas-longhorns": require(`${pathToNcaafLogos}/texas-longhorns.webp`),
+  "virginia-tech-hokies": require(`${pathToNcaafLogos}/virginia-tech-hokies.webp`),
+  "southern-miss-golden-eagles": require(`${pathToNcaafLogos}/southern-miss-golden-eagles.webp`),
+  "vanderbilt-commodores": require(`${pathToNcaafLogos}/vanderbilt-commodores.webp`),
+  "oregon-ducks": require(`${pathToNcaafLogos}/oregon-ducks.webp`),
+  "ohio-state-buckeyes": require(`${pathToNcaafLogos}/ohio-state-buckeyes.webp`),
+  "michigan-state-spartans": require(`${pathToNcaafLogos}/michigan-state-spartans.webp`),
+  "northern-illinois-huskies": require(`${pathToNcaafLogos}/northern-illinois-huskies.webp`),
+  "ball-state-cardinals": require(`${pathToNcaafLogos}/ball-state-cardinals.webp`),
+  "memphis-tigers": require(`${pathToNcaafLogos}/memphis-tigers.webp`),
+  "washington-state-cougars": require(`${pathToNcaafLogos}/washington-state-cougars.webp`),
+  "michigan-wolverines": require(`${pathToNcaafLogos}/michigan-wolverines.webp`),
+  "colorado-state-rams": require(`${pathToNcaafLogos}/colorado-state-rams.webp`),
+  "easternmichigan-eagles": require(`${pathToNcaafLogos}/easternmichigan-eagles.webp`),
+  "notre-dame-fighting-irish": require(`${pathToNcaafLogos}/notre-dame-fighting-irish.webp`),
+  "air-force-falcons": require(`${pathToNcaafLogos}/air-force-falcons.webp`),
+  "miami-(fl)-hurricanes": require(`${pathToNcaafLogos}/miami-(fl)-hurricanes.webp`),
+  "georgia-state-panthers": require(`${pathToNcaafLogos}/georgia-state-panthers.webp`),
+  "boise-state-broncos": require(`${pathToNcaafLogos}/boise-state-broncos.webp`),
+  "penn-state-nittany-lions": require(`${pathToNcaafLogos}/penn-state-nittany-lions.webp`),
+  "western-kentucky-hilltoppers": require(`${pathToNcaafLogos}/western-kentucky-hilltoppers.webp`),
+  "syracuse-orange": require(`${pathToNcaafLogos}/syracuse-orange.webp`),
+  "hawai_i-rainbow-warriors": require(`${pathToNcaafLogos}/hawai_i-rainbow-warriors.webp`),
+  "coastal-carolina-chanticleers": require(`${pathToNcaafLogos}/coastal-carolina-chanticleers.webp`),
+  "indiana-hoosiers": require(`${pathToNcaafLogos}/indiana-hoosiers.webp`),
+  "akron-zips": require(`${pathToNcaafLogos}/akron-zips.webp`),
+  "maryland-terrapins": require(`${pathToNcaafLogos}/maryland-terrapins.webp`),
+  "new-mexico-state-aggies": require(`${pathToNcaafLogos}/new-mexico-state-aggies.webp`),
+  "pittsburgh-panthers": require(`${pathToNcaafLogos}/pittsburgh-panthers.webp`),
+  "northwestern-wildcats": require(`${pathToNcaafLogos}/northwestern-wildcats.webp`),
+  "arizona-wildcats": require(`${pathToNcaafLogos}/arizona-wildcats.webp`),
+  "kent-state-golden-flashes": require(`${pathToNcaafLogos}/kent-state-golden-flashes.webp`),
+  "florida-atlantic-owls": require(`${pathToNcaafLogos}/florida-atlantic-owls.webp`),
+  "uab-blazers": require(`${pathToNcaafLogos}/uab-blazers.webp`),
+  "houston-cougars": require(`${pathToNcaafLogos}/houston-cougars.webp`),
+  "bowling-green-falcons": require(`${pathToNcaafLogos}/bowling-green-falcons.webp`),
+  "virginia-cavaliers": require(`${pathToNcaafLogos}/virginia-cavaliers.webp`),
+  "baylor-bears": require(`${pathToNcaafLogos}/baylor-bears.webp`),
+  "wyoming-cowboys": require(`${pathToNcaafLogos}/wyoming-cowboys.webp`),
+  "colorado-buffaloes": require(`${pathToNcaafLogos}/colorado-buffaloes.webp`),
+  "ul-monroe-warhawks": require(`${pathToNcaafLogos}/ul-monroe-warhawks.webp`),
+  "arizona-state-sun-devils": require(`${pathToNcaafLogos}/arizona-state-sun-devils.webp`),
+  "utah-utes": require(`${pathToNcaafLogos}/utah-utes.webp`),
+  "florida-international-panthers": require(`${pathToNcaafLogos}/florida-international-panthers.webp`),
+  "texas-tech-red-raiders": require(`${pathToNcaafLogos}/texas-tech-red-raiders.webp`),
+  "appalachian-state-mountaineers": require(`${pathToNcaafLogos}/appalachian-state-mountaineers.webp`),
+  "tulsa-golden-hurricane": require(`${pathToNcaafLogos}/tulsa-golden-hurricane.webp`),
+  "kansas-state-wildcats": require(`${pathToNcaafLogos}/kansas-state-wildcats.webp`),
+  "illinois-fighting-illini": require(`${pathToNcaafLogos}/illinois-fighting-illini.webp`),
+  "fresno-state-bulldogs": require(`${pathToNcaafLogos}/fresno-state-bulldogs.webp`),
+  "minnesota-golden-gophers": require(`${pathToNcaafLogos}/minnesota-golden-gophers.webp`),
+  "florida-gators": require(`${pathToNcaafLogos}/florida-gators.webp`),
+  "mississippi-state-bulldogs": require(`${pathToNcaafLogos}/mississippi-state-bulldogs.webp`),
+  "georgia-bulldogs": require(`${pathToNcaafLogos}/georgia-bulldogs.webp`),
+  "tcu-horned-frogs": require(`${pathToNcaafLogos}/tcu-horned-frogs.webp`),
+  "alabama-crimson-tide": require(`${pathToNcaafLogos}/alabama-crimson-tide.webp`),
+  "army-black-knights": require(`${pathToNcaafLogos}/army-black-knights.webp`),
+  "tulane-green-waves": require(`${pathToNcaafLogos}/tulane-green-waves.webp`),
+};
 // Default logo to use if a team's logo is not found
 const defaultLogo: ImageSourcePropType = require("../../../assets/images/icon.png");
 
-export function getImage(teamName: string): ImageSourcePropType {
+export function getImage(
+  teamName: string,
+  league: LeagueEnum
+): ImageSourcePropType {
+  console.log(teamName, league);
   const formattedName = teamName.toLowerCase().replace(/\s+/g, "-");
-  return teamLogos[formattedName] || defaultLogo;
+  return (
+    teamLogos[formattedName] || teamLogos[`${league}-default`] || defaultLogo
+  );
 }

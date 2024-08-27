@@ -137,6 +137,6 @@ export function getGameOdds(sportMarket: SportMarket): GameOdds {
   return result;
 }
 
-export const spreadLineHelper = (line: number): string => {
+export const negativePlusHelper = (line: number): string => {
   return line > 0 ? `+${line}` : `${line}`;
 };

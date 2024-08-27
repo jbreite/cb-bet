@@ -16,7 +16,6 @@ import { getGamesInfo } from "@/utils/overtime/queries/getGamesInfo";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { LeagueMap } from "@/constants/sports";
 import { SfText } from "@/components/SfThemedText";
-import { MarketTypeEnum } from "@/utils/overtime/enums/marketTypes";
 
 //TODO: Selected to show state if bet is selected
 //TODO: Need to make sure that this is the correct way to filter the data
@@ -32,7 +31,7 @@ export default function AuthenticatedIndex() {
   const tabBarHeight = useBottomTabBarHeight();
   console.log("tabBarHeight", tabBarHeight);
 
-  const bottomPadding = userBets.length > 0 ? 240 : 32; //TODO: Make this dynamic
+  const bottomPadding = userBets.length > 0 ? 240 : 32; //TODO: Make this dynamic. Shouold be a hook
 
   const {
     data: marketsData,

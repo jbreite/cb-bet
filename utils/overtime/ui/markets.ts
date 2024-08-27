@@ -1,7 +1,7 @@
 import { MarketTypeMap } from "@/constants/marketTypes";
 import { MarketTypeEnum } from "../enums/marketTypes";
 import { SportMarket, TradeData } from "../types/markets";
-import { spreadLineHelper } from "./helpers";
+import { negativePlusHelper } from "./helpers";
 
 export const getMarketTypeName = (marketType: MarketTypeEnum) => {
   const marketTypeInfo = MarketTypeMap[marketType];
@@ -10,31 +10,35 @@ export const getMarketTypeName = (marketType: MarketTypeEnum) => {
 
 export const getMarketOutcomeText = (
   sportMarket: SportMarket,
-  tradeData: TradeData
+  position: number,
+  typeId: MarketTypeEnum,
+  line: number
 ) => {
-  if (MarketTypeEnum.WINNER === tradeData.typeId) {
-    if (tradeData.position === 0) {
+  if (MarketTypeEnum.WINNER === typeId) {
+    if (position === 0) {
       return sportMarket.homeTeam;
     }
-    if (tradeData.position === 1) {
+    if (position === 1) {
       return sportMarket.awayTeam;
     }
-    if (tradeData.position === 2) {
+    if (position === 2) {
       return "Draw";
     }
-  } else if (MarketTypeEnum.SPREAD === tradeData.typeId) {
-    if (tradeData.position === 0) {
-      return `${sportMarket.homeTeam} ${spreadLineHelper(tradeData.line)}`;
+  } else if (MarketTypeEnum.SPREAD === typeId) {
+    if (position === 0) {
+      return `${sportMarket.homeTeam} ${negativePlusHelper(line)}`;
     }
-    if (tradeData.position === 1) {
-      return `${sportMarket.awayTeam} ${spreadLineHelper(tradeData.line * -1)}`;
+    if (position === 1) {
+      return `${sportMarket.awayTeam} ${negativePlusHelper(line * -1)}`;
     }
-  } else if (MarketTypeEnum.TOTAL === tradeData.typeId) {
-    if (tradeData.position === 0) {
-      return `Over ${tradeData.line}`;
+  } else if (MarketTypeEnum.TOTAL === typeId) {
+    if (position === 0) {
+      return `Over ${line}`;
     }
-    if (tradeData.position === 1) {
-      return `Under ${tradeData.line}`;
+    if (position === 1) {
+      return `Under ${line}`;
     }
+  } else {
+    return "";
   }
 };

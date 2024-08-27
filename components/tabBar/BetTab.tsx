@@ -78,7 +78,12 @@ export default function BetTab({
     : "";
 
   const marketOutcomeText = firstBet
-    ? getMarketOutcomeText(firstBet.sportMarket, firstBet.tradeData)
+    ? getMarketOutcomeText(
+        firstBet.sportMarket,
+        firstBet.tradeData.position,
+        firstBet.tradeData.typeId,
+        firstBet.tradeData.line
+      )
     : "";
 
   const {
