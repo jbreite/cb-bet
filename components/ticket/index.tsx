@@ -37,8 +37,8 @@ export default function TicketView({ ticket }: { ticket: Ticket }) {
   const homeTeam = ticket.sportMarkets[0].homeTeam;
   const awayTeam = ticket.sportMarkets[0].awayTeam;
 
-  const homeTeamImage = getImage(homeTeam);
-  const awayTeamImage = getImage(awayTeam);
+  const homeTeamImage = getImage(homeTeam, ticket.sportMarkets[0].leagueId);
+  const awayTeamImage = getImage(awayTeam, ticket.sportMarkets[0].leagueId);
 
   return (
     <View>

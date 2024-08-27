@@ -25,8 +25,8 @@ export default function MainBetCard({
 }) {
   const [userBets] = useAtom(userBetsAtom);
 
-  const homeTeamImage = getImage(sportMarket.homeTeam);
-  const awayTeamImage = getImage(sportMarket.awayTeam);
+  const homeTeamImage = getImage(sportMarket.homeTeam, sportMarket.leagueId);
+  const awayTeamImage = getImage(sportMarket.awayTeam, sportMarket.leagueId);
 
   const isLeagueDrawAvailable = getLeagueIsDrawAvailable(sportMarket.leagueId);
 
