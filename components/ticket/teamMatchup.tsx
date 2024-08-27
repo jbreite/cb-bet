@@ -11,7 +11,7 @@ export default function TeamMatchup({
   return (
     <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
       <Image source={teamImage} style={{ width: 16, height: 16 }} />
-      <SfText familyType="medium" style={{ fontSize: 16 }}>
+      <SfText familyType="medium" style={{ fontSize: 14 }} numberOfLines={1}>
         {teamName}
       </SfText>
     </View>

@@ -6,11 +6,17 @@ import { CB_BET_SUPPORTED_NETWORK_IDS } from "@/constants/Constants";
 import GeneralSpinningLoader from "@/components/GeneralSpinningLoader";
 import GeneralErrorMessage from "@/components/GeneralErrorMessage";
 import TicketView from "@/components/ticket";
-import { Ticket } from "@/utils/overtime/types/markets";
 import { SfText } from "@/components/SfThemedText";
+import { userBetsAtom } from "@/lib/atom/atoms";
+import { useAtom } from "jotai";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
 export default function Bets() {
   const { address } = useAccount();
+  const [userBets] = useAtom(userBetsAtom);
+
+  const tabBarHeight = useBottomTabBarHeight();
+  const bottomPadding = userBets.length > 0 ? 240 : 32; //TODO: Make this dynamic. Shouold be a hook
 
   const {
     data: userHistoryData,
@@ -31,40 +37,48 @@ export default function Bets() {
   } else if (userHistoryData) {
     console.log(JSON.stringify(userHistoryData));
     userHistoryView = (
-      <ScrollView contentContainerStyle={{ gap: 16, paddingHorizontal: 24 }}>
-        {userHistoryData.claimable.length !== 0 && (
-          <View>
-            <SfText style={styles.titleText} familyType="semibold">
-              Claimable
-            </SfText>
-            {userHistoryData.claimable.map((ticket) => (
-              <TicketView key={ticket.id} ticket={ticket} />
-            ))}
-          </View>
-        )}
+      <View style={{ flex: 1 }}>
+        <ScrollView
+          contentContainerStyle={{
+            gap: 16,
+            paddingHorizontal: 24,
+            paddingBottom: tabBarHeight + bottomPadding,
+          }}
+        >
+          {userHistoryData.claimable.length !== 0 && (
+            <View style={styles.listContainer}>
+              <SfText style={styles.titleText} familyType="semibold">
+                Claimable
+              </SfText>
+              {userHistoryData.claimable.map((ticket) => (
+                <TicketView key={ticket.id} ticket={ticket} />
+              ))}
+            </View>
+          )}
 
-        {userHistoryData.open.length !== 0 && (
-          <View>
-            <SfText style={styles.titleText} familyType="semibold">
-              Open
-            </SfText>
-            {userHistoryData.open.map((ticket) => (
-              <TicketView key={ticket.id} ticket={ticket} />
-            ))}
-          </View>
-        )}
+          {userHistoryData.open.length !== 0 && (
+            <View style={styles.listContainer}>
+              <SfText style={styles.titleText} familyType="semibold">
+                Open
+              </SfText>
+              {userHistoryData.open.map((ticket) => (
+                <TicketView key={ticket.id} ticket={ticket} />
+              ))}
+            </View>
+          )}
 
-        {userHistoryData.closed.length !== 0 && (
-          <View>
-            <SfText style={styles.titleText} familyType="semibold">
-              Closed
-            </SfText>
-            {userHistoryData.closed.map((ticket) => (
-              <TicketView key={ticket.id} ticket={ticket} />
-            ))}
-          </View>
-        )}
-      </ScrollView>
+          {userHistoryData.closed.length !== 0 && (
+            <View style={styles.listContainer}>
+              <SfText style={styles.titleText} familyType="semibold">
+                Closed
+              </SfText>
+              {userHistoryData.closed.map((ticket) => (
+                <TicketView key={ticket.id} ticket={ticket} />
+              ))}
+            </View>
+          )}
+        </ScrollView>
+      </View>
     );
   }
   return (
@@ -79,6 +93,10 @@ export default function Bets() {
 }
 
 const styles = StyleSheet.create({
+  listContainer: {
+    flex: 1,
+    gap: 16,
+  },
   titleText: {
     fontSize: 24,
   },

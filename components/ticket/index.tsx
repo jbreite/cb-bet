@@ -1,4 +1,4 @@
-import { View, Image } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { Ticket } from "../../utils/overtime/types/markets";
 import { SfText } from "../SfThemedText";
 import {
@@ -6,7 +6,10 @@ import {
   formatCurrency,
 } from "@/utils/overtime/ui/beyTabHelpers";
 import { negativePlusHelper } from "@/utils/overtime/ui/helpers";
-import { getMarketOutcomeText } from "@/utils/overtime/ui/markets";
+import {
+  getMarketOutcomeText,
+  getMarketTypeName,
+} from "@/utils/overtime/ui/markets";
 import { getImage } from "@/utils/overtime/ui/images";
 import TeamMatchup from "./teamMatchup";
 
@@ -40,8 +43,21 @@ export default function TicketView({ ticket }: { ticket: Ticket }) {
   const homeTeamImage = getImage(homeTeam, ticket.sportMarkets[0].leagueId);
   const awayTeamImage = getImage(awayTeam, ticket.sportMarkets[0].leagueId);
 
+  const betTypeName =
+    numberOfMarkets > 1
+      ? `${numberOfMarkets} PARLAY`
+      : getMarketTypeName(ticket.sportMarkets[0].typeId);
+
   return (
-    <View>
+    <View
+      style={{
+        borderWidth: 2,
+        borderColor: "#E3E3E3",
+        borderRadius: 20,
+        borderCurve: "continuous",
+        padding: 16,
+      }}
+    >
       <View
         style={{
           flexDirection: "row",
@@ -49,40 +65,50 @@ export default function TicketView({ ticket }: { ticket: Ticket }) {
           alignItems: "center",
         }}
       >
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-          <View
-            style={{
-              width: 40,
-              height: 40,
-              backgroundColor: "red",
-              borderRadius: 100,
-              borderCurve: "continuous",
-            }}
-          />
-          <View>
-            <SfText familyType="semibold" style={{ fontSize: 20 }}>
-              {ticketTitle}
-            </SfText>
-            <View
-              style={{ flexDirection: "row", gap: 4, alignItems: "center" }}
-            >
-              <TeamMatchup teamName={awayTeam} teamImage={awayTeamImage} />
-              <SfText familyType="medium" style={{ fontSize: 16 }}>
-                @
-              </SfText>
-              <TeamMatchup teamName={homeTeam} teamImage={homeTeamImage} />
-            </View>
-          </View>
+        <View style={styles.indHeadingTextContainer}>
+          <SfText
+            familyType="semibold"
+            style={{ fontSize: 20, flex: 1 }}
+            numberOfLines={1}
+            ellipsizeMode="middle"
+          >
+            {ticketTitle}
+          </SfText>
+          <SfText familyType="medium" style={{ fontSize: 16 }}>
+            {betTypeName}
+          </SfText>
         </View>
-        <View style={{ gap: 4 }}>
-          <SfText style={{ fontSize: 16, textAlign: "right" }}>
-            To Win:{formattedPayout}
+
+        <View style={styles.indHeadingTextContainer}>
+          <SfText
+            familyType="medium"
+            style={{ fontSize: 16, textAlign: "right" }}
+          >
+            To win {formattedPayout}
           </SfText>
           <SfText style={{ fontSize: 16, textAlign: "right" }}>
             {americanOdds}
           </SfText>
         </View>
       </View>
+      <View
+        style={{
+          gap: 4,
+          alignItems: "center",
+        }}
+      >
+        <TeamMatchup teamName={awayTeam} teamImage={awayTeamImage} />
+        <SfText familyType="medium" style={{ fontSize: 16 }}>
+          @
+        </SfText>
+        <TeamMatchup teamName={homeTeam} teamImage={homeTeamImage} />
+      </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  indHeadingTextContainer: {
+    gap: 4,
+  },
+});
