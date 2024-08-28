@@ -48,14 +48,14 @@ export const getFungibles = async ({
     method: "GET",
     headers: {
       accept: "application/json",
-      authorization: `Basic ${btoa(API_KEY || "")}`,
+      authorization: 'Basic emtfZGV2XzNlNTBlZTQ0NzM5NDQwMjNhN2VlY2Y5YzJmODFkZGVjOg=='
     },
   };
 
-  //   // Log headers without sensitive information
-  //   console.log("Request headers:", {
-  //     options,
-  //   });
+    // Log headers without sensitive information
+    console.log("Request headers:", {
+      options,
+    });
   try {
     const response = await fetch(url, options);
     if (!response.ok) {

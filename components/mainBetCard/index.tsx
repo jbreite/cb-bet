@@ -11,6 +11,7 @@ import { userBetsAtom } from "@/lib/atom/atoms";
 import { useAtom } from "jotai";
 import { SfText } from "../SfThemedText";
 import { getMarketTypeName } from "@/utils/overtime/ui/markets";
+import { convertUnixToFormattedDate } from "@/utils/overtime/ui/date";
 
 const ODDS_GRID_GAP = 4;
 
@@ -28,14 +29,14 @@ export default function MainBetCard({
   const homeTeamImage = getImage(sportMarket.homeTeam, sportMarket.leagueId);
   const awayTeamImage = getImage(sportMarket.awayTeam, sportMarket.leagueId);
 
+  const formattedDate = convertUnixToFormattedDate(sportMarket.maturity);
+
   const isLeagueDrawAvailable = getLeagueIsDrawAvailable(sportMarket.leagueId);
 
   const gameOdds = getGameOdds(sportMarket);
 
   const winnerGameOdds = gameOdds[MarketTypeEnum.WINNER];
-  console.log("winnerGameOdds", winnerGameOdds);
   const spreadGameOdds = gameOdds[MarketTypeEnum.SPREAD];
-  console.log("spreadGameOdds", spreadGameOdds);
   const totalGameOdds = gameOdds[MarketTypeEnum.TOTAL];
 
   const isSelected = (index: number, marketType: MarketTypeEnum) => {
@@ -52,6 +53,7 @@ export default function MainBetCard({
       onPress={onPress}
       style={{
         marginVertical: 12,
+        gap: 8,
       }}
     >
       <View
@@ -61,7 +63,7 @@ export default function MainBetCard({
           gap: 4,
         }}
       >
-        <View style={{ flex: 1, maxWidth: "35%" }}>
+        <View style={{ flex: 1, maxWidth: "35%", gap: 4 }}>
           <TeamInfo teamImage={awayTeamImage} teamName={sportMarket.awayTeam} />
           <TeamDivider />
           <TeamInfo teamImage={homeTeamImage} teamName={sportMarket.homeTeam} />
@@ -229,6 +231,7 @@ export default function MainBetCard({
           </View>
         )}
       </View>
+      <SfText familyType="medium">{formattedDate}</SfText>
     </Pressable>
   );
 }

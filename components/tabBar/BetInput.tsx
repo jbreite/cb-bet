@@ -30,7 +30,7 @@ export default function BetInput({
         onPress={onButtonPress}
         isLoading={isLoading}
         disabled={isDisabled}
-        style={{ flex: 1, padding: 12 }}
+        style={{ flex: 3 / 2, padding: 12 }}
       />
     </View>
   );

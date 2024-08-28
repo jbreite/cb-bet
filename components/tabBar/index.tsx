@@ -3,7 +3,6 @@ import {
   View,
   StyleSheet,
   LayoutChangeEvent,
-  TouchableWithoutFeedback,
   useWindowDimensions,
 } from "react-native";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
@@ -55,9 +54,6 @@ export default function TabBar({
   const onKeyboardLayout = useCallback((event: LayoutChangeEvent) => {
     keyboardHeight.value = event.nativeEvent.layout.height;
   }, []);
-
-  console.log("keyboardHeight", keyboardHeight.value);
-  console.log("tabBarHeight", tabBarHeight.value);
 
   const toggleKeyboardVisibility = () => {
     isKeyboardVisible.value = !isKeyboardVisible.value;

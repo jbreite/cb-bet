@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import { Alert, StyleSheet, Text, View } from "react-native";
 import { useAtom } from "jotai";
 import { userBetsAtom } from "@/lib/atom/atoms";
-import { useQuery } from "@tanstack/react-query";
 import {
   ErrorQuoteData,
-  getQuote,
+  QuoteData,
   SuccessfulQuoteData,
 } from "@/utils/overtime/queries/getQuote";
 import { usePlaceBet } from "@/hooks/bets/usePlaceBet";
@@ -26,6 +25,8 @@ import {
 import { router } from "expo-router";
 import { useUSDCBal } from "@/hooks/tokens/useUSDCBal";
 import { useQuote } from "@/hooks/bets/useQuote";
+import { usePlaceBetBetter } from "@/hooks/bets/usePlaceBetBetter";
+import { useCapabilities } from "wagmi/experimental";
 
 //TODO: Need a failure reason and show the error message.
 //TODO: When refetching quote or changing input needs to clear the error.
@@ -50,24 +51,31 @@ export default function BetTab({
   const numberBets = userBetsAtomData.length;
   const tradeDataArray = userBetsAtomData.map((bet) => bet.tradeData);
 
+  const { data: capabilities } = useCapabilities();
+
+  console.log("capabilities", capabilities);
+
+  const numberBetAmount = parseFloat(betAmount.replace("$", ""));
+  console.log("numberBetAmount", numberBetAmount);
+
   const { data: quoteObject, isLoading: quoteLoading } = useQuote(
     betAmount,
     tradeDataArray
   );
 
-  // const {
-  //   data: usdcBal,
-  //   isLoading: usdcBalLoading,
-  //   isError: usdcBalError,
-  // } = useUSDCBal();
+  const {
+    placeBet,
+    allowanceError,
+    callsStatus,
+    writeContractsIsPending,
+    writeContractsIsError,
+  } = usePlaceBetBetter();
 
-  // if (usdcBalError) {
-  //   console.log("usdcBalError", usdcBalError);
-  // } else if (usdcBal) {
-  //   console.log("usdcBal", usdcBal);
-  // } else if (usdcBalLoading) {
-  //   console.log("usdcBalLoading", usdcBalLoading);
-  // }
+  const {
+    balance: usdcBalance,
+    isLoading: usdcBalLoading,
+    isError: usdcBalError,
+  } = useUSDCBal();
 
   //TODO: Need to handle the case where there are an array of bets.
   const firstBet = userBetsAtomData[0];
@@ -85,32 +93,24 @@ export default function BetTab({
       )
     : "";
 
-  const {
-    placeBet,
-    writeError,
-    writePending,
-    writeFailureReason,
-    waitLoading,
-    transactionSuccess,
-  } = usePlaceBet({
-    quoteObject: quoteObject,
-    tradeData: tradeDataArray,
-  });
+  const onBetSuccess = () => {
+    console.log("Bet placed successfully!");
+    setUserBetsAtom([]);
+    // Not sure this is right
+    isKeyboardVisible.value = false;
+    setIsKeyboardVisible(false);
 
-  const handleBet = async () => {
+    setBetAmount("$");
+    router.push("/bets");
+  };
+
+  const handlePlaceBet = () => {
     if (!quoteObject) {
       Alert.alert("Error", "Quote data is not available");
       return;
     }
 
-    try {
-      await placeBet();
-
-      //Clean ups after a bet is placed
-    } catch (error) {
-      console.error("Error placing bet:", error);
-      Alert.alert("Error", "Failed to place bet. Please try again.");
-    }
+    placeBet(quoteObject, tradeDataArray, onBetSuccess);
   };
 
   const isSuccessfulQuoteObject = (
@@ -127,25 +127,23 @@ export default function BetTab({
   const formattedAmericanOdds = formatAmericanOdds(americanOdds);
   const tenDollarBetOutcome = calculateBetOutcome(americanOdds, 10);
 
+  console.log("usdcBalance", usdcBalance);
+  const getWinText = (quoteObject: QuoteData | undefined) => {
+    if (quoteObject && isSuccessfulQuoteObject(quoteObject.quoteData)) {
+      return `To Win: ${formatCurrency({
+        amount: quoteObject.quoteData.potentialProfit.usd,
+        omitDecimalsForWholeNumbers: true,
+      })}`;
+    }
+    return "To Win";
+  };
+
   const buttonText =
-    quoteObject && isSuccessfulQuoteObject(quoteObject.quoteData)
-      ? `To Win: ${formatCurrency({
-          amount: quoteObject.quoteData.potentialProfit.usd,
-          omitDecimalsForWholeNumbers: true,
-        })}`
-      : "To Win";
+    usdcBalance && numberBetAmount > usdcBalance.value
+      ? "Not enough Funds"
+      : getWinText(quoteObject);
 
-  if (writeError) {
-    console.log("writeError", writeError);
-    console.log("writeFailureReason", writeFailureReason);
-  }
-
-  if (transactionSuccess) {
-    setUserBetsAtom([]);
-    setBetAmount("$0");
-    setIsKeyboardVisible(false);
-    router.push("/(auth)/(tabs)/bets");
-  }
+  const buttonLoadingText = getWinText(quoteObject);
 
   return (
     <View style={styles.container}>
@@ -204,20 +202,27 @@ export default function BetTab({
       <View style={{ gap: 8 }}>
         <BetInput
           buttonLabel={buttonText}
-          isLoadingText={buttonText}
+          isLoadingText={buttonLoadingText}
           betAmount={betAmount ?? "$"}
           setBetAmount={setBetAmount}
           onInputPress={() => setIsKeyboardVisible(!isKeyboardVisible.value)}
-          onButtonPress={handleBet}
-          isLoading={writePending || quoteLoading}
-          isDisabled={writePending || quoteLoading || betAmount == "$"}
+          onButtonPress={handlePlaceBet}
+          isLoading={writeContractsIsPending || quoteLoading}
+          isDisabled={
+            writeContractsIsPending ||
+            quoteLoading ||
+            numberBetAmount === 0 ||
+            numberBetAmount > usdcBalance.value
+          }
         />
         {quoteObject && !isSuccessfulQuoteObject(quoteObject.quoteData) && (
           <SfText>{quoteObject.quoteData.error}</SfText>
         )}
 
-        {writeFailureReason && (
-          <SfText>{extractFailureReason(writeFailureReason.toString())}</SfText>
+        {writeContractsIsError && (
+          <SfText>
+            {extractFailureReason(writeContractsIsError.toString())}
+          </SfText>
         )}
       </View>
     </View>
