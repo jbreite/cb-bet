@@ -2,10 +2,8 @@ import React, { useState } from "react";
 import { Alert, StyleSheet, Text, View } from "react-native";
 import { useAtom } from "jotai";
 import { userBetsAtom } from "@/lib/atom/atoms";
-import { useQuery } from "@tanstack/react-query";
 import {
   ErrorQuoteData,
-  getQuote,
   SuccessfulQuoteData,
 } from "@/utils/overtime/queries/getQuote";
 import { usePlaceBet } from "@/hooks/bets/usePlaceBet";
@@ -26,7 +24,6 @@ import {
 import { router } from "expo-router";
 import { useUSDCBal } from "@/hooks/tokens/useUSDCBal";
 import { useQuote } from "@/hooks/bets/useQuote";
-import { useReadAllowance } from "@/hooks/bets/useReadAllowance";
 import { usePlaceBetBetter } from "@/hooks/bets/usePlaceBetBetter";
 
 //TODO: Need a failure reason and show the error message.
@@ -59,8 +56,6 @@ export default function BetTab({
 
   const {
     placeBet,
-    allowance,
-    refetchAllowance,
     allowanceError,
     callsStatus,
     writeContractsIsPending,
@@ -106,7 +101,10 @@ export default function BetTab({
     // Assuming you have quoteObject and tradeData available
     placeBet(quoteObject, tradeDataArray, () => {
       console.log("Bet placed successfully!");
-      // Perform any other actions on success
+      setUserBetsAtom([]);
+      setIsKeyboardVisible(false);
+      setBetAmount("$");
+      router.push("/bets");
     });
   };
 

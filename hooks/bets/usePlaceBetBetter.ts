@@ -20,7 +20,12 @@ export const usePlaceBetBetter = () => {
     refetch: refetchAllowance,
     allowanceError,
   } = useReadAllowance();
-  const { writeContracts, data: writeContractsData, isPending: writeContractsIsPending, isError: writeContractsIsError } = useWriteContracts();
+  const {
+    writeContracts,
+    data: writeContractsData,
+    isPending: writeContractsIsPending,
+    isError: writeContractsIsError,
+  } = useWriteContracts();
 
   const { data: callsStatus } = useCallsStatus({
     id: writeContractsData as string,
@@ -78,20 +83,29 @@ export const usePlaceBetBetter = () => {
       ],
     };
 
+    if (!allowance) {
+      console.log("No allowance... could just be undefined");
+    }
+
     let contracts = [];
     if (buyInAmount > allowance) {
-        console.log("Hi")
       contracts = [approvalContractInput, betContractInput];
     } else {
       contracts = [betContractInput];
     }
 
     writeContracts({
+      //TODO: Clean up these types
       contracts: contracts,
-      onSuccess: () => {
+      onSuccess: (data: any) => {
+        console.log("writeContracts onSuccess called", data);
         if (onSuccess) {
+          console.log("Calling provided onSuccess callback");
           onSuccess();
         }
+      },
+      onError: (error: any) => {
+        console.error("writeContracts error:", error);
       },
     });
   };
@@ -106,7 +120,3 @@ export const usePlaceBetBetter = () => {
     writeContractsIsError,
   };
 };
-
-//4. If the betInput is less than the allowance, then we can place the bet with just useWriteContact
-//NOT SURE IF NEEDED OR NOT RIGHT NOW, BUT WILL LEAVE JUST DEALING WITH ONE FOR NOW
-//writeContract(betContractInput);
