@@ -24,14 +24,14 @@ import {
   getMarketTypeName,
 } from "@/utils/overtime/ui/markets";
 import { router } from "expo-router";
+import { useUSDCBal } from "@/hooks/tokens/useUSDCBal";
+import { useQuote } from "@/hooks/bets/useQuote";
 
 //TODO: Need a failure reason and show the error message.
 //TODO: When refetching quote or changing input needs to clear the error.
 //TODO: Need to BetTab have two states
 //TODO: Need a success state.
 //TODO: Need to clean up error messages after another fetch.
-
-const REFETCH_INTERVAL = 500000;
 
 interface BetTabProps {
   isKeyboardVisible: SharedValue<boolean>;
@@ -49,26 +49,25 @@ export default function BetTab({
   const [userBetsAtomData, setUserBetsAtom] = useAtom(userBetsAtom);
   const numberBets = userBetsAtomData.length;
   const tradeDataArray = userBetsAtomData.map((bet) => bet.tradeData);
-  const numberBetAmount = parseFloat(betAmount.slice(1));
-  console.log("numberBetAmount", numberBetAmount);
 
-  const {
-    data: quoteObject,
-    isLoading: quoteLoading,
-    isError: quoteError,
-  } = useQuery({
-    queryKey: ["quoteData", betAmount, tradeDataArray],
-    queryFn: () =>
-      getQuote({
-        buyInAmount: numberBetAmount,
-        tradeData: tradeDataArray,
-      }),
-    refetchInterval: REFETCH_INTERVAL,
-    enabled:
-      !isNaN(numberBetAmount) &&
-      numberBetAmount > 0 &&
-      tradeDataArray.length > 0,
-  });
+  const { data: quoteObject, isLoading: quoteLoading } = useQuote(
+    betAmount,
+    tradeDataArray
+  );
+
+  // const {
+  //   data: usdcBal,
+  //   isLoading: usdcBalLoading,
+  //   isError: usdcBalError,
+  // } = useUSDCBal();
+
+  // if (usdcBalError) {
+  //   console.log("usdcBalError", usdcBalError);
+  // } else if (usdcBal) {
+  //   console.log("usdcBal", usdcBal);
+  // } else if (usdcBalLoading) {
+  //   console.log("usdcBalLoading", usdcBalLoading);
+  // }
 
   //TODO: Need to handle the case where there are an array of bets.
   const firstBet = userBetsAtomData[0];
