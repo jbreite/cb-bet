@@ -3,7 +3,6 @@ import {
   View,
   StyleSheet,
   LayoutChangeEvent,
-  TouchableWithoutFeedback,
   useWindowDimensions,
 } from "react-native";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";

@@ -11,6 +11,7 @@ import { userBetsAtom } from "@/lib/atom/atoms";
 import { useAtom } from "jotai";
 import { SfText } from "../SfThemedText";
 import { getMarketTypeName } from "@/utils/overtime/ui/markets";
+import { convertUnixToFormattedDate } from "@/utils/overtime/ui/date";
 
 const ODDS_GRID_GAP = 4;
 
@@ -27,6 +28,8 @@ export default function MainBetCard({
 
   const homeTeamImage = getImage(sportMarket.homeTeam, sportMarket.leagueId);
   const awayTeamImage = getImage(sportMarket.awayTeam, sportMarket.leagueId);
+
+  const formattedDate = convertUnixToFormattedDate(sportMarket.maturity);
 
   const isLeagueDrawAvailable = getLeagueIsDrawAvailable(sportMarket.leagueId);
 
@@ -50,6 +53,7 @@ export default function MainBetCard({
       onPress={onPress}
       style={{
         marginVertical: 12,
+        gap: 8,
       }}
     >
       <View
@@ -227,6 +231,7 @@ export default function MainBetCard({
           </View>
         )}
       </View>
+      <SfText familyType="medium">{formattedDate}</SfText>
     </Pressable>
   );
 }

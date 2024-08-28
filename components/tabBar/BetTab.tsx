@@ -98,10 +98,11 @@ export default function BetTab({
       return;
     }
 
-    // Assuming you have quoteObject and tradeData available
     placeBet(quoteObject, tradeDataArray, () => {
       console.log("Bet placed successfully!");
       setUserBetsAtom([]);
+      // Not sure this is right
+      isKeyboardVisible.value = false; 
       setIsKeyboardVisible(false);
       setBetAmount("$");
       router.push("/bets");

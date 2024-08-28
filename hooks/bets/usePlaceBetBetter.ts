@@ -97,8 +97,7 @@ export const usePlaceBetBetter = () => {
     writeContracts({
       //TODO: Clean up these types
       contracts: contracts,
-      onSuccess: (data: any) => {
-        console.log("writeContracts onSuccess called", data);
+      onSuccess: () => {
         if (onSuccess) {
           console.log("Calling provided onSuccess callback");
           onSuccess();
