@@ -92,21 +92,24 @@ export default function BetTab({
       )
     : "";
 
+  const onBetSuccess = () => {
+    console.log("Bet placed successfully!");
+    setUserBetsAtom([]);
+    // Not sure this is right
+    isKeyboardVisible.value = false;
+    setIsKeyboardVisible(false);
+    
+    setBetAmount("$");
+    router.push("/bets");
+  };
+
   const handlePlaceBet = () => {
     if (!quoteObject) {
       Alert.alert("Error", "Quote data is not available");
       return;
     }
 
-    placeBet(quoteObject, tradeDataArray, () => {
-      console.log("Bet placed successfully!");
-      setUserBetsAtom([]);
-      // Not sure this is right
-      isKeyboardVisible.value = false; 
-      setIsKeyboardVisible(false);
-      setBetAmount("$");
-      router.push("/bets");
-    });
+    placeBet(quoteObject, tradeDataArray, onBetSuccess);
   };
 
   const isSuccessfulQuoteObject = (
