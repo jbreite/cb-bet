@@ -63,7 +63,7 @@ export default function MainBetCard({
           gap: 4,
         }}
       >
-        <View style={{ flex: 1, maxWidth: "35%" }}>
+        <View style={{ flex: 1, maxWidth: "35%", gap: 4 }}>
           <TeamInfo teamImage={awayTeamImage} teamName={sportMarket.awayTeam} />
           <TeamDivider />
           <TeamInfo teamImage={homeTeamImage} teamName={sportMarket.homeTeam} />
