@@ -35,7 +35,7 @@ export default function Bets() {
   } else if (userHistoryIsError) {
     userHistoryView = <GeneralErrorMessage errorMessage={"Error"} />;
   } else if (userHistoryData) {
-    console.log(JSON.stringify(userHistoryData));
+    // console.log(JSON.stringify(userHistoryData));
     userHistoryView = (
       <View style={{ flex: 1 }}>
         <ScrollView

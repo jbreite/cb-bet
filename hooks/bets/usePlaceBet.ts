@@ -1,14 +1,14 @@
 import { CB_BET_SUPPORTED_NETWORK_IDS } from "@/constants/Constants";
-import sportsAMMV2Contract from "@/constants/overtimeContracts";
+import sportsAMMV2Contract, {
+  DEFAULT_USDC_OPTIMISM,
+  REFERRAL_ADDRESS,
+  DEFAULT_SLIPPAGE,
+} from "@/constants/overtimeContracts";
 import { QuoteData } from "@/utils/overtime/queries/getQuote";
 import { TradeData } from "@/utils/overtime/types/markets";
 import { getTradeData } from "@/utils/overtime/ui/helpers";
 import { parseEther, parseUnits } from "viem";
 import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
-
-export const USDC_ADDRESS = "0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85";
-const REFERRAL_ADDRESS = "0x57B02589d6e24203FC43e442ce9A4803E290293b";
-const DEFAULT_SLIPPAGE = parseEther("0.02");
 
 export const usePlaceBet = ({
   quoteObject,
@@ -63,7 +63,7 @@ export const usePlaceBet = ({
         parsedTotalQuote,
         parsedSlippage,
         REFERRAL_ADDRESS,
-        USDC_ADDRESS,
+        DEFAULT_USDC_OPTIMISM,
         false,
       ],
     });

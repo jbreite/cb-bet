@@ -56,9 +56,6 @@ export default function TabBar({
     keyboardHeight.value = event.nativeEvent.layout.height;
   }, []);
 
-  console.log("keyboardHeight", keyboardHeight.value);
-  console.log("tabBarHeight", tabBarHeight.value);
-
   const toggleKeyboardVisibility = () => {
     isKeyboardVisible.value = !isKeyboardVisible.value;
     setIsKeyboardVisibleState(!isKeyboardVisibleState);

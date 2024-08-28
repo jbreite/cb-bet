@@ -5,7 +5,7 @@ import { useAccount, useDisconnect } from "wagmi";
 
 export default function AccountModal() {
   const { address } = useAccount();
-  console.log("address", address);
+
   const { disconnect } = useDisconnect();
 
   return (

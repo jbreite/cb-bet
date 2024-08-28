@@ -26,6 +26,8 @@ import {
 import { router } from "expo-router";
 import { useUSDCBal } from "@/hooks/tokens/useUSDCBal";
 import { useQuote } from "@/hooks/bets/useQuote";
+import { useReadAllowance } from "@/hooks/bets/useReadAllowance";
+import { usePlaceBetBetter } from "@/hooks/bets/usePlaceBetBetter";
 
 //TODO: Need a failure reason and show the error message.
 //TODO: When refetching quote or changing input needs to clear the error.
@@ -54,6 +56,16 @@ export default function BetTab({
     betAmount,
     tradeDataArray
   );
+
+  const {
+    placeBet,
+    allowance,
+    refetchAllowance,
+    allowanceError,
+    callsStatus,
+    writeContractsIsPending,
+    writeContractsIsError,
+  } = usePlaceBetBetter();
 
   // const {
   //   data: usdcBal,
@@ -85,32 +97,17 @@ export default function BetTab({
       )
     : "";
 
-  const {
-    placeBet,
-    writeError,
-    writePending,
-    writeFailureReason,
-    waitLoading,
-    transactionSuccess,
-  } = usePlaceBet({
-    quoteObject: quoteObject,
-    tradeData: tradeDataArray,
-  });
-
-  const handleBet = async () => {
+  const handlePlaceBet = () => {
     if (!quoteObject) {
       Alert.alert("Error", "Quote data is not available");
       return;
     }
 
-    try {
-      await placeBet();
-
-      //Clean ups after a bet is placed
-    } catch (error) {
-      console.error("Error placing bet:", error);
-      Alert.alert("Error", "Failed to place bet. Please try again.");
-    }
+    // Assuming you have quoteObject and tradeData available
+    placeBet(quoteObject, tradeDataArray, () => {
+      console.log("Bet placed successfully!");
+      // Perform any other actions on success
+    });
   };
 
   const isSuccessfulQuoteObject = (
@@ -134,18 +131,6 @@ export default function BetTab({
           omitDecimalsForWholeNumbers: true,
         })}`
       : "To Win";
-
-  if (writeError) {
-    console.log("writeError", writeError);
-    console.log("writeFailureReason", writeFailureReason);
-  }
-
-  if (transactionSuccess) {
-    setUserBetsAtom([]);
-    setBetAmount("$0");
-    setIsKeyboardVisible(false);
-    router.push("/(auth)/(tabs)/bets");
-  }
 
   return (
     <View style={styles.container}>
@@ -208,16 +193,20 @@ export default function BetTab({
           betAmount={betAmount ?? "$"}
           setBetAmount={setBetAmount}
           onInputPress={() => setIsKeyboardVisible(!isKeyboardVisible.value)}
-          onButtonPress={handleBet}
-          isLoading={writePending || quoteLoading}
-          isDisabled={writePending || quoteLoading || betAmount == "$"}
+          onButtonPress={handlePlaceBet}
+          isLoading={writeContractsIsPending || quoteLoading}
+          isDisabled={
+            writeContractsIsPending || quoteLoading || betAmount == "$"
+          }
         />
         {quoteObject && !isSuccessfulQuoteObject(quoteObject.quoteData) && (
           <SfText>{quoteObject.quoteData.error}</SfText>
         )}
 
-        {writeFailureReason && (
-          <SfText>{extractFailureReason(writeFailureReason.toString())}</SfText>
+        {writeContractsIsError && (
+          <SfText>
+            {extractFailureReason(writeContractsIsError.toString())}
+          </SfText>
         )}
       </View>
     </View>

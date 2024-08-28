@@ -136,7 +136,6 @@ export function getImage(
   teamName: string,
   league: LeagueEnum
 ): ImageSourcePropType {
-  console.log(teamName, league);
   const formattedName = teamName.toLowerCase().replace(/\s+/g, "-");
   return (
     teamLogos[formattedName] || teamLogos[`${league}-default`] || defaultLogo

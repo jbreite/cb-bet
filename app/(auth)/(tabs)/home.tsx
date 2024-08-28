@@ -26,11 +26,7 @@ const supportedLeagues = [LeagueEnum.NCAAF, LeagueEnum.NFL, LeagueEnum.EPL];
 
 export default function AuthenticatedIndex() {
   const [userBets, setUserBets] = useAtom(userBetsAtom);
-  const [BottomSheetMapAtomData] = useAtom(BottomSheetMapAtom);
-  console.log(BottomSheetMapAtomData);
   const tabBarHeight = useBottomTabBarHeight();
-  console.log("tabBarHeight", tabBarHeight);
-
   const bottomPadding = userBets.length > 0 ? 240 : 32; //TODO: Make this dynamic. Shouold be a hook
 
   const {
@@ -101,13 +97,12 @@ export default function AuthenticatedIndex() {
                   sportMarket={market}
                   onPress={() => console.log(JSON.stringify(market))}
                   onPressOddsButton={(index, marketType) => {
-                    console.log("index", index);
                     const tradeDataWithPosition = getTradeDataFromSportMarket(
                       market,
                       index,
                       marketType
                     );
-                    console.log("tradeDataWithPosition", tradeDataWithPosition);
+                    // console.log("tradeDataWithPosition", tradeDataWithPosition);
                     if (tradeDataWithPosition) {
                       handleMarketPress(market, tradeDataWithPosition);
                     }

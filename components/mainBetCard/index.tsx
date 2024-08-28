@@ -33,9 +33,7 @@ export default function MainBetCard({
   const gameOdds = getGameOdds(sportMarket);
 
   const winnerGameOdds = gameOdds[MarketTypeEnum.WINNER];
-  console.log("winnerGameOdds", winnerGameOdds);
   const spreadGameOdds = gameOdds[MarketTypeEnum.SPREAD];
-  console.log("spreadGameOdds", spreadGameOdds);
   const totalGameOdds = gameOdds[MarketTypeEnum.TOTAL];
 
   const isSelected = (index: number, marketType: MarketTypeEnum) => {
