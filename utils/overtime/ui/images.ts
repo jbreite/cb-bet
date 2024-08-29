@@ -131,6 +131,7 @@ const teamLogos: { [key: string]: ImageSourcePropType } = {
   "tulane-green-waves": require(`${pathToNcaafLogos}/tulane-green-waves.webp`),
 
   //NFL
+  "2-default": require(`${pathToNflLogos}/2-default.png`),
   "a.j.-brown": require(`${pathToNflLogos}/a.j.-brown.webp`),
   "adam-thielen": require(`${pathToNflLogos}/adam-thielen.webp`),
   "ahkello-witherspoon": require(`${pathToNflLogos}/ahkello-witherspoon.webp`),
