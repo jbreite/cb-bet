@@ -29,7 +29,7 @@ export default function TicketView({ ticket }: { ticket: Ticket }) {
 
   const ticketTitle =
     numberOfMarkets > 1
-      ? "PARLAY"
+      ? `${numberOfMarkets} Parlay`
       : getMarketOutcomeText(
           ticket.sportMarkets[0],
           ticket.sportMarkets[0].position,
@@ -37,55 +37,51 @@ export default function TicketView({ ticket }: { ticket: Ticket }) {
           ticket.sportMarkets[0].line
         );
 
-  const homeTeam = ticket.sportMarkets[0].homeTeam;
-  const awayTeam = ticket.sportMarkets[0].awayTeam;
-
-  const homeTeamImage = getImage(homeTeam, ticket.sportMarkets[0].leagueId);
-  const awayTeamImage = getImage(awayTeam, ticket.sportMarkets[0].leagueId);
-  const leagueName = ticket.sportMarkets[0].leagueName;
-
   const betTypeName =
     numberOfMarkets > 1
-      ? `${numberOfMarkets} PARLAY`
+      ? ticket.sportMarkets
+          .map((bet) =>
+            getMarketOutcomeText(bet, bet.position, bet.typeId, bet.line)
+          )
+          .join(", ") //TODO this could be more detailed but fine fo now
       : getMarketTypeName(ticket.sportMarkets[0].typeId);
 
   return (
     <View style={{ gap: 16 }}>
-      <View>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <View style={styles.indHeadingTextContainer}>
-            <SfText
-              familyType="semibold"
-              style={{ fontSize: 20, flex: 1 }}
-              numberOfLines={1}
-              ellipsizeMode="middle"
-            >
-              {ticketTitle}
-            </SfText>
-            <SfText familyType="medium" style={{ fontSize: 16 }}>
-              {betTypeName}
-            </SfText>
-          </View>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <View style={styles.indHeadingTextContainer}>
+          <SfText
+            familyType="semibold"
+            style={{ flex: 1, fontSize: 20 }}
+            numberOfLines={1}
+            ellipsizeMode="middle"
+          >
+            {ticketTitle}
+          </SfText>
+          <SfText familyType="medium" style={{ fontSize: 16 }}>
+            {betTypeName}
+          </SfText>
+        </View>
 
-          <View style={styles.indHeadingTextContainer}>
-            <SfText
-              familyType="medium"
-              style={{ fontSize: 16, textAlign: "right" }}
-            >
-              To win {formattedPayout}
-            </SfText>
-            <SfText style={{ fontSize: 16, textAlign: "right" }}>
-              {americanOdds}
-            </SfText>
-          </View>
+        <View style={styles.indHeadingTextContainer}>
+          <SfText
+            familyType="medium"
+            style={{ fontSize: 16, textAlign: "right" }}
+          >
+            To win {formattedPayout}
+          </SfText>
+          <SfText style={{ fontSize: 16, textAlign: "right" }}>
+            {americanOdds}
+          </SfText>
         </View>
       </View>
+
       <View
         style={{
           borderWidth: 2,
@@ -95,18 +91,25 @@ export default function TicketView({ ticket }: { ticket: Ticket }) {
           padding: 16,
         }}
       >
-        <View style={{ gap: 16 }}>
-          <SfText style={{ textAlign: "center", fontSize: 16 }}>
-            {leagueName}
-          </SfText>
-          <View
-            style={{ flexDirection: "row", justifyContent: "space-around" }}
-          >
-            <TeamMatchup teamName={homeTeam} teamImage={homeTeamImage} />
-
-            <TeamMatchup teamName={awayTeam} teamImage={awayTeamImage} />
+        {ticket.sportMarkets.map((market, index) => (
+          <View key={index} style={{ gap: 16 }}>
+            <SfText style={{ textAlign: "center", fontSize: 16 }}>
+              {market.leagueName}
+            </SfText>
+            <View
+              style={{ flexDirection: "row", justifyContent: "space-around" }}
+            >
+              <TeamMatchup
+                teamName={market.homeTeam}
+                teamImage={getImage(market.homeTeam, market.leagueId)}
+              />
+              <TeamMatchup
+                teamName={market.awayTeam}
+                teamImage={getImage(market.awayTeam, market.leagueId)}
+              />
+            </View>
           </View>
-        </View>
+        ))}
       </View>
     </View>
   );

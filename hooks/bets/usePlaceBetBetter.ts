@@ -14,6 +14,8 @@ import { getTradeData } from "@/utils/overtime/ui/helpers";
 import { ERC_20_ABI } from "@/utils/overtime/abi/ERC20_ABI";
 import { useWriteContracts, useCallsStatus } from "wagmi/experimental";
 
+//Ecample Parlay Transaction - https://optimistic.etherscan.io/tx/0x1d70dd8b569ca187661dcf60c5b4b1fc129b81093990611aaf6e70a048784327
+
 export const usePlaceBetBetter = () => {
   const {
     allowance,
@@ -44,6 +46,8 @@ export const usePlaceBetBetter = () => {
     if ("error" in quoteObject.quoteData) {
       throw new Error("Got an error quote Object");
     }
+
+    console.log("tradeData", tradeData);
 
     const parsedTotalQuote = parseEther(
       quoteObject.quoteData.totalQuote.normalizedImplied.toString()
@@ -82,6 +86,9 @@ export const usePlaceBetBetter = () => {
         false,
       ],
     };
+    console.log("writeContracts payload:", JSON.stringify(betContractInput, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    ));
 
     if (!allowance) {
       console.log("No allowance... could just be undefined");
@@ -108,7 +115,6 @@ export const usePlaceBetBetter = () => {
       },
     });
   };
-
   return {
     placeBet,
     allowance,

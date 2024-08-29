@@ -60,7 +60,7 @@ export function getTradeDataFromSportMarket(
   };
 }
 
-export function getTradeData(quoteTradeData: any[]) {
+export function getTradeData(quoteTradeData: TradeData[]) {
   return quoteTradeData.map((data) => ({
     ...data,
     line: Math.round(data.line * 100), // Keep as number, multiply by 100 and round

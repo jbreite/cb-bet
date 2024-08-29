@@ -1,6 +1,6 @@
 import { MarketTypeMap } from "@/constants/marketTypes";
 import { MarketTypeEnum } from "../enums/marketTypes";
-import { SportMarket, TradeData } from "../types/markets";
+import { SportMarket, TicketMarket } from "../types/markets";
 import { negativePlusHelper } from "./helpers";
 
 export const getMarketTypeName = (marketType: MarketTypeEnum) => {
@@ -9,7 +9,7 @@ export const getMarketTypeName = (marketType: MarketTypeEnum) => {
 };
 
 export const getMarketOutcomeText = (
-  sportMarket: SportMarket,
+  sportMarket: SportMarket | TicketMarket,
   position: number,
   typeId: MarketTypeEnum,
   line: number

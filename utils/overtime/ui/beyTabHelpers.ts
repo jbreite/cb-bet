@@ -92,6 +92,7 @@ export function formatCurrency({
 }
 
 export function extractFailureReason(logText: string): string {
+  console.log("logText", logText);
   const startPhrase = "reason:";
   const endPhrase = "Contract Call:";
 

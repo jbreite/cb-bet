@@ -49,7 +49,7 @@ export default function BetTab({
 }: BetTabProps) {
   const [userBetsAtomData, setUserBetsAtom] = useAtom(userBetsAtom);
   const numberBets = userBetsAtomData.length;
-  const tradeDataArray = userBetsAtomData.map((bet) => bet.tradeData);
+  const tradeData = userBetsAtomData.map((bet) => bet.tradeData);
 
   const { data: capabilities } = useCapabilities();
 
@@ -60,7 +60,7 @@ export default function BetTab({
 
   const { data: quoteObject, isLoading: quoteLoading } = useQuote(
     betAmount,
-    tradeDataArray
+    tradeData
   );
 
   const {
@@ -77,22 +77,33 @@ export default function BetTab({
     isError: usdcBalError,
   } = useUSDCBal();
 
-  //TODO: Need to handle the case where there are an array of bets.
   const firstBet = userBetsAtomData[0];
 
-  const betTypeName = firstBet
-    ? getMarketTypeName(firstBet.tradeData.typeId)
-    : "";
+  const betTypeName =
+    numberBets > 1
+      ? userBetsAtomData
+          .map((bet) =>
+            getMarketOutcomeText(
+              bet.sportMarket,
+              bet.tradeData.position,
+              bet.tradeData.typeId,
+              bet.tradeData.line
+            )
+          )
+          .join(", ") //TODO this could be more detailed but fine fo now
+      : getMarketTypeName(firstBet.tradeData.typeId);
 
-  const marketOutcomeText = firstBet
-    ? getMarketOutcomeText(
-        firstBet.sportMarket,
-        firstBet.tradeData.position,
-        firstBet.tradeData.typeId,
-        firstBet.tradeData.line
-      )
-    : "";
+  const marketOutcomeText =
+    numberBets > 1
+      ? `${numberBets} Game Parlay`
+      : getMarketOutcomeText(
+          firstBet.sportMarket,
+          firstBet.tradeData.position,
+          firstBet.tradeData.typeId,
+          firstBet.tradeData.line
+        );
 
+  //TODO: This is not working
   const onBetSuccess = () => {
     console.log("Bet placed successfully!");
     setUserBetsAtom([]);
@@ -110,7 +121,7 @@ export default function BetTab({
       return;
     }
 
-    placeBet(quoteObject, tradeDataArray, onBetSuccess);
+    placeBet(quoteObject, tradeData, onBetSuccess);
   };
 
   const isSuccessfulQuoteObject = (
@@ -127,7 +138,6 @@ export default function BetTab({
   const formattedAmericanOdds = formatAmericanOdds(americanOdds);
   const tenDollarBetOutcome = calculateBetOutcome(americanOdds, 10);
 
-  console.log("usdcBalance", usdcBalance);
   const getWinText = (quoteObject: QuoteData | undefined) => {
     if (quoteObject && isSuccessfulQuoteObject(quoteObject.quoteData)) {
       return `To Win: ${formatCurrency({
@@ -196,7 +206,7 @@ export default function BetTab({
             {formattedAmericanOdds}
           </SfText>
         </View>
-        <Text>{numberBets > 1 ? "Parlay".toUpperCase() : betTypeName}</Text>
+        <Text>{betTypeName}</Text>
       </View>
 
       <View style={{ gap: 8 }}>

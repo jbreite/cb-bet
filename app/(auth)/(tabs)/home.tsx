@@ -17,8 +17,6 @@ import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { LeagueMap } from "@/constants/sports";
 import { SfText } from "@/components/SfThemedText";
 
-//TODO: Selected to show state if bet is selected
-//TODO: Need to make sure that this is the correct way to filter the data
 //TODO: Add Refetching and refreshing the data
 //TODO: Add in game data with getGamesInfo()
 
@@ -40,22 +38,25 @@ export default function AuthenticatedIndex() {
 
   function handleMarketPress(market: SportMarket, tradeData: TradeData) {
     setUserBets((prevBets) => {
-      const existingBetIndex = prevBets.findIndex(
+      // Remove any existing bets for this game
+      const filteredBets = prevBets.filter(
+        (bet) => bet.sportMarket.gameId !== market.gameId
+      );
+
+      // Check if the new bet is already selected
+      const isNewBetSelected = prevBets.some(
         (bet) =>
           bet.sportMarket.gameId === market.gameId &&
           bet.tradeData.typeId === tradeData.typeId &&
           bet.tradeData.position === tradeData.position
       );
 
-      if (existingBetIndex !== -1) {
-        // If the bet already exists, remove it (toggle off)
-        return prevBets.filter((_, index) => index !== existingBetIndex);
+      if (isNewBetSelected) {
+        // If the new bet is already selected, just return the filtered bets (removing it)
+        return filteredBets;
       } else {
-        // If the bet doesn't exist, add it
-        return [
-          // ...prevBets,
-          { tradeData, sportMarket: market },
-        ];
+        // If the new bet is not selected, add it to the filtered bets
+        return [...filteredBets, { tradeData, sportMarket: market }];
       }
     });
   }

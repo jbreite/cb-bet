@@ -11,6 +11,8 @@ import { userBetsAtom } from "@/lib/atom/atoms";
 import { useAtom } from "jotai";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
+//TODO: Group tickets by gameId
+
 export default function Bets() {
   const { address } = useAccount();
   const [userBets] = useAtom(userBetsAtom);
@@ -35,7 +37,6 @@ export default function Bets() {
   } else if (userHistoryIsError) {
     userHistoryView = <GeneralErrorMessage errorMessage={"Error"} />;
   } else if (userHistoryData) {
-    // console.log(JSON.stringify(userHistoryData));
     userHistoryView = (
       <View style={{ flex: 1 }}>
         <ScrollView
