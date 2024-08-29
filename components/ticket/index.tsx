@@ -12,6 +12,7 @@ import {
 } from "@/utils/overtime/ui/markets";
 import { getImage } from "@/utils/overtime/ui/images";
 import TeamMatchup from "./teamMatchup";
+import { convertUnixToFormattedDate } from "@/utils/overtime/ui/date";
 
 const OPTIMISTIC_ETHERERSCAN_BASE_URL =
   "https://optimistic.etherscan.io/address/";
@@ -47,14 +48,8 @@ export default function TicketView({ ticket }: { ticket: Ticket }) {
       : getMarketTypeName(ticket.sportMarkets[0].typeId);
 
   return (
-    <View style={{ gap: 16 }}>
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
+    <View style={[styles.border, { gap: 16 }]}>
+      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
         <View style={styles.indHeadingTextContainer}>
           <SfText
             familyType="semibold"
@@ -82,15 +77,7 @@ export default function TicketView({ ticket }: { ticket: Ticket }) {
         </View>
       </View>
 
-      <View
-        style={{
-          borderWidth: 2,
-          borderColor: "#E3E3E3",
-          borderRadius: 20,
-          borderCurve: "continuous",
-          padding: 16,
-        }}
-      >
+      <View style={styles.border}>
         {ticket.sportMarkets.map((market, index) => (
           <View key={index} style={{ gap: 16 }}>
             <SfText style={{ textAlign: "center", fontSize: 16 }}>
@@ -108,6 +95,9 @@ export default function TicketView({ ticket }: { ticket: Ticket }) {
                 teamImage={getImage(market.awayTeam, market.leagueId)}
               />
             </View>
+            <SfText style={{ textAlign: "center", fontSize: 16 }}>
+              {convertUnixToFormattedDate(market.maturity)}
+            </SfText>
           </View>
         ))}
       </View>
@@ -116,6 +106,13 @@ export default function TicketView({ ticket }: { ticket: Ticket }) {
 }
 
 const styles = StyleSheet.create({
+  border: {
+    borderWidth: 2,
+    borderColor: "#E3E3E3",
+    borderRadius: 20,
+    borderCurve: "continuous",
+    padding: 16,
+  },
   indHeadingTextContainer: {
     gap: 4,
   },

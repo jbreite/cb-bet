@@ -10,12 +10,12 @@ export default function TeamMatchup({
 }) {
   let teamNameString = teamName;
 
-  //   if (teamName.length > 16) {
-  //     teamNameString = teamName
-  //       .split(" ")
-  //       .map((word) => word[0].toUpperCase())
-  //       .join("");
-  //   }
+    if (teamName.length > 16) {
+      teamNameString = teamName
+        .split(" ")
+        .map((word) => word[0].toUpperCase())
+        .join("");
+    }
   return (
     <View style={{ flex: 1, alignItems: "center", gap: 4 }}>
       <Image
