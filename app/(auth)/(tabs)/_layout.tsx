@@ -6,8 +6,14 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import { TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import TabBar from "@/components/tabBar";
+import { useAccount } from "wagmi";
+import AddressEmoji from "@/components/mainHeader/addressEmoji";
+import MORE_HORIZONTAL from "@/components/icons/More_Horizontal";
+
+//TODO: Update margin Verticarl fro the Header
 
 export default function TabLayout() {
+  const { address } = useAccount();
   const colorScheme = useColorScheme();
 
   return (
@@ -15,23 +21,18 @@ export default function TabLayout() {
       tabBar={(props) => <TabBar {...props} />}
       sceneContainerStyle={{ backgroundColor: "white" }}
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
-        //    headerShadowVisible: false,
+        headerTitle: "",
         headerLeft: () => (
-          <TouchableOpacity
-            onPress={() => router.push("/(auth)/accountModal")}
-            style={{ paddingLeft: 20 }}
-          >
-            <Ionicons name="person-circle" size={24} />
-          </TouchableOpacity>
+          <View style={{ paddingLeft: 20 }}>
+            <AddressEmoji address={address} />
+          </View>
         ),
         headerRight: () => (
-          <TouchableOpacity onPress={() => console.log("pressed")}>
-            <Ionicons
-              name="ellipsis-horizontal"
-              size={24}
-              style={{ paddingRight: 20 }}
-            />
+          <TouchableOpacity
+            onPress={() => console.log("pressed")}
+            style={{ paddingRight: 20 }}
+          >
+            <MORE_HORIZONTAL size={24} />
           </TouchableOpacity>
         ),
       }}

@@ -2,12 +2,15 @@ import React from "react";
 import { View } from "react-native";
 import GeneralSpinningLoader from "@/components/GeneralSpinningLoader";
 import GeneralErrorMessage from "@/components/GeneralErrorMessage";
-import { CB_BET_SUPPORTED_NETWORK_IDS } from "@/constants/Constants";
+import {
+  CB_BET_SUPPORTED_NETWORK_IDS,
+  SUPPORTED_LEAGUES,
+} from "@/constants/Constants";
 import { LeagueEnum } from "@/utils/overtime/enums/sport";
 import { getMarkets } from "@/utils/overtime/queries/getMarkets";
 import { useQuery } from "@tanstack/react-query";
 import { FlashList } from "@shopify/flash-list";
-import { BottomSheetMapAtom, userBetsAtom } from "@/lib/atom/atoms";
+import { userBetsAtom } from "@/lib/atom/atoms";
 import { useAtom } from "jotai";
 import { SportMarket, TradeData } from "@/utils/overtime/types/markets";
 import MainBetCard from "@/components/mainBetCard";
@@ -19,8 +22,6 @@ import { SfText } from "@/components/SfThemedText";
 
 //TODO: Add Refetching and refreshing the data
 //TODO: Add in game data with getGamesInfo()
-
-const supportedLeagues = [LeagueEnum.NCAAF, LeagueEnum.NFL, LeagueEnum.EPL];
 
 export default function AuthenticatedIndex() {
   const [userBets, setUserBets] = useAtom(userBetsAtom);
@@ -67,7 +68,7 @@ export default function AuthenticatedIndex() {
     SportView = <GeneralErrorMessage errorMessage={marketsIsError.message} />;
   } else if (marketsData) {
     // Transform data into a structure with league IDs as keys and markets as values
-    const transformedData = supportedLeagues.reduce((acc, league) => {
+    const transformedData = SUPPORTED_LEAGUES.reduce((acc, league) => {
       const sport = LeagueMap[league].sport;
       const leagueData = marketsData[sport]?.[league] || [];
 
@@ -79,7 +80,7 @@ export default function AuthenticatedIndex() {
     }, {} as Record<LeagueEnum, SportMarket[]>);
 
     // Filter out leagues with no data
-    const leaguesWithData = supportedLeagues.filter(
+    const leaguesWithData = SUPPORTED_LEAGUES.filter(
       (league) => transformedData[league]?.length > 0
     );
 
