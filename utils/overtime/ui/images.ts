@@ -129,7 +129,7 @@ const teamLogos: { [key: string]: ImageSourcePropType } = {
   "rice-owls": require(`${pathToNcaafLogos}/rice-owls.webp`),
   "rutgers-scarlet-knights": require(`${pathToNcaafLogos}/rutgers-scarlet-knights.webp`),
   "san-diego-state-aztecs": require(`${pathToNcaafLogos}/san-diego-state-aztecs.webp`),
-  "san-josé-state-spartans": require(`${pathToNcaafLogos}/san-josé-state-spartans.webp`),
+  // "san-josé-state-spartans": require(`${pathToNcaafLogos}/san-josé-state-spartans.webp`),
   "smu-mustangs": require(`${pathToNcaafLogos}/smu-mustangs.webp`),
   "south-alabama-jaguars": require(`${pathToNcaafLogos}/south-alabama-jaguars.webp`),
   "south-carolina": require(`${pathToNcaafLogos}/south-carolina.webp`),

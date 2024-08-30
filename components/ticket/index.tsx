@@ -54,7 +54,10 @@ export default function TicketView({
       : getMarketTypeName(ticket.sportMarkets[0].typeId);
 
   return (
-    <Pressable style={[styles.border, { gap: 16 }]} onPress={onPress}>
+    <Pressable
+      style={[styles.border, { gap: 16 }]}
+      onPress={() => onPress && onPress(ticket.id)}
+    >
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
         <View style={styles.indHeadingTextContainer}>
           <SfText

@@ -2,7 +2,7 @@
   "expo": {
     "name": "bsquared",
     "slug": "cb-bet",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/backupBookIcon.png",
     "scheme": "comjbreitecbbet",
@@ -13,9 +13,8 @@
       "backgroundColor": "#1A88F8"
     },
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.jbreite.cbbet",
-      "associatedDomains": ["applinks:bsquared.world"]
+      "associatedDomains": ["applinks:bsquared.world"],
+      "bundleIdentifier": "com.jbreite.cbbet"
     },
     "android": {
       "adaptiveIcon": {
