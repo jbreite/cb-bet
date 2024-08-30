@@ -1,7 +1,7 @@
 import { SportMarket } from "@/utils/overtime/types/markets";
 import { getGameOdds, negativePlusHelper } from "@/utils/overtime/ui/helpers";
 import { getImage } from "@/utils/overtime/ui/images";
-import { View, StyleSheet, Text, Pressable } from "react-native";
+import { View, StyleSheet, Pressable } from "react-native";
 import OddsButton from "./oddsButton";
 import { getLeagueIsDrawAvailable } from "@/utils/overtime/ui/sportsHelpers";
 import TeamInfo from "./teamInfo";

@@ -1,4 +1,4 @@
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Pressable } from "react-native";
 import { Ticket } from "../../utils/overtime/types/markets";
 import { SfText } from "../SfThemedText";
 import {
@@ -17,7 +17,13 @@ import { convertUnixToFormattedDate } from "@/utils/overtime/ui/date";
 const OPTIMISTIC_ETHERERSCAN_BASE_URL =
   "https://optimistic.etherscan.io/address/";
 
-export default function TicketView({ ticket }: { ticket: Ticket }) {
+export default function TicketView({
+  ticket,
+  onPress,
+}: {
+  ticket: Ticket;
+  onPress?: (ticketId: string) => void;
+}) {
   const numberOfMarkets = ticket.numOfMarkets;
   const formattedBuyInAmount = formatCurrency({ amount: ticket.buyInAmount });
   const formattedPayout = formatCurrency({ amount: ticket.payout });
@@ -48,7 +54,7 @@ export default function TicketView({ ticket }: { ticket: Ticket }) {
       : getMarketTypeName(ticket.sportMarkets[0].typeId);
 
   return (
-    <View style={[styles.border, { gap: 16 }]}>
+    <Pressable style={[styles.border, { gap: 16 }]} onPress={onPress}>
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
         <View style={styles.indHeadingTextContainer}>
           <SfText
@@ -101,7 +107,7 @@ export default function TicketView({ ticket }: { ticket: Ticket }) {
           </View>
         ))}
       </View>
-    </View>
+    </Pressable>
   );
 }
 

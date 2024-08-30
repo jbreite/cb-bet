@@ -6,7 +6,7 @@ export interface GameOdds {
   [MarketTypeEnum.TOTAL]?: TotalMarketOdds;
 }
 
-interface OddsItem {
+export interface OddsItem {
   odds: string;
   index: number;
 }
