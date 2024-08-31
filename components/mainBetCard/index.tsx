@@ -33,21 +33,16 @@ export default function MainBetCard({
 
   const isLeagueDrawAvailable = getLeagueIsDrawAvailable(sportMarket.leagueId);
 
-  const gameOdds = getGameOdds(sportMarket);
-
-  const winnerGameOdds = gameOdds[MarketTypeEnum.WINNER];
-  const spreadGameOdds = gameOdds[MarketTypeEnum.SPREAD];
-  const totalGameOdds = gameOdds[MarketTypeEnum.TOTAL];
-
   return (
     <Pressable
       onPress={onPress}
       style={{
         marginVertical: 12,
+        gap: 8,
       }}
     >
-      <View style={{ flex: 1, gap: 4 }}>
-        <View style={{ flexDirection: "row" }}>
+      <View style={{ flex: 1, gap: ODDS_GRID_GAP }}>
+        <View style={styles.oddsRow}>
           <TeamInfo teamImage={awayTeamImage} teamName={sportMarket.awayTeam} />
           <OddsRow
             sportMarket={sportMarket}
@@ -57,7 +52,7 @@ export default function MainBetCard({
           />
         </View>
         <TeamDivider />
-        <View style={{ flex: 1, flexDirection: "row" }}>
+        <View style={styles.oddsRow}>
           <TeamInfo teamImage={homeTeamImage} teamName={sportMarket.homeTeam} />
           <OddsRow
             sportMarket={sportMarket}
@@ -83,6 +78,10 @@ const styles = StyleSheet.create({
   },
   oddsGridContainer: {
     flex: 1,
+    flexDirection: "row",
+    gap: ODDS_GRID_GAP,
+  },
+  oddsRow: {
     flexDirection: "row",
     gap: ODDS_GRID_GAP,
   },

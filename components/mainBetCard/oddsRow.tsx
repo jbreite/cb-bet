@@ -1,12 +1,10 @@
 import { MarketTypeEnum } from "@/utils/overtime/enums/marketTypes";
 import { SportMarket } from "@/utils/overtime/types/markets";
-import { SfText } from "../SfThemedText";
 import { View } from "react-native";
 import { getLeagueIsDrawAvailable } from "@/utils/overtime/ui/sportsHelpers";
 import OddsButton from "./oddsButton";
 import {
   findOddsForMarket,
-  findSportMarket,
   formatAmericanOdds,
   negativePlusHelper,
 } from "@/utils/overtime/ui/helpers";
@@ -55,47 +53,43 @@ export default function OddsRow({
   console.log(JSON.stringify(marketOdds));
   return (
     <View style={{ flex: 1 }}>
-      {isLeagueDrawAvailable ? (
-        <View></View>
-      ) : (
-        <View style={{ flex: 1, flexDirection: "row", gap: 4 }}>
-          {/* Winner */}
-          <OddsButton
-            line={formatAmericanOdds(
-              marketOdds[MarketTypeEnum.WINNER]?.odds[position].american ?? 0
-            )}
-            onPress={() => onPressOddsButton(position, MarketTypeEnum.WINNER)}
-            selected={isSelected(position, MarketTypeEnum.WINNER)}
-          />
+      <View style={{ flexDirection: "row", gap: 4 }}>
+        {/* Winner */}
+        <OddsButton
+          line={formatAmericanOdds(
+            marketOdds[MarketTypeEnum.WINNER]?.odds[position].american ?? 0
+          )}
+          onPress={() => onPressOddsButton(position, MarketTypeEnum.WINNER)}
+          selected={isSelected(position, MarketTypeEnum.WINNER)}
+        />
 
-          {/* Spread */}
-          <OddsButton
-            line={formatAmericanOdds(
-              marketOdds[MarketTypeEnum.SPREAD]?.odds[position].american ?? 0
-            )}
-            onPress={() => onPressOddsButton(position, MarketTypeEnum.SPREAD)}
-            selected={isSelected(position, MarketTypeEnum.SPREAD)}
-            label={negativePlusHelper(
-              (position === PositionEnum.AWAY ? -1 : 1) *
-                (marketOdds[MarketTypeEnum.SPREAD]?.line ?? 0)
-            )}
-          />
+        {/* Spread */}
+        <OddsButton
+          line={formatAmericanOdds(
+            marketOdds[MarketTypeEnum.SPREAD]?.odds[position].american ?? 0
+          )}
+          onPress={() => onPressOddsButton(position, MarketTypeEnum.SPREAD)}
+          selected={isSelected(position, MarketTypeEnum.SPREAD)}
+          label={negativePlusHelper(
+            (position === PositionEnum.AWAY ? -1 : 1) *
+              (marketOdds[MarketTypeEnum.SPREAD]?.line ?? 0)
+          )}
+        />
 
-          {/* Total */}
-          <OddsButton
-            line={formatAmericanOdds(
-              marketOdds[MarketTypeEnum.TOTAL]?.odds[position].american ?? 0
-            )}
-            onPress={() => onPressOddsButton(position, MarketTypeEnum.TOTAL)}
-            selected={isSelected(position, MarketTypeEnum.TOTAL)}
-            label={
-              position === PositionEnum.AWAY
-                ? `U${marketOdds[MarketTypeEnum.TOTAL]?.line}`
-                : `O${marketOdds[MarketTypeEnum.TOTAL]?.line}`
-            }
-          />
-        </View>
-      )}
+        {/* Total */}
+        <OddsButton
+          line={formatAmericanOdds(
+            marketOdds[MarketTypeEnum.TOTAL]?.odds[position].american ?? 0
+          )}
+          onPress={() => onPressOddsButton(position, MarketTypeEnum.TOTAL)}
+          selected={isSelected(position, MarketTypeEnum.TOTAL)}
+          label={
+            position === PositionEnum.AWAY
+              ? `U${marketOdds[MarketTypeEnum.TOTAL]?.line}`
+              : `O${marketOdds[MarketTypeEnum.TOTAL]?.line}`
+          }
+        />
+      </View>
     </View>
   );
 }
