@@ -31,7 +31,7 @@ export default function MainBetCard({
 
   const formattedDate = convertUnixToFormattedDate(sportMarket.maturity);
 
-  const isLeagueDrawAvailable = getLeagueIsDrawAvailable(sportMarket.leagueId);
+  // const isLeagueDrawAvailable = getLeagueIsDrawAvailable(sportMarket.leagueId);
 
   return (
     <Pressable

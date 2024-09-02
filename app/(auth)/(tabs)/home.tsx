@@ -23,6 +23,8 @@ import { SfText } from "@/components/SfThemedText";
 //TODO: Add Refetching and refreshing the data
 //TODO: Add in game data with getGamesInfo()
 
+
+
 export default function AuthenticatedIndex() {
   const [userBets, setUserBets] = useAtom(userBetsAtom);
   const tabBarHeight = useBottomTabBarHeight();

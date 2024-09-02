@@ -50,7 +50,6 @@ export default function OddsRow({
     return acc;
   }, {} as Record<MarketTypeEnum, ReturnType<typeof findOddsForMarket>>);
 
-  console.log(JSON.stringify(marketOdds));
   return (
     <View style={{ flex: 1 }}>
       <View style={{ flexDirection: "row", gap: 4 }}>
