@@ -28,6 +28,7 @@ export default function OddsButton({
         borderColor: "#E6E6E6",
         borderCurve: "continuous",
         backgroundColor: selected ? "#E6E6E6" : "transparent",
+        minHeight: 54, //TODO prob better wayt to do this
       }}
       disabled={zeroLine}
     >

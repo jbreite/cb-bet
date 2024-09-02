@@ -18,7 +18,6 @@ import { getTradeDataFromSportMarket } from "@/utils/overtime/ui/helpers";
 import { getGamesInfo } from "@/utils/overtime/queries/getGamesInfo";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { LeagueMap } from "@/constants/sports";
-import { SfText } from "@/components/SfThemedText";
 import StickyHeaderMainBetCard from "@/components/mainBetCard/stickeyHeader";
 
 //TODO: Add Refetching and refreshing the data
