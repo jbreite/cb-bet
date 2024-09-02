@@ -1,5 +1,6 @@
-import { Pressable } from "react-native";
+import { Pressable, View } from "react-native";
 import { SfText } from "../SfThemedText";
+import Lock from "../icons/Lock";
 
 export default function OddsButton({
   line,
@@ -12,6 +13,8 @@ export default function OddsButton({
   label?: string;
   selected?: boolean;
 }) {
+  const numberLine = parseFloat(line);
+  const zeroLine = numberLine === 0;
   return (
     <Pressable
       onPress={onPress}
@@ -25,16 +28,24 @@ export default function OddsButton({
         borderColor: "#E6E6E6",
         borderCurve: "continuous",
         backgroundColor: selected ? "#E6E6E6" : "transparent",
+        minHeight: 54, //TODO prob better wayt to do this
       }}
+      disabled={zeroLine}
     >
-      {label && (
-        <SfText familyType="semibold" style={{ fontSize: 14 }}>
-          {label}
-        </SfText>
+      {zeroLine ? (
+        <Lock size={18} color={"black"} />
+      ) : (
+        <View style={{ justifyContent: "center", alignItems: "center" }}>
+          {label && (
+            <SfText familyType="semibold" style={{ fontSize: 14 }}>
+              {label}
+            </SfText>
+          )}
+          <SfText familyType="semibold" style={{ fontSize: 14 }}>
+            {line}
+          </SfText>
+        </View>
       )}
-      <SfText familyType="semibold" style={{ fontSize: 14 }}>
-        {line}
-      </SfText>
     </Pressable>
   );
 }

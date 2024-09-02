@@ -140,3 +140,111 @@ export function getGameOdds(sportMarket: SportMarket): GameOdds {
 export const negativePlusHelper = (line: number): string => {
   return line > 0 ? `+${line}` : `${line}`;
 };
+
+export function getGameOddsTwo(sportMarket: SportMarket): GameOdds {
+  const isDrawAvailable = getLeagueIsDrawAvailable(sportMarket.leagueId);
+
+  const result: GameOdds = {
+    [MarketTypeEnum.WINNER]: {
+      homeOdds: {
+        odds: formatAmericanOdds(sportMarket.odds[0].american),
+        index: 0,
+      },
+      awayOdds: {
+        odds: formatAmericanOdds(sportMarket.odds[1].american),
+        index: 1,
+      },
+    },
+  };
+
+  if (isDrawAvailable && sportMarket.odds.length > 2) {
+    result[MarketTypeEnum.WINNER].drawOdds = {
+      odds: formatAmericanOdds(sportMarket.odds[2].american),
+      index: 2,
+    };
+  }
+
+  const spreadMarket = sportMarket.childMarkets.find(
+    (market: SportMarket) => market.typeId === MarketTypeEnum.SPREAD
+  );
+
+  if (spreadMarket) {
+    result[MarketTypeEnum.SPREAD] = {
+      homeOdds: {
+        odds: formatAmericanOdds(spreadMarket.odds[0].american),
+        index: 0,
+      },
+      awayOdds: {
+        odds: formatAmericanOdds(spreadMarket.odds[1].american),
+        index: 1,
+      },
+      line: spreadMarket.line, // This is already correct for the home team
+    };
+  }
+
+  const totalMarket = sportMarket.childMarkets.find(
+    (market: SportMarket) => market.typeId === MarketTypeEnum.TOTAL
+  );
+
+  if (totalMarket) {
+    result[MarketTypeEnum.TOTAL] = {
+      overOdds: {
+        odds: formatAmericanOdds(totalMarket.odds[0].american),
+        index: 0,
+      },
+      underOdds: {
+        odds: formatAmericanOdds(totalMarket.odds[1].american),
+        index: 1,
+      },
+      line: totalMarket.line,
+    };
+  }
+
+  return result;
+
+  //Return
+  //Line,
+  //Odds, Index
+  //
+}
+
+export function findSportMarket({
+  sportMarket,
+  marketType,
+}: {
+  sportMarket: SportMarket;
+  marketType: MarketTypeEnum;
+}) {
+  if (sportMarket.typeId === marketType) {
+    return sportMarket;
+  } else {
+    return sportMarket.childMarkets.find(
+      (market: SportMarket) => market.typeId === marketType
+    );
+  }
+}
+
+export function findOddsForMarket(
+  sportMarket: SportMarket,
+  marketType: MarketTypeEnum
+) {
+  const targetMarket = sportMarket.typeId === marketType
+    ? sportMarket
+    : sportMarket.childMarkets.find((market: SportMarket) => market.typeId === marketType);
+
+  if (targetMarket) {
+    const line = targetMarket.line;
+    const odds = targetMarket.odds;
+    const typeId = targetMarket.typeId;
+    const isDrawAvailable = getLeagueIsDrawAvailable(targetMarket.leagueId);
+
+    return {
+      line,
+      odds,
+      typeId,
+      isDrawAvailable,
+    };
+  }
+
+  return null; // Return null if no matching market is found
+}

@@ -10,10 +10,19 @@ export default function TeamInfo({
 }) {
   return (
     <View
-      style={{ flex: 1, flexDirection: "row", alignItems: "center", gap: 4 }}
+      style={{
+        flex: 2 / 3,
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 4,
+      }}
     >
       <Image source={teamImage} style={styles.imageStyle} />
-      <SfText familyType="medium" style={{ fontSize: 14, flex: 1,  }} numberOfLines={2}>
+      <SfText
+        familyType="medium"
+        style={{ flex: 1, fontSize: 14 }}
+        numberOfLines={2}
+      >
         {teamName}
       </SfText>
     </View>

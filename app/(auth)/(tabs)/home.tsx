@@ -18,7 +18,7 @@ import { getTradeDataFromSportMarket } from "@/utils/overtime/ui/helpers";
 import { getGamesInfo } from "@/utils/overtime/queries/getGamesInfo";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { LeagueMap } from "@/constants/sports";
-import { SfText } from "@/components/SfThemedText";
+import StickyHeaderMainBetCard from "@/components/mainBetCard/stickeyHeader";
 
 //TODO: Add Refetching and refreshing the data
 //TODO: Add in game data with getGamesInfo()
@@ -83,6 +83,7 @@ export default function AuthenticatedIndex() {
     const leaguesWithData = SUPPORTED_LEAGUES.filter(
       (league) => transformedData[league]?.length > 0
     );
+    console.log("leagues with data:", JSON.stringify(transformedData[1]));
 
     SportView = (
       <View style={{ flex: 1 }}>
@@ -90,9 +91,7 @@ export default function AuthenticatedIndex() {
           data={leaguesWithData}
           renderItem={({ item: leagueId }) => (
             <View>
-              <SfText familyType="semibold" style={{ fontSize: 24 }}>
-                {LeagueMap[leagueId].label}
-              </SfText>
+              <StickyHeaderMainBetCard leagueId={leagueId} />
               {transformedData[leagueId].map((market) => (
                 <MainBetCard
                   key={market.gameId}
