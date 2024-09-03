@@ -16,7 +16,6 @@ import Animated, {
   FadeIn,
   FadeOut,
   LinearTransition,
-  SlideInUp,
   SlideInDown,
   SlideOutDown,
 } from "react-native-reanimated";
@@ -31,13 +30,15 @@ import { handleBetAmountChange } from "../keyboard/handleKeyboardInput";
 //TODO: Just make sure after placing bet everything is reset
 //TODO: Clean up the animations
 
+export const INITIAL_BET_AMOUNT = "$0";
+
 export default function TabBar({
   state,
   descriptors,
   navigation,
 }: BottomTabBarProps) {
   const [userBetsAtomData] = useAtom(userBetsAtom);
-  const [betAmount, setBetAmount] = useState("$0");
+  const [betAmount, setBetAmount] = useState(INITIAL_BET_AMOUNT);
   const { bottom } = useSafeAreaInsets();
   const tabBarHeight = useSharedValue(0);
   const keyboardHeight = useSharedValue(0);
