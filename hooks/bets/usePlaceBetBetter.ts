@@ -16,7 +16,7 @@ import { useWriteContracts, useCallsStatus } from "wagmi/experimental";
 
 //Ecample Parlay Transaction - https://optimistic.etherscan.io/tx/0x1d70dd8b569ca187661dcf60c5b4b1fc129b81093990611aaf6e70a048784327
 
-export const usePlaceBetBetter = () => {
+export const usePlaceBetBetter = (onSuccess?: () => void) => {
   const {
     allowance,
     refetch: refetchAllowance,
@@ -27,7 +27,18 @@ export const usePlaceBetBetter = () => {
     data: writeContractsData,
     isPending: writeContractsIsPending,
     isError: writeContractsIsError,
-  } = useWriteContracts();
+  } = useWriteContracts({
+    mutation: {
+      onSuccess: () => {
+        console.log("Bet placed successfully!");
+        if (onSuccess) {
+          console.log("Calling provided onSuccess callback");
+          onSuccess();
+        }
+        // ... other logic here for success or error
+      },
+    },
+  });
 
   const { data: callsStatus } = useCallsStatus({
     id: writeContractsData as string,
@@ -38,11 +49,7 @@ export const usePlaceBetBetter = () => {
     },
   });
 
-  const placeBet = (
-    quoteObject: QuoteData,
-    tradeData: TradeData[],
-    onSuccess?: () => void
-  ) => {
+  const placeBet = (quoteObject: QuoteData, tradeData: TradeData[]) => {
     if ("error" in quoteObject.quoteData) {
       throw new Error("Got an error quote Object");
     }
@@ -104,17 +111,7 @@ export const usePlaceBetBetter = () => {
     }
 
     writeContracts({
-      //TODO: Clean up these types
       contracts: contracts,
-      onSuccess: () => {
-        if (onSuccess) {
-          console.log("Calling provided onSuccess callback");
-          onSuccess();
-        }
-      },
-      onError: (error: any) => {
-        console.error("writeContracts error:", error);
-      },
     });
   };
   return {

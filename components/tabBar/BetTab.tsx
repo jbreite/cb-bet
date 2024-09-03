@@ -7,7 +7,6 @@ import {
   QuoteData,
   SuccessfulQuoteData,
 } from "@/utils/overtime/queries/getQuote";
-import { usePlaceBet } from "@/hooks/bets/usePlaceBet";
 import BetInput from "./BetInput";
 import {
   calculateBetOutcome,
@@ -27,11 +26,11 @@ import { useUSDCBal } from "@/hooks/tokens/useUSDCBal";
 import { useQuote } from "@/hooks/bets/useQuote";
 import { usePlaceBetBetter } from "@/hooks/bets/usePlaceBetBetter";
 import { useCapabilities } from "wagmi/experimental";
+import { INITIAL_BET_AMOUNT } from ".";
 
 //TODO: Need a failure reason and show the error message.
 //TODO: When refetching quote or changing input needs to clear the error.
 //TODO: Need to BetTab have two states
-//TODO: Need a success state.
 //TODO: Need to clean up error messages after another fetch.
 
 interface BetTabProps {
@@ -63,13 +62,25 @@ export default function BetTab({
     tradeData
   );
 
+  //TODO: This is not working
+  const onBetSuccess = () => {
+    console.log("Bet placed successfully!");
+    setUserBetsAtom([]);
+    // Not sure this is right
+    isKeyboardVisible.value = false;
+    setIsKeyboardVisible(false);
+
+    setBetAmount(INITIAL_BET_AMOUNT);
+    router.push("/bets");
+  };
+
   const {
     placeBet,
     allowanceError,
     callsStatus,
     writeContractsIsPending,
     writeContractsIsError,
-  } = usePlaceBetBetter();
+  } = usePlaceBetBetter(onBetSuccess);
 
   const {
     balance: usdcBalance,
@@ -103,25 +114,13 @@ export default function BetTab({
           firstBet.tradeData.line
         );
 
-  //TODO: This is not working
-  const onBetSuccess = () => {
-    console.log("Bet placed successfully!");
-    setUserBetsAtom([]);
-    // Not sure this is right
-    isKeyboardVisible.value = false;
-    setIsKeyboardVisible(false);
-
-    setBetAmount("$");
-    router.push("/bets");
-  };
-
   const handlePlaceBet = () => {
     if (!quoteObject) {
       Alert.alert("Error", "Quote data is not available");
       return;
     }
 
-    placeBet(quoteObject, tradeData, onBetSuccess);
+    placeBet(quoteObject, tradeData);
   };
 
   const isSuccessfulQuoteObject = (
