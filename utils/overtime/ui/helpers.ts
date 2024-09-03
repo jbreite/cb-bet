@@ -228,9 +228,20 @@ export function findOddsForMarket(
   sportMarket: SportMarket,
   marketType: MarketTypeEnum
 ) {
-  const targetMarket = sportMarket.typeId === marketType
-    ? sportMarket
-    : sportMarket.childMarkets.find((market: SportMarket) => market.typeId === marketType);
+  const targetMarkets = sportMarket.typeId === marketType
+    ? [sportMarket]
+    : sportMarket.childMarkets.filter((market: SportMarket) => market.typeId === marketType);
+
+  const closestToMinus110 = targetMarkets.reduce((closest, market) => {
+    const diffFromMinus110 = market.odds.map(odd => Math.abs(odd.american + 110));
+    const minDiff = Math.min(...diffFromMinus110);
+    if (!closest || minDiff < closest.minDiff) {
+      return { market, minDiff };
+    }
+    return closest;
+  }, null as { market: SportMarket, minDiff: number } | null);
+
+  const targetMarket = closestToMinus110 ? closestToMinus110.market : null;
 
   if (targetMarket) {
     const line = targetMarket.line;

@@ -26,7 +26,7 @@ import { useUSDCBal } from "@/hooks/tokens/useUSDCBal";
 import { useQuote } from "@/hooks/bets/useQuote";
 import { usePlaceBetBetter } from "@/hooks/bets/usePlaceBetBetter";
 import { useCapabilities } from "wagmi/experimental";
-import { INITIAL_BET_AMOUNT } from ".";
+import { INITIAL_BET_AMOUNT } from "@/constants/Constants";
 
 //TODO: Need a failure reason and show the error message.
 //TODO: When refetching quote or changing input needs to clear the error.

@@ -83,7 +83,7 @@ export default function AuthenticatedIndex() {
     const leaguesWithData = SUPPORTED_LEAGUES.filter(
       (league) => transformedData[league]?.length > 0
     );
-    console.log("leagues with data:", JSON.stringify(transformedData[1]));
+    // console.log("leagues with data:", JSON.stringify(transformedData[1]));
 
     SportView = (
       <View style={{ flex: 1 }}>

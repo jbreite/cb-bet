@@ -23,14 +23,12 @@ import TabButton from "./TabButton";
 import BetTab from "./BetTab";
 import { ButtonGrid, KeyboardButtonItemType } from "../keyboard";
 import { handleBetAmountChange } from "../keyboard/handleKeyboardInput";
+import { INITIAL_BET_AMOUNT } from "@/constants/Constants";
 
 //TODO: Need to make an interpoltation of the tab bar and keyboard so they move together...
 // See - https://www.notion.so/Bet-Tab-Animations-ac77704a6dd44060a67f75fe8100e4e5?pvs=4
 
-//TODO: Just make sure after placing bet everything is reset
 //TODO: Clean up the animations
-
-export const INITIAL_BET_AMOUNT = "$0";
 
 export default function TabBar({
   state,

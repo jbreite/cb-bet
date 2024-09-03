@@ -13,7 +13,6 @@ import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import sportsAMMV2Contract from "@/constants/overtimeContracts";
 
 //TODO: Group tickets by gameId
-
 //Example claim transaction - https://optimistic.etherscan.io/tx/0xbc151726cc4b073815449bfe36a07ccc897beaf41878ff3aab964251ad5d6f48
 
 export default function Bets() {
