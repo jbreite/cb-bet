@@ -1,7 +1,7 @@
 import { QuoteData } from "@/utils/overtime/queries/getQuote";
 import { useReadAllowance } from "./useReadAllowance";
 import { TradeData } from "@/utils/overtime/types/markets";
-import { parseEther, parseUnits } from "viem";
+import { encodeFunctionData, parseEther, parseUnits } from "viem";
 import sportsAMMV2Contract, {
   DEFAULT_SLIPPAGE,
   DEFAULT_USDC_OPTIMISM,
@@ -86,9 +86,11 @@ export const usePlaceBetBetter = () => {
         false,
       ],
     };
-    console.log("writeContracts payload:", JSON.stringify(betContractInput, (key, value) =>
-      typeof value === 'bigint' ? value.toString() : value
-    ));
+    // console.log("writeContracts payload:", JSON.stringify(betContractInput, (key, value) =>
+    //   typeof value === 'bigint' ? value.toString() : value
+    // ));
+    const betCalldata = encodeFunctionData(betContractInput);
+    console.log("Bet call Data", betCalldata);
 
     if (!allowance) {
       console.log("No allowance... could just be undefined");
