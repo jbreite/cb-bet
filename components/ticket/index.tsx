@@ -13,6 +13,8 @@ import {
 import { getImage } from "@/utils/overtime/ui/images";
 import TeamMatchup from "./teamMatchup";
 import { convertUnixToFormattedDate } from "@/utils/overtime/ui/date";
+import { Link } from "expo-router";
+import Button from "../Button";
 
 const OPTIMISTIC_ETHERERSCAN_BASE_URL =
   "https://optimistic.etherscan.io/address/";
@@ -29,6 +31,11 @@ export default function TicketView({
   const formattedPayout = formatCurrency({ amount: ticket.payout });
 
   const ticketLink = `${OPTIMISTIC_ETHERERSCAN_BASE_URL}${ticket.id}`;
+  const ticketStatus = ticket.isOpen
+    ? "Open"
+    : ticket.isUserTheWinner
+    ? "Winner"
+    : "Loser";
 
   const americanOdds = negativePlusHelper(
     convertNormalizedImpliedToAmerican(ticket.totalQuote)
@@ -44,72 +51,121 @@ export default function TicketView({
           ticket.sportMarkets[0].line
         );
 
-  const betTypeName =
-    numberOfMarkets > 1
-      ? ticket.sportMarkets
-          .map((bet) =>
-            getMarketOutcomeText(bet, bet.position, bet.typeId, bet.line)
-          )
-          .join(", ") //TODO this could be more detailed but fine fo now
-      : getMarketTypeName(ticket.sportMarkets[0].typeId);
+  const ticketName =
+    numberOfMarkets > 1 ? `${numberOfMarkets} Parlay` : "Single Ticket";
+
+  const ticketGameStatuses = ticket.sportMarkets.reduce(
+    (acc, market) => {
+      if (market.isResolved) {
+        acc[market.isWinning ? "Won" : "Lost"]++;
+      } else {
+        acc["Open"]++;
+      }
+      return acc;
+    },
+    { Won: 0, Lost: 0, Open: 0 }
+  );
+
+  const ticketStatusSummary = Object.entries(ticketGameStatuses)
+    .filter(([_, count]) => count > 0)
+    .map(([status, count]) => `${count} ${status}`)
+    .join(", ");
 
   return (
-    <Pressable
-      style={[styles.border, { gap: 16 }]}
-      onPress={() => onPress && onPress(ticket.id)}
-    >
+    <Pressable style={[{ gap: 16 }]}>
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
         <View style={styles.indHeadingTextContainer}>
           <SfText
             familyType="semibold"
-            style={{ flex: 1, fontSize: 20 }}
+            style={{ flex: 1, fontSize: 18 }}
             numberOfLines={1}
             ellipsizeMode="middle"
           >
-            {ticketTitle}
+            {ticketName}
           </SfText>
-          <SfText familyType="medium" style={{ fontSize: 16 }}>
-            {betTypeName}
+
+          <SfText
+            familyType="medium"
+            style={{ fontSize: 16, color: "#9B9B9B" }}
+          >
+            {ticketStatusSummary}
           </SfText>
         </View>
 
         <View style={styles.indHeadingTextContainer}>
           <SfText
             familyType="medium"
-            style={{ fontSize: 16, textAlign: "right" }}
+            style={{ fontSize: 18, textAlign: "right" }}
           >
-            To win {formattedPayout}
+            {formattedBuyInAmount} To win {formattedPayout}
           </SfText>
-          <SfText style={{ fontSize: 16, textAlign: "right" }}>
+
+          <SfText
+            style={{ fontSize: 16, color: "#9B9B9B", textAlign: "right" }}
+          >
             {americanOdds}
           </SfText>
         </View>
       </View>
 
       <View style={styles.border}>
-        {ticket.sportMarkets.map((market, index) => (
-          <View key={index} style={{ gap: 16 }}>
-            <SfText style={{ textAlign: "center", fontSize: 16 }}>
-              {market.leagueName}
-            </SfText>
-            <View
-              style={{ flexDirection: "row", justifyContent: "space-around" }}
-            >
-              <TeamMatchup
-                teamName={market.homeTeam}
-                teamImage={getImage(market.homeTeam, market.leagueId)}
-              />
-              <TeamMatchup
-                teamName={market.awayTeam}
-                teamImage={getImage(market.awayTeam, market.leagueId)}
-              />
+        {ticket.sportMarkets.map((market, index) => {
+          const marketOdds = negativePlusHelper(
+            convertNormalizedImpliedToAmerican(market.odd.normalizedImplied)
+          );
+          const marketOutcomeText = getMarketOutcomeText(
+            market,
+            market.position,
+            market.typeId,
+            market.line
+          );
+
+          const marketDate = convertUnixToFormattedDate(market.maturity);
+          return (
+            <View key={index} style={{ gap: 16 }}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
+              >
+                <SfText familyType="semibold" style={{ fontSize: 16 }}>
+                  {marketOutcomeText}
+                </SfText>
+                <SfText familyType="semibold" style={{ fontSize: 16 }}>
+                  {marketOdds}
+                </SfText>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  gap: 4,
+                  alignItems: "center",
+                }}
+              >
+                <TeamMatchup
+                  teamName={market.homeTeam}
+                  teamImage={getImage(market.homeTeam, market.leagueId)}
+                />
+                <SfText familyType="semibold" style={{ fontSize: 16 }}>
+                  -
+                </SfText>
+                <TeamMatchup
+                  teamName={market.awayTeam}
+                  teamImage={getImage(market.awayTeam, market.leagueId)}
+                />
+              </View>
             </View>
-            <SfText style={{ textAlign: "center", fontSize: 16 }}>
-              {convertUnixToFormattedDate(market.maturity)}
-            </SfText>
-          </View>
-        ))}
+          );
+        })}
       </View>
+
+      {onPress && (
+        <Button
+          label={`Claim ${formattedPayout}`}
+          onPress={() => onPress(ticket.id)}
+        />
+      )}
     </Pressable>
   );
 }
@@ -126,3 +182,12 @@ const styles = StyleSheet.create({
     gap: 4,
   },
 });
+
+// const betTypeName =
+// numberOfMarkets > 1
+//   ? ticket.sportMarkets
+//       .map((bet) =>
+//         getMarketOutcomeText(bet, bet.position, bet.typeId, bet.line)
+//       )
+//       .join(", ") //TODO this could be more detailed but fine fo now
+//   : getMarketTypeName(ticket.sportMarkets[0].typeId);

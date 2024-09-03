@@ -20,7 +20,7 @@ export default function TeamMatchup({
     <View style={{ flex: 1, alignItems: "center", gap: 4 }}>
       <Image
         source={teamImage}
-        style={{ height: 40, aspectRatio: 1, objectFit: "contain" }}
+        style={{ height: 24, aspectRatio: 1, objectFit: "contain" }}
       />
       <SfText
         familyType="semibold"

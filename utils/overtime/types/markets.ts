@@ -103,7 +103,7 @@ export type TradeData = {
 
 export type TicketMarket = SportMarket & {
   position: PositionEnum;
-  odd: number;
+  odd: SportMarketOdds;
   isWinning?: boolean;
 };
 

@@ -1,6 +1,7 @@
 import { Pressable, View } from "react-native";
 import { SfText } from "../SfThemedText";
 import Lock from "../icons/Lock";
+import useHaptics from "@/hooks/useHaptics";
 
 export default function OddsButton({
   line,
@@ -13,11 +14,19 @@ export default function OddsButton({
   label?: string;
   selected?: boolean;
 }) {
+  const { triggerImpact, ImpactFeedbackStyle } = useHaptics();
+
   const numberLine = parseFloat(line);
   const zeroLine = numberLine === 0;
+
+  const handlePress = () => {
+    triggerImpact(ImpactFeedbackStyle.Light);
+    onPress();
+  };
+
   return (
     <Pressable
-      onPress={onPress}
+      onPress={handlePress}
       style={{
         flex: 1,
         paddingVertical: 8,

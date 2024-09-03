@@ -71,8 +71,9 @@ export default function Bets() {
   } else if (userHistoryIsError) {
     userHistoryView = <GeneralErrorMessage errorMessage={"Error"} />;
   } else if (userHistoryData) {
+    console.log(JSON.stringify(userHistoryData.closed));
     userHistoryView = (
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, paddingTop: 8 }}>
         <ScrollView
           contentContainerStyle={{
             gap: 16,
@@ -134,7 +135,7 @@ export default function Bets() {
 const styles = StyleSheet.create({
   listContainer: {
     flex: 1,
-    gap: 16,
+    gap: 8,
   },
   titleText: {
     fontSize: 24,
