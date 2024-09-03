@@ -11,12 +11,16 @@ import { defaultStore } from "@/lib/atom/store";
 import { config } from "@/config";
 import { useAccount, WagmiProvider } from "wagmi";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { usePostHog, PostHogProvider } from "posthog-react-native";
 
 const queryClient = new QueryClient();
+const POSTHOG_API_KEY = process.env.EXPO_PUBLIC_POSTHOG_API_KEY!;
 
 SplashScreen.preventAutoHideAsync();
 
 function InitialLayout() {
+  const posthog = usePostHog();
+
   const [loaded, error] = useFonts({
     "SF-Pro-Rounded-Black": require("../assets/fonts/SF-Pro-Rounded-Black.otf"),
     "SF-Pro-Rounded-Bold": require("../assets/fonts/SF-Pro-Rounded-Bold.otf"),
@@ -29,7 +33,7 @@ function InitialLayout() {
     "SF-Pro-Rounded-Ultralight": require("../assets/fonts/SF-Pro-Rounded-Ultralight.otf"),
   });
 
-  const { isConnected, status } = useAccount();
+  const { isConnected, status, address } = useAccount();
 
   const router = useRouter();
   const segments = useSegments();
@@ -55,9 +59,19 @@ function InitialLayout() {
     if (isConnected && !inAuthGroup) {
       // Bring the user inside the auth group
       router.replace("/(auth)/(tabs)/home");
+
+      // Identify the user with PostHog
+      if (address) {
+        posthog?.identify(address, {
+          wallet_address: address,
+        });
+      }
     } else if (!isConnected && inAuthGroup) {
       // Kick the user out of the auth group
       router.replace("/");
+
+      //Reset Posthog instance
+      posthog.reset();
     }
   }, [isConnected, status]);
 
@@ -96,11 +110,23 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <WagmiProvider config={config}>
-        <QueryClientProvider client={queryClient}>
-          <JotaiProvider store={defaultStore}>
-            <InitialLayout />
-          </JotaiProvider>
-        </QueryClientProvider>
+        <PostHogProvider
+          apiKey={POSTHOG_API_KEY}
+          autocapture={{
+            captureTouches: true,
+            captureLifecycleEvents: true,
+            captureScreens: true,
+            ignoreLabels: [], // Any labels here will be ignored from the stack in touch events
+            customLabelProp: "ph-label",
+            noCaptureProp: "ph-no-capture",
+          }}
+        >
+          <QueryClientProvider client={queryClient}>
+            <JotaiProvider store={defaultStore}>
+              <InitialLayout />
+            </JotaiProvider>
+          </QueryClientProvider>
+        </PostHogProvider>
       </WagmiProvider>
     </GestureHandlerRootView>
   );

@@ -11,6 +11,7 @@ export default function Index() {
 
   const handleConnect = () => {
     connect({ connector: connectors[0] });
+    
   };
 
   return (
@@ -25,7 +26,10 @@ export default function Index() {
     >
       <View />
       <View style={{ justifyContent: "center", alignItems: "center" }}>
-        <SfText familyType="bold" style={{ textAlign: "center", fontSize: 40, color:"#1A88F8" }}>
+        <SfText
+          familyType="bold"
+          style={{ textAlign: "center", fontSize: 40, color: "#1A88F8" }}
+        >
           Based Bets
         </SfText>
 
