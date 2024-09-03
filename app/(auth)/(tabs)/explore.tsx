@@ -1,3 +1,4 @@
+import { SfText } from "@/components/SfThemedText";
 import { View, Text } from "react-native";
 
 export default function Explore() {
@@ -10,7 +11,14 @@ export default function Explore() {
         alignItems: "center",
       }}
     >
-      <Text>Coming Soon</Text>
+      <View style={{ alignItems: "center" }}>
+        <SfText familyType="bold" style={{ fontSize: 24 }}>
+          👀
+        </SfText>
+        <SfText familyType="bold" style={{ fontSize: 24 }}>
+          Coming Soon
+        </SfText>
+      </View>
     </View>
   );
 }

@@ -8,7 +8,6 @@ import {
 import { negativePlusHelper } from "@/utils/overtime/ui/helpers";
 import {
   getMarketOutcomeText,
-  getMarketTypeName,
 } from "@/utils/overtime/ui/markets";
 import { getImage } from "@/utils/overtime/ui/images";
 import TeamMatchup from "./teamMatchup";
@@ -31,12 +30,6 @@ export default function TicketView({
   const formattedPayout = formatCurrency({ amount: ticket.payout });
 
   const ticketLink = `${OPTIMISTIC_ETHERERSCAN_BASE_URL}${ticket.id}`;
-  const ticketStatus = ticket.isOpen
-    ? "Open"
-    : ticket.isUserTheWinner
-    ? "Winner"
-    : "Loser";
-
   const americanOdds = negativePlusHelper(
     convertNormalizedImpliedToAmerican(ticket.totalQuote)
   );
@@ -52,7 +45,7 @@ export default function TicketView({
         );
 
   const ticketName =
-    numberOfMarkets > 1 ? `${numberOfMarkets} Parlay` : "Single Ticket";
+    numberOfMarkets > 1 ? `${numberOfMarkets}-Leg Parlay` : "Single Ticket";
 
   const ticketGameStatuses = ticket.sportMarkets.reduce(
     (acc, market) => {
