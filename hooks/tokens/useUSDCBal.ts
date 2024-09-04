@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getFungibles } from "@/utils/zerion/queries/getFungibles";
+import { fetchFungibles } from "@/utils/zerion/queries/getFungibles";
 import { useAccount } from "wagmi";
 import { DEFAULT_USDC_OPTIMISM } from "@/constants/overtimeContracts";
 import { useMemo } from "react";
@@ -13,11 +13,7 @@ export const useUSDCBal = () => {
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["fungibles", address],
-    queryFn: () =>
-      getFungibles({
-        address,
-        filter: {},
-      }),
+    queryFn: () => fetchFungibles(address, {}),
     enabled: !!address,
   });
 
