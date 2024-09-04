@@ -4,6 +4,9 @@ import Button from "@/components/Button";
 import { CoinbaseWalletLogo } from "@/components/coinbaseComponents/coinbaseWalletLogo";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { SfText } from "@/components/SfThemedText";
+import { StyleSheet } from "react-native";
+import GridBackground from "@/components/lander/gridBackground";
+import BSquaredLogo from "@/components/lander/bSquaresLogo";
 
 export default function Index() {
   const { connect, connectors, isPending } = useConnect();
@@ -11,41 +14,57 @@ export default function Index() {
 
   const handleConnect = () => {
     connect({ connector: connectors[0] });
-    
   };
 
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: bottom,
-        marginTop: top,
-      }}
-    >
+    <View style={styles.container}>
+      <GridBackground />
       <View />
-      <View style={{ justifyContent: "center", alignItems: "center" }}>
+      <View
+        style={{ justifyContent: "center", alignItems: "center", padding: 24 }}
+      >
+        <BSquaredLogo />
         <SfText
-          familyType="bold"
-          style={{ textAlign: "center", fontSize: 40, color: "#1A88F8" }}
+          style={{ textAlign: "center", fontSize: 24, color: "#1A88F8" }}
+          familyType="semibold"
         >
-          Based Bets
+          Onchain sports betting powered by Overtime and the Coinbase Smart
+          Wallet
         </SfText>
-
-        <Image
-          source={require("@/assets/images/tempOnboardingImage.png")}
-          style={{ aspectRatio: 1, height: 147 }}
-        />
       </View>
       <Button
-        label="Connect Wallet"
+        label="Login"
         isLoading={isPending}
         isLoadingText="Connecting..."
         onPress={handleConnect}
         disabled={isPending}
-        style={{ width: "80%" }}
+        style={{ width: "90%", marginBottom: bottom }}
       />
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "#f0f0f0",
+  },
+  gridContainer: {
+    ...StyleSheet.absoluteFillObject,
+    overflow: "hidden",
+  },
+  gridLine: {
+    position: "absolute",
+    backgroundColor: "#e0e0e0",
+  },
+  vertical: {
+    width: 1,
+    height: "100%",
+  },
+  horizontal: {
+    height: 1,
+    width: "100%",
+  },
+});
