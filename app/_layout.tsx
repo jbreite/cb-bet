@@ -34,6 +34,7 @@ function InitialLayout() {
   });
 
   const { isConnected, status, address } = useAccount();
+  console.log("Status", status);
 
   const router = useRouter();
   const segments = useSegments();
@@ -43,10 +44,12 @@ function InitialLayout() {
   }, [error]);
 
   useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
+    if (loaded && isConnected === true) {
+      setTimeout(() => {
+        SplashScreen.hideAsync();
+      }, 1);
     }
-  }, [loaded]);
+  }, [loaded, isConnected]);
 
   //For some reason still goes to login first adn not just loggedd in
   useEffect(() => {
