@@ -44,12 +44,12 @@ function InitialLayout() {
   }, [error]);
 
   useEffect(() => {
-    if (loaded && isConnected === true) {
+    if (loaded && (status === "connected" || status === "disconnected")) {
       setTimeout(() => {
         SplashScreen.hideAsync();
       }, 1);
     }
-  }, [loaded, isConnected]);
+  }, [loaded, status]);
 
   //For some reason still goes to login first adn not just loggedd in
   useEffect(() => {
