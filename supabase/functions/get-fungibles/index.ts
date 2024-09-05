@@ -14,11 +14,17 @@ serve(async (req: Request) => {
 
     // Add all possible query parameters
     const params = [
-      "currency", "sort", "filter[positions]", "filter[trash]",
-      "filter[position_types]", "filter[chain_ids]", "filter[fungible_ids]", "filter[dapp_ids]"
+      "currency",
+      "sort",
+      "filter[positions]",
+      "filter[trash]",
+      "filter[position_types]",
+      "filter[chain_ids]",
+      "filter[fungible_ids]",
+      "filter[dapp_ids]",
     ];
 
-    params.forEach(param => {
+    params.forEach((param) => {
       const value = url.searchParams.get(param);
       if (value) queryParams.append(param, value);
     });
@@ -26,8 +32,10 @@ serve(async (req: Request) => {
     // Set defaults if not provided
     if (!queryParams.has("currency")) queryParams.set("currency", "usd");
     if (!queryParams.has("sort")) queryParams.set("sort", "value");
-    if (!queryParams.has("filter[positions]")) queryParams.set("filter[positions]", "only_simple");
-    if (!queryParams.has("filter[trash]")) queryParams.set("filter[trash]", "only_non_trash");
+    if (!queryParams.has("filter[positions]"))
+      queryParams.set("filter[positions]", "only_simple");
+    if (!queryParams.has("filter[trash]"))
+      queryParams.set("filter[trash]", "only_non_trash");
 
     const API_KEY = Deno.env.get("ZERION_API_KEY");
     if (!API_KEY) {
@@ -36,14 +44,11 @@ serve(async (req: Request) => {
 
     const apiUrl = `${ZERION_API_BASE_URL}/wallets/${address}/positions/?${queryParams}`;
 
-    console.log("API URL:", apiUrl);
-    console.log("API Key (first 4 chars):", API_KEY.substring(0, 4) + "...");
-
     const response = await fetch(apiUrl, {
       method: "GET",
       headers: {
-        "Accept": "application/json",
-        "Authorization": `Bearer ${API_KEY}`
+        Accept: "application/json",
+        Authorization: `Bearer ${API_KEY}`,
       },
     });
 
@@ -57,7 +62,6 @@ serve(async (req: Request) => {
     return new Response(JSON.stringify(data), {
       headers: { "Content-Type": "application/json" },
     });
-
   } catch (error) {
     console.error("Error in edge function:", error);
     return new Response(JSON.stringify({ error: error.message }), {
