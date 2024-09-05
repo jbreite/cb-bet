@@ -33,8 +33,9 @@ export default function Bets() {
     queryKey: ["userHistory", address?.toString()],
     queryFn: () =>
       getUserHistory(CB_BET_SUPPORTED_NETWORK_IDS.OPTIMISM, address),
+    // keepPreviousData: true,
+    // staleTime: 5 * 60 * 1000, // 5 minutes
   });
-
   const handleClaim = (ticketId: string) => {
     if (!address) {
       console.error("No wallet address found");

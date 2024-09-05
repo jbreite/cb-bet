@@ -57,7 +57,7 @@ export default function BetTab({
   const numberBetAmount = parseFloat(betAmount.replace("$", ""));
   console.log("numberBetAmount", numberBetAmount);
 
-  const { data: quoteObject, isLoading: quoteLoading } = useQuote(
+  const { data: quoteObject, isLoading: quoteLoading, isError: isQuoteError } = useQuote(
     betAmount,
     tradeData
   );
@@ -115,7 +115,7 @@ export default function BetTab({
         );
 
   const handlePlaceBet = () => {
-    if (!quoteObject) {
+    if (!quoteObject || isQuoteError) {
       Alert.alert("Error", "Quote data is not available");
       return;
     }
