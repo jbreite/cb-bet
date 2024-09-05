@@ -12,16 +12,44 @@ import {
 } from "@/constants/Constants";
 import { getTradeData } from "@/utils/overtime/ui/helpers";
 import { ERC_20_ABI } from "@/utils/overtime/abi/ERC20_ABI";
-import { useWriteContracts, useCallsStatus } from "wagmi/experimental";
+import { useWriteContracts, useCallsStatus, useCapabilities } from "wagmi/experimental";
+import { useAccount } from "wagmi";
+import { useMemo } from "react";
 
 //Ecample Parlay Transaction - https://optimistic.etherscan.io/tx/0x1d70dd8b569ca187661dcf60c5b4b1fc129b81093990611aaf6e70a048784327
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL!;
+const PAYMASTER_FUNCTION_URL = `${supabaseUrl}/functions/v1/paymaster`;
+
+
 
 export const usePlaceBetBetter = (onSuccess?: () => void) => {
+  const account = useAccount();
+
+  const { data: availableCapabilities } = useCapabilities({
+    account: account.address,
+  });
+  const capabilities = useMemo(() => {
+    if (!availableCapabilities || !account.chainId) return {};
+    const capabilitiesForChain = availableCapabilities[account.chainId];
+    if (
+      capabilitiesForChain["paymasterService"] &&
+      capabilitiesForChain["paymasterService"].supported
+    ) {
+      return {
+        paymasterService: {
+          url: PAYMASTER_FUNCTION_URL,
+        },
+      };
+    }
+    return {};
+  }, [availableCapabilities, account.chainId]);
+
   const {
     allowance,
     refetch: refetchAllowance,
     allowanceError,
   } = useReadAllowance();
+
   const {
     writeContracts,
     data: writeContractsData,
@@ -112,6 +140,7 @@ export const usePlaceBetBetter = (onSuccess?: () => void) => {
 
     writeContracts({
       contracts: contracts,
+      capabilities
     });
   };
   return {
