@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Alert, StyleSheet, Text, View } from "react-native";
 import { useAtom } from "jotai";
 import { userBetsAtom } from "@/lib/atom/atoms";
@@ -24,8 +24,7 @@ import {
 import { router } from "expo-router";
 import { useUSDCBal } from "@/hooks/tokens/useUSDCBal";
 import { useQuote } from "@/hooks/bets/useQuote";
-import { usePlaceBetBetter } from "@/hooks/bets/usePlaceBetBetter";
-import { useCapabilities } from "wagmi/experimental";
+import { usePlaceBet } from "@/hooks/bets/usePlaceBet";
 import { INITIAL_BET_AMOUNT } from "@/constants/Constants";
 
 //TODO: Need a failure reason and show the error message.
@@ -76,7 +75,7 @@ export default function BetTab({
     callsStatus,
     writeContractsIsPending,
     writeContractsIsError,
-  } = usePlaceBetBetter(onBetSuccess);
+  } = usePlaceBet(onBetSuccess);
 
   const {
     balance: usdcBalance,

@@ -11,6 +11,8 @@ import { userBetsAtom } from "@/lib/atom/atoms";
 import { useAtom } from "jotai";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import sportsAMMV2Contract from "@/constants/overtimeContracts";
+import { useWriteContracts } from "wagmi/experimental";
+import { usePaymaster } from "@/hooks/bets/usePaymaster";
 
 //TODO: Group tickets by gameId
 //Example claim transaction - https://optimistic.etherscan.io/tx/0xbc151726cc4b073815449bfe36a07ccc897beaf41878ff3aab964251ad5d6f48
@@ -22,7 +24,7 @@ export default function Bets() {
   const tabBarHeight = useBottomTabBarHeight();
   const bottomPadding = userBets.length > 0 ? 240 : 32; //TODO: Make this dynamic. Shouold be a hook
 
-  const { writeContract } = useWriteContract();
+  const capabilities = usePaymaster();
 
   const {
     data: userHistoryData,
@@ -36,33 +38,35 @@ export default function Bets() {
     // keepPreviousData: true,
     // staleTime: 5 * 60 * 1000, // 5 minutes
   });
+
+  const { writeContracts } = useWriteContracts({
+    mutation: {
+      onSuccess: (data) => {
+        console.log("Claim successful", data);
+        refetch();
+      },
+    },
+  });
+
   const handleClaim = (ticketId: string) => {
     if (!address) {
       console.error("No wallet address found");
       return;
     }
 
-    writeContract(
-      {
-        address: sportsAMMV2Contract.addresses[
-          CB_BET_SUPPORTED_NETWORK_IDS.OPTIMISM
-        ] as `0x${string}`,
-        abi: sportsAMMV2Contract.abi,
-        functionName: "exerciseTicket",
-        args: [ticketId],
-      },
-      {
-        onSuccess: (data) => {
-          console.log("Claim successful", data);
-          refetch();
-          // You might want to refetch the user history or update the UI here
-        },
-        onError: (error) => {
-          console.error("Claim failed", error);
-          // Handle the error, maybe show an error message to the user
-        },
-      }
-    );
+    const claimTicketInput = {
+      address: sportsAMMV2Contract.addresses[
+        CB_BET_SUPPORTED_NETWORK_IDS.OPTIMISM
+      ] as `0x${string}`,
+      abi: sportsAMMV2Contract.abi,
+      functionName: "exerciseTicket",
+      args: [ticketId],
+    };
+
+    writeContracts({
+      contracts: [claimTicketInput],
+      capabilities,
+    });
   };
 
   let userHistoryView;
@@ -72,7 +76,7 @@ export default function Bets() {
   } else if (userHistoryIsError) {
     userHistoryView = <GeneralErrorMessage errorMessage={"Error"} />;
   } else if (userHistoryData) {
-    console.log(JSON.stringify(userHistoryData.closed));
+    // console.log(JSON.stringify(userHistoryData));
     userHistoryView = (
       <View style={{ flex: 1, paddingTop: 8 }}>
         <ScrollView

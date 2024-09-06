@@ -1,4 +1,7 @@
-import { ENTRYPOINT_ADDRESS_V06, UserOperation } from "npm:permissionless@0.1.29";
+import {
+  ENTRYPOINT_ADDRESS_V06,
+  UserOperation,
+} from "npm:permissionless@0.1.29";
 import {
   Address,
   BlockTag,
@@ -30,7 +33,12 @@ export async function willSponsor({
   entrypoint: string;
   userOp: UserOperation<"0.6">;
 }) {
-  console.log("willSponsor called with chainId:", chainId, "entrypoint:", entrypoint);
+  console.log(
+    "willSponsor called with chainId:",
+    chainId,
+    "entrypoint:",
+    entrypoint
+  );
 
   // check chain id
   // if (chainId !== optimism.id) {
@@ -39,7 +47,12 @@ export async function willSponsor({
   // }
   // check entrypoint
   if (entrypoint.toLowerCase() !== ENTRYPOINT_ADDRESS_V06.toLowerCase()) {
-    console.log("Entrypoint mismatch. Expected:", ENTRYPOINT_ADDRESS_V06.toLowerCase(), "Got:", entrypoint.toLowerCase());
+    console.log(
+      "Entrypoint mismatch. Expected:",
+      ENTRYPOINT_ADDRESS_V06.toLowerCase(),
+      "Got:",
+      entrypoint.toLowerCase()
+    );
     return false;
   }
 
@@ -62,7 +75,12 @@ export async function willSponsor({
         factoryAddress.toLowerCase() !==
         coinbaseSmartWalletFactoryAddress.toLowerCase()
       ) {
-        console.log("Factory address mismatch. Expected:", coinbaseSmartWalletFactoryAddress.toLowerCase(), "Got:", factoryAddress.toLowerCase());
+        console.log(
+          "Factory address mismatch. Expected:",
+          coinbaseSmartWalletFactoryAddress.toLowerCase(),
+          "Got:",
+          factoryAddress.toLowerCase()
+        );
         return false;
       }
     } else {
@@ -86,7 +104,12 @@ export async function willSponsor({
       )[0];
       console.log("Implementation address:", implementationAddress);
       if (implementationAddress != coinbaseSmartWalletV1Implementation) {
-        console.log("Implementation address mismatch. Expected:", coinbaseSmartWalletV1Implementation, "Got:", implementationAddress);
+        console.log(
+          "Implementation address mismatch. Expected:",
+          coinbaseSmartWalletV1Implementation,
+          "Got:",
+          implementationAddress
+        );
         return false;
       }
     }
@@ -108,32 +131,44 @@ export async function willSponsor({
       return false;
     }
 
-    // const calls = calldata.args[0] as {
-    //   target: Address;
-    //   value: bigint;
-    //   data: Hex;
-    // }[];
-    // console.log("Number of calls:", calls.length);
+    const calls = calldata.args[0] as {
+      target: Address;
+      value: bigint;
+      data: Hex;
+      r;
+    }[];
+    console.log("Number of calls:", calls.length);
 
-    // // Allow batch calls of any length, but ensure there's at least one call
-    // if (calls.length === 0) {
-    //   console.log("No calls in batch");
-    //   return false;
+    // Allow batch calls of any length, but ensure there's at least one call
+    if (calls.length === 0) {
+      console.log("No calls in batch");
+      return false;
+    }
+
+    let callToCheckIndex = 0;
+    // if (calls.length > 1) {
+    //   // if there is more than one call, check if the first is a magic spend call
+    //   if (calls[0].target.toLowerCase() !== magicSpendAddress.toLowerCase()) {
+    //     console.log(
+    //       "First call is not to magic spend address. Expected:",
+    //       magicSpendAddress.toLowerCase(),
+    //       "Got:",
+    //       calls[0].target.toLowerCase()
+    //     );
+    //     return false;
+    //   }
+    //   callToCheckIndex = 1;
     // }
 
-    // let callToCheckIndex = 0;
-    // // if (calls.length > 1) {
-    // //   // if there is more than one call, check if the first is a magic spend call
-    // //   if (calls[0].target.toLowerCase() !== magicSpendAddress.toLowerCase()) {
-    // //     console.log("First call is not to magic spend address. Expected:", magicSpendAddress.toLowerCase(), "Got:", calls[0].target.toLowerCase());
-    // //     return false;
-    // //   }
-    // //   callToCheckIndex = 1;
-    // // }
-
     // console.log("Call to check index:", callToCheckIndex);
-    // console.log("Target address:", calls[callToCheckIndex].target.toLowerCase());
-    // console.log("SportsAMM address:", sportsAMMV2Contract.addresses[10].toLowerCase());
+    // console.log(
+    //   "Target address:",
+    //   calls[callToCheckIndex].target.toLowerCase()
+    // );
+    // console.log(
+    //   "SportsAMM address:",
+    //   sportsAMMV2Contract.addresses[10].toLowerCase()
+    // );
     // console.log("USDC address:", DEFAULT_USDC_OPTIMISM.toLowerCase());
 
     // if (
@@ -161,7 +196,7 @@ export async function willSponsor({
     //   return false;
     // }
 
-    console.log("willSponsor check passed");
+    // console.log("willSponsor check passed");
     return true;
   } catch (e) {
     console.error(`willSponsor check failed: ${e}`);
