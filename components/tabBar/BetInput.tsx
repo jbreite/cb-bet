@@ -30,7 +30,7 @@ export default function BetInput({
         onPress={onButtonPress}
         isLoading={isLoading}
         disabled={isDisabled}
-        style={{ flex: 3 / 2, padding: 12 }}
+        style={{ flex: 3 / 2, padding: 16 }}
       />
     </View>
   );
@@ -41,8 +41,8 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     gap: 24,
-    paddingVertical: 8,
-    paddingRight: 8,
+    paddingVertical: 4,
+    paddingRight: 4,
     paddingLeft: 16,
     borderRadius: 100,
     borderWidth: 1,
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   inputText: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "bold",
   },
 });

@@ -1,4 +1,5 @@
 import { UserBet } from "@/lib/atom/atoms";
+import { ErrorQuoteData, SuccessfulQuoteData } from "../queries/getQuote";
 
 export function convertNormalizedImpliedToAmerican(
   normalizedImpliedOdds: number
@@ -110,3 +111,9 @@ export function extractFailureReason(logText: string): string {
 
   return logText.slice(reasonStartIndex, endIndex).trim();
 }
+
+export const isSuccessfulQuoteObject = (
+  quoteData: SuccessfulQuoteData | ErrorQuoteData
+): quoteData is SuccessfulQuoteData => {
+  return "totalQuote" in quoteData;
+};

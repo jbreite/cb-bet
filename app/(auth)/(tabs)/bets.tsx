@@ -17,6 +17,8 @@ import { usePaymaster } from "@/hooks/bets/usePaymaster";
 //TODO: Group tickets by gameId
 //Example claim transaction - https://optimistic.etherscan.io/tx/0xbc151726cc4b073815449bfe36a07ccc897beaf41878ff3aab964251ad5d6f48
 
+//TODO: Claim All button
+
 export default function Bets() {
   const { address } = useAccount();
   const [userBets] = useAtom(userBetsAtom);

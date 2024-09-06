@@ -14,6 +14,7 @@ import {
   extractFailureReason,
   formatAmericanOdds,
   formatCurrency,
+  isSuccessfulQuoteObject,
 } from "@/utils/overtime/ui/beyTabHelpers";
 import { SfText } from "../SfThemedText";
 import { SharedValue } from "react-native-reanimated";
@@ -55,6 +56,7 @@ export default function BetTab({
     data: quoteObject,
     isLoading: quoteLoading,
     isError: isQuoteError,
+    refetch: refetchQuote,
   } = useQuote(betAmount, tradeData);
 
   //TODO: This is not working
@@ -69,45 +71,35 @@ export default function BetTab({
     router.push("/bets");
   };
 
-  const {
-    placeBet,
-    allowanceError,
-    callsStatus,
-    writeContractsIsPending,
-    writeContractsIsError,
-  } = usePlaceBet(onBetSuccess);
+  const { placeBet, writeContractsIsPending, writeContractsIsError } =
+    usePlaceBet(onBetSuccess);
 
-  const {
-    balance: usdcBalance,
-    isLoading: usdcBalLoading,
-    isError: usdcBalError,
-  } = useUSDCBal();
+  const { balance: usdcBalance } = useUSDCBal();
 
   const firstBet = userBetsAtomData[0];
+  const isParlay = numberBets > 1;
 
-  const betTypeName =
-    numberBets > 1
-      ? userBetsAtomData
-          .map((bet) =>
-            getMarketOutcomeText(
-              bet.sportMarket,
-              bet.tradeData.position,
-              bet.tradeData.typeId,
-              bet.tradeData.line
-            )
+  const betTypeName = isParlay
+    ? userBetsAtomData
+        .map((bet) =>
+          getMarketOutcomeText(
+            bet.sportMarket,
+            bet.tradeData.position,
+            bet.tradeData.typeId,
+            bet.tradeData.line
           )
-          .join(", ") //TODO this could be more detailed but fine fo now
-      : getMarketTypeName(firstBet.tradeData.typeId);
+        )
+        .join(", ") //TODO this could be more detailed but fine fo now
+    : getMarketTypeName(firstBet.tradeData.typeId);
 
-  const marketOutcomeText =
-    numberBets > 1
-      ? `${numberBets} Game Parlay`
-      : getMarketOutcomeText(
-          firstBet.sportMarket,
-          firstBet.tradeData.position,
-          firstBet.tradeData.typeId,
-          firstBet.tradeData.line
-        );
+  const marketOutcomeText = isParlay
+    ? `${numberBets} Game Parlay`
+    : getMarketOutcomeText(
+        firstBet.sportMarket,
+        firstBet.tradeData.position,
+        firstBet.tradeData.typeId,
+        firstBet.tradeData.line
+      );
 
   const handlePlaceBet = () => {
     if (!quoteObject || isQuoteError) {
@@ -116,12 +108,6 @@ export default function BetTab({
     }
 
     placeBet(quoteObject, tradeData);
-  };
-
-  const isSuccessfulQuoteObject = (
-    quoteData: SuccessfulQuoteData | ErrorQuoteData
-  ): quoteData is SuccessfulQuoteData => {
-    return "totalQuote" in quoteData;
   };
 
   const americanOdds =
@@ -142,12 +128,23 @@ export default function BetTab({
     return "To Win";
   };
 
-  const buttonText =
-    usdcBalance && numberBetAmount > usdcBalance.value
-      ? "Not enough Funds"
-      : getWinText(quoteObject);
+  const enoughUSDC = usdcBalance && numberBetAmount > usdcBalance.value;
+
+  const buttonText = enoughUSDC ? "Not enough Funds" : getWinText(quoteObject);
 
   const buttonLoadingText = getWinText(quoteObject);
+
+  let quoteText = "";
+  if (quoteObject && !isSuccessfulQuoteObject(quoteObject.quoteData)) {
+    if (quoteObject.quoteData.error.includes("Proof is not valid")) {
+      console.log("Received 'Proof is not valid' error. Refetching...");
+      quoteText =
+        "Proof not valid. Please refresh bets. Better solution coming.";
+      refetchQuote();
+    } else {
+      quoteText = quoteObject.quoteData.error;
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -211,20 +208,20 @@ export default function BetTab({
           setBetAmount={setBetAmount}
           onInputPress={() => setIsKeyboardVisible(!isKeyboardVisible.value)}
           onButtonPress={handlePlaceBet}
-          isLoading={writeContractsIsPending || quoteLoading}
+          isLoading={writeContractsIsPending || (quoteLoading && !enoughUSDC)}
           isDisabled={
             writeContractsIsPending ||
             quoteLoading ||
             numberBetAmount === 0 ||
-            numberBetAmount > usdcBalance.value
+            enoughUSDC
           }
         />
         {quoteObject && !isSuccessfulQuoteObject(quoteObject.quoteData) && (
-          <SfText>{quoteObject.quoteData.error}</SfText>
+          <SfText>{quoteText}</SfText>
         )}
 
         {writeContractsIsError && (
-          <SfText>
+          <SfText familyType="medium" style={{ fontSize: 16 }}>
             {extractFailureReason(writeContractsIsError.toString())}
           </SfText>
         )}

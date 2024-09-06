@@ -12,7 +12,6 @@ export const useQuote = (betAmount: string, tradeDataArray: TradeData[]) => {
         buyInAmount: numberBetAmount,
         tradeData: tradeDataArray,
       }),
-
     enabled:
       !isNaN(numberBetAmount) &&
       numberBetAmount > 0 &&
