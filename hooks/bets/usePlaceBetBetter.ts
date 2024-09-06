@@ -12,15 +12,17 @@ import {
 } from "@/constants/Constants";
 import { getTradeData } from "@/utils/overtime/ui/helpers";
 import { ERC_20_ABI } from "@/utils/overtime/abi/ERC20_ABI";
-import { useWriteContracts, useCallsStatus, useCapabilities } from "wagmi/experimental";
+import {
+  useWriteContracts,
+  useCallsStatus,
+  useCapabilities,
+} from "wagmi/experimental";
 import { useAccount } from "wagmi";
 import { useMemo } from "react";
 
-//Ecample Parlay Transaction - https://optimistic.etherscan.io/tx/0x1d70dd8b569ca187661dcf60c5b4b1fc129b81093990611aaf6e70a048784327
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL!;
-const PAYMASTER_FUNCTION_URL = `${supabaseUrl}/functions/v1/paymaster`;
-
-
+const PAYMASTER_FUNCTION_URL = `${supabaseUrl}/functions/v1/paymaster`
+console.log(PAYMASTER_FUNCTION_URL);
 
 export const usePlaceBetBetter = (onSuccess?: () => void) => {
   const account = useAccount();
@@ -77,7 +79,7 @@ export const usePlaceBetBetter = (onSuccess?: () => void) => {
     },
   });
 
-  const placeBet = (quoteObject: QuoteData, tradeData: TradeData[]) => {
+  const placeBet = async (quoteObject: QuoteData, tradeData: TradeData[]) => {
     if ("error" in quoteObject.quoteData) {
       throw new Error("Got an error quote Object");
     }
@@ -133,6 +135,7 @@ export const usePlaceBetBetter = (onSuccess?: () => void) => {
 
     let contracts = [];
     if (buyInAmount > allowance) {
+      console.log("hello");
       contracts = [approvalContractInput, betContractInput];
     } else {
       contracts = [betContractInput];
@@ -140,9 +143,10 @@ export const usePlaceBetBetter = (onSuccess?: () => void) => {
 
     writeContracts({
       contracts: contracts,
-      capabilities
+      capabilities,
     });
   };
+
   return {
     placeBet,
     allowance,

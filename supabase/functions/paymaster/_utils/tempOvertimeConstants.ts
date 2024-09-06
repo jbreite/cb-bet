@@ -1,5 +1,4 @@
-import { parseEther } from "viem";
-import { CB_BET_SUPPORTED_NETWORK_IDS } from "./Constants";
+import { parseEther } from "npm:viem";
 
 export const DEFAULT_USDC_OPTIMISM =
   "0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85";
@@ -8,7 +7,7 @@ export const DEFAULT_SLIPPAGE = parseEther("0.02");
 
 const sportsAMMV2Contract = {
   addresses: {
-    [CB_BET_SUPPORTED_NETWORK_IDS.OPTIMISM]:
+    [10]:
       "0xFb4e4811C7A811E098A556bD79B64c20b479E431",
   },
   abi: [

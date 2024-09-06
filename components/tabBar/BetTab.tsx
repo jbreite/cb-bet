@@ -50,17 +50,13 @@ export default function BetTab({
   const numberBets = userBetsAtomData.length;
   const tradeData = userBetsAtomData.map((bet) => bet.tradeData);
 
-  const { data: capabilities } = useCapabilities();
-
-  console.log("capabilities", capabilities);
-
   const numberBetAmount = parseFloat(betAmount.replace("$", ""));
-  console.log("numberBetAmount", numberBetAmount);
 
-  const { data: quoteObject, isLoading: quoteLoading, isError: isQuoteError } = useQuote(
-    betAmount,
-    tradeData
-  );
+  const {
+    data: quoteObject,
+    isLoading: quoteLoading,
+    isError: isQuoteError,
+  } = useQuote(betAmount, tradeData);
 
   //TODO: This is not working
   const onBetSuccess = () => {
