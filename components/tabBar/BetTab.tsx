@@ -8,11 +8,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useAtom } from "jotai";
 import { userBetsAtom } from "@/lib/atom/atoms";
-import {
-  ErrorQuoteData,
-  QuoteData,
-  SuccessfulQuoteData,
-} from "@/utils/overtime/queries/getQuote";
+import { QuoteData } from "@/utils/overtime/queries/getQuote";
 import BetInput from "./BetInput";
 import {
   calculateBetOutcome,
@@ -35,11 +31,6 @@ import { usePlaceBet } from "@/hooks/bets/usePlaceBet";
 import { INITIAL_BET_AMOUNT } from "@/constants/Constants";
 import Chevron_Down from "../icons/Chevron_Down";
 import IconPressable from "../IconPressable";
-import Swipeable, {
-  SwipeableMethods,
-} from "react-native-gesture-handler/ReanimatedSwipeable";
-import { RectButton } from "react-native-gesture-handler";
-import { renderRightActions } from "./betTabSwipeable";
 
 //TODO: Need a failure reason and show the error message.
 //TODO: When refetching quote or changing input needs to clear the error.
@@ -62,7 +53,9 @@ export default function BetTab({
   const [userBetsAtomData, setUserBetsAtom] = useAtom(userBetsAtom);
   const numberBets = userBetsAtomData.length;
   const tradeData = userBetsAtomData.map((bet) => bet.tradeData);
-  const swipeableRef = useRef<SwipeableMethods>(null);
+  const fullSheetHeight = useSharedValue(0);
+  const collapsibleHeight = useSharedValue(0);
+  console.log(isKeyboardVisible.value)
 
   const numberBetAmount = parseFloat(betAmount.replace("$", ""));
 
@@ -162,149 +155,149 @@ export default function BetTab({
 
   const isCollapsed = useSharedValue(false);
 
-  const animatedStyle = useAnimatedStyle(() => ({
-    height: withTiming(isCollapsed.value ? 60 : "auto", { duration: 300 }),
+  const rConatainerStyle = useAnimatedStyle(() => ({
     overflow: "hidden",
+    transform: [
+      {
+        translateY: withTiming(
+          isCollapsed.value ? collapsibleHeight.value + 24 : -0
+        ),
+      },
+    ],
   }));
 
   const toggleCollapse = () => {
     isCollapsed.value = !isCollapsed.value;
   };
 
+  console.log(fullSheetHeight.value);
+  console.log(collapsibleHeight.value);
+
   return (
-    <Swipeable
-      ref={swipeableRef}
-      friction={2}
-      rightThreshold={30}
-      renderRightActions={(_, progress) => renderRightActions(_, progress)}
-      containerStyle={{ borderTopRightRadius: 20, borderTopLeftRadius: 20 }}
-      onSwipeableWillOpen={(direction) => {
-        if (direction === "right") {
-          console.log("close ref");
-          swipeableRef.current!.close();
-          console.log("Clear Atom");
-          setUserBetsAtom([]);
-        }
+    <Animated.View
+      style={[styles.container, rConatainerStyle]}
+      onLayout={(e) => {
+        fullSheetHeight.value = e.nativeEvent.layout.height;
       }}
     >
-      <Animated.View style={[styles.container, animatedStyle]}>
-        <View style={styles.heading}>
-          <View
-            style={{
-              flex: 1,
-              flexDirection: "row",
-              gap: 8,
-              alignItems: "center",
-            }}
-          >
-            <View style={styles.betslipNumber}>
-              <SfText
-                familyType={"bold"}
-                style={{
-                  fontSize: 16,
-                  color: "white",
-                }}
-              >
-                {numberBets}
-              </SfText>
-            </View>
+      <View style={styles.heading}>
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "row",
+            gap: 8,
+            alignItems: "center",
+          }}
+        >
+          <View style={styles.betslipNumber}>
             <SfText
               familyType={"bold"}
               style={{
                 fontSize: 16,
-                color: "#1A88F8",
+                color: "white",
               }}
             >
-              Bet Slip
+              {numberBets}
             </SfText>
           </View>
-
-          <View style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
-            <SfText familyType="medium" style={{ fontSize: 16 }}>
-              $10 to win{" "}
-              {formatCurrency({
-                amount: tenDollarBetOutcome.profit,
-                omitDecimalsForWholeNumbers: true,
-              })}
-            </SfText>
-            <IconPressable onPress={toggleCollapse}>
-              <Animated.View
-                style={useAnimatedStyle(() => ({
-                  transform: [
-                    {
-                      rotate: withTiming(isCollapsed.value ? "180deg" : "0deg"),
-                    },
-                  ],
-                }))}
-              >
-                <Chevron_Down color={"#949595"} strokeWidth={2.5} />
-              </Animated.View>
-            </IconPressable>
-          </View>
+          <SfText
+            familyType={"bold"}
+            style={{
+              fontSize: 16,
+              color: "#1A88F8",
+            }}
+          >
+            Bet Slip
+          </SfText>
         </View>
 
-        <Animated.View
-          style={useAnimatedStyle(() => ({
-            opacity: withTiming(isCollapsed.value ? 0 : 1),
-            height: withTiming(isCollapsed.value ? 0 : "auto"),
-            marginTop: withTiming(isCollapsed.value ? 0 : 16),
-          }))}
-        >
-          <View style={{ gap: 16 }}>
-            {/*Bet Info*/}
-            <View style={{ gap: 4 }}>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                }}
-              >
-                <SfText familyType="semibold" style={{ fontSize: 18 }}>
-                  {marketOutcomeText}
-                </SfText>
-                <SfText familyType="semibold" style={{ fontSize: 18 }}>
-                  {formattedAmericanOdds}
-                </SfText>
-              </View>
-              <Text>{betTypeName}</Text>
-            </View>
+        <View style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
+          <SfText familyType="medium" style={{ fontSize: 16 }}>
+            $10 to win{" "}
+            {formatCurrency({
+              amount: tenDollarBetOutcome.profit,
+              omitDecimalsForWholeNumbers: true,
+            })}
+          </SfText>
+          <IconPressable
+            onPress={toggleCollapse}
+            disabled={isKeyboardVisible.value === true}
+          >
+            <Animated.View
+              style={useAnimatedStyle(() => ({
+                transform: [
+                  {
+                    rotate: withTiming(isCollapsed.value ? "180deg" : "0deg"),
+                  },
+                ],
+              }))}
+            >
+              <Chevron_Down color={"#949595"} strokeWidth={2.5} />
+            </Animated.View>
+          </IconPressable>
+        </View>
+      </View>
 
-            {/*Input*/}
-            <View style={{ gap: 8 }}>
-              <BetInput
-                buttonLabel={buttonText}
-                isLoadingText={buttonLoadingText}
-                betAmount={betAmount ?? "$"}
-                setBetAmount={setBetAmount}
-                onInputPress={() =>
-                  setIsKeyboardVisible(!isKeyboardVisible.value)
-                }
-                onButtonPress={handlePlaceBet}
-                isLoading={
-                  writeContractsIsPending || (quoteLoading && !enoughUSDC)
-                }
-                isDisabled={
-                  writeContractsIsPending ||
-                  quoteLoading ||
-                  numberBetAmount === 0 ||
-                  enoughUSDC
-                }
-              />
-              {quoteObject &&
-                !isSuccessfulQuoteObject(quoteObject.quoteData) && (
-                  <SfText>{quoteText}</SfText>
-                )}
-
-              {writeContractsIsError && (
-                <SfText familyType="medium" style={{ fontSize: 16 }}>
-                  {extractFailureReason(writeContractsIsError.toString())}
-                </SfText>
-              )}
+      <View
+        onLayout={(e) => {
+          collapsibleHeight.value = e.nativeEvent.layout.height;
+        }}
+      >
+        <View style={{ gap: 16 }}>
+          {/*Bet Info*/}
+          <View style={{ gap: 4 }}>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+              }}
+            >
+              <SfText familyType="semibold" style={{ fontSize: 18 }}>
+                {marketOutcomeText}
+              </SfText>
+              <SfText familyType="semibold" style={{ fontSize: 18 }}>
+                {formattedAmericanOdds}
+              </SfText>
             </View>
+            <Text>{betTypeName}</Text>
           </View>
-        </Animated.View>
-      </Animated.View>
-    </Swipeable>
+
+          {/*Input*/}
+          <View style={{ gap: 8 }}>
+            <BetInput
+              buttonLabel={buttonText}
+              isLoadingText={buttonLoadingText}
+              betAmount={betAmount ?? "$"}
+              setBetAmount={setBetAmount}
+              onInputPress={() =>
+                setIsKeyboardVisible(!isKeyboardVisible.value)
+              }
+              onButtonPress={handlePlaceBet}
+              isLoading={
+                writeContractsIsPending || (quoteLoading && !enoughUSDC)
+              }
+              isDisabled={
+                writeContractsIsPending ||
+                quoteLoading ||
+                numberBetAmount === 0 ||
+                enoughUSDC
+              }
+            />
+            {quoteObject && !isSuccessfulQuoteObject(quoteObject.quoteData) && (
+              <SfText familyType="medium" style={{ fontSize: 14 }}>
+                {quoteText}
+              </SfText>
+            )}
+
+            {writeContractsIsError && (
+              <SfText familyType="medium" style={{ fontSize: 16 }}>
+                {extractFailureReason(writeContractsIsError.toString())}
+              </SfText>
+            )}
+          </View>
+        </View>
+      </View>
+    </Animated.View>
   );
 }
 

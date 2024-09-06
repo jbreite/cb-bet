@@ -4,10 +4,12 @@ import { Pressable } from "react-native";
 export default function IconPressable({
   backgroundColor = "#F7F8F9",
   onPress,
+  disabled,
   children,
 }: {
   backgroundColor?: string;
   onPress: () => void;
+  disabled?: boolean;
   children: React.ReactNode;
 }) {
   const { triggerImpact, ImpactFeedbackStyle } = useHaptics();
@@ -19,6 +21,7 @@ export default function IconPressable({
   return (
     <Pressable
       onPress={handlePress}
+      disabled={disabled}
       style={{
         backgroundColor: backgroundColor,
         padding: 2,
