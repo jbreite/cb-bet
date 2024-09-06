@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Alert, StyleSheet, Text, View } from "react-native";
 import { useAtom } from "jotai";
 import { userBetsAtom } from "@/lib/atom/atoms";
@@ -24,8 +24,7 @@ import {
 import { router } from "expo-router";
 import { useUSDCBal } from "@/hooks/tokens/useUSDCBal";
 import { useQuote } from "@/hooks/bets/useQuote";
-import { usePlaceBetBetter } from "@/hooks/bets/usePlaceBetBetter";
-import { useCapabilities } from "wagmi/experimental";
+import { usePlaceBet } from "@/hooks/bets/usePlaceBet";
 import { INITIAL_BET_AMOUNT } from "@/constants/Constants";
 
 //TODO: Need a failure reason and show the error message.
@@ -50,17 +49,13 @@ export default function BetTab({
   const numberBets = userBetsAtomData.length;
   const tradeData = userBetsAtomData.map((bet) => bet.tradeData);
 
-  const { data: capabilities } = useCapabilities();
-
-  console.log("capabilities", capabilities);
-
   const numberBetAmount = parseFloat(betAmount.replace("$", ""));
-  console.log("numberBetAmount", numberBetAmount);
 
-  const { data: quoteObject, isLoading: quoteLoading } = useQuote(
-    betAmount,
-    tradeData
-  );
+  const {
+    data: quoteObject,
+    isLoading: quoteLoading,
+    isError: isQuoteError,
+  } = useQuote(betAmount, tradeData);
 
   //TODO: This is not working
   const onBetSuccess = () => {
@@ -80,7 +75,7 @@ export default function BetTab({
     callsStatus,
     writeContractsIsPending,
     writeContractsIsError,
-  } = usePlaceBetBetter(onBetSuccess);
+  } = usePlaceBet(onBetSuccess);
 
   const {
     balance: usdcBalance,
@@ -115,7 +110,7 @@ export default function BetTab({
         );
 
   const handlePlaceBet = () => {
-    if (!quoteObject) {
+    if (!quoteObject || isQuoteError) {
       Alert.alert("Error", "Quote data is not available");
       return;
     }
