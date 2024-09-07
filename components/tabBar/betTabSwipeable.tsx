@@ -1,73 +1,56 @@
-import { RectButton } from "react-native-gesture-handler";
-import { SwipeableMethods } from "react-native-gesture-handler/lib/typescript/components/ReanimatedSwipeable";
+import React from "react";
+import { StyleSheet, View } from "react-native";
 import Animated, {
-  Extrapolation,
-  interpolate,
   SharedValue,
   useAnimatedStyle,
+  interpolate,
+  Extrapolation,
 } from "react-native-reanimated";
+import Trash_Full from "../icons/Trash_Full";
 
 export function RightActionSwipeable({
-  dragX,
+  progress,
 }: {
-  dragX: SharedValue<number>;
+  progress: SharedValue<number>;
 }) {
-  console.log(dragX.value);
-  const animatedStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(dragX.value, [0, 30], [1, 0], Extrapolation.CLAMP),
-    transform: [
-      {
-        translateX: interpolate(
-          dragX.value,
-          [0, 50, 100, 101],
-          [-20, 0, 0, 1],
-          Extrapolation.CLAMP
-        ),
-      },
-    ],
-  }));
+  //   const animatedStyle = useAnimatedStyle(() => {
+  //     const translateX = interpolate(
+  //       progress.value,
+  //       [0, 100],
+  //       [-100, 0], // Adjust these values as needed
+  //       Extrapolation.CLAMP
+  //     );
+
+  //     return {
+  //       transform: [{ translateX }],
+  //     };
+  //   });
+
   return (
-    <Animated.View
-      style={[
-        {
-          flex: 1,
-          backgroundColor: "#497AFC",
-          justifyContent: "center",
-        },
-        // animatedStyle,
-      ]}
-    >
-      <Animated.Text>Archive</Animated.Text>
-    </Animated.View>
+    <View style={styles.container}>
+      <Animated.View style={[styles.iconContainer]}>
+        <Trash_Full size={32} color="white" />
+      </Animated.View>
+    </View>
   );
 }
 
-export const renderRightActions = (
-  _progress: any,
-  translation: SharedValue<number>
-) => {
-  console.log(translation);
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "red",
+    justifyContent: "center",
+    alignItems: "flex-end", // Align to the right side
+  },
+  iconContainer: {
+    paddingHorizontal: 16,
+  },
+});
 
-  const animatedStyle = useAnimatedStyle(() => ({
-    // opacity: interpolate(_progress.value, [0, 1], [1, 0], Extrapolation.CLAMP),
-    opacity: _progress.value === 1 ? 0 : 1,
-    transform: [
-        {
-          translateX: interpolate(
-            translation.value,
-            [-20, 0, 0, 1],
-            [0, 50, 100, 101],
-        
-            Extrapolation.CLAMP
-          ),
-        },
-      ],
-  
-  }));
-
+export const renderRightActions = (progress: SharedValue<number>) => {
   return (
-    <Animated.View style={[{ flex: 1 }, animatedStyle]}>
-      <RightActionSwipeable dragX={translation} />
+    <Animated.View style={[{ flex: 1 }]}>
+      <RightActionSwipeable progress={progress} />
     </Animated.View>
   );
 };

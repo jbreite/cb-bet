@@ -11,8 +11,6 @@ export type UserBet = {
 // Export the atom with the defined type
 export const userBetsAtom = atom<UserBet[]>([]);
 
-export const sportMarketAtom = atom<SportMarket[]>([]);
-
 export const BottomSheetMapAtom = atom<Map<string, BottomSheetModal | null>>(
   new Map()
 );

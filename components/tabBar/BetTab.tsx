@@ -1,10 +1,10 @@
-import React, { useCallback, useRef } from "react";
+import React, { useRef } from "react";
 import { Alert, StyleSheet, Text, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   withTiming,
-  useSharedValue,
   runOnJS,
+  SharedValue,
 } from "react-native-reanimated";
 import { useAtom } from "jotai";
 import { userBetsAtom } from "@/lib/atom/atoms";
@@ -19,7 +19,6 @@ import {
   isSuccessfulQuoteObject,
 } from "@/utils/overtime/ui/beyTabHelpers";
 import { SfText } from "../SfThemedText";
-import { SharedValue } from "react-native-reanimated";
 import {
   getMarketOutcomeText,
   getMarketTypeName,
@@ -31,31 +30,42 @@ import { usePlaceBet } from "@/hooks/bets/usePlaceBet";
 import { INITIAL_BET_AMOUNT } from "@/constants/Constants";
 import Chevron_Down from "../icons/Chevron_Down";
 import IconPressable from "../IconPressable";
-
-//TODO: Need a failure reason and show the error message.
-//TODO: When refetching quote or changing input needs to clear the error.
-//TODO: Need to BetTab have two states
-//TODO: Need to clean up error messages after another fetch.
+import Swipeable, {
+  SwipeableMethods,
+} from "react-native-gesture-handler/ReanimatedSwipeable";
+import { renderRightActions } from "./betTabSwipeable";
+import useHaptics from "@/hooks/useHaptics";
+import { RightActionSwipeable } from './betTabSwipeable';
 
 interface BetTabProps {
   isKeyboardVisible: SharedValue<boolean>;
   setIsKeyboardVisible: (visible: boolean) => void;
   betAmount: string;
   setBetAmount: (amount: string) => void;
+  isCollapsed: SharedValue<boolean>;
+  toggleCollapse: () => void;
+  onLayout: (height: number) => void;
+  disableCollapse: boolean;
 }
+
+const PADDING = 16;
 
 export default function BetTab({
   isKeyboardVisible,
   setIsKeyboardVisible,
   betAmount,
   setBetAmount,
+  isCollapsed,
+  toggleCollapse,
+  onLayout,
+  disableCollapse,
 }: BetTabProps) {
+  const { triggerImpact, ImpactFeedbackStyle } = useHaptics();
+
   const [userBetsAtomData, setUserBetsAtom] = useAtom(userBetsAtom);
   const numberBets = userBetsAtomData.length;
   const tradeData = userBetsAtomData.map((bet) => bet.tradeData);
-  const fullSheetHeight = useSharedValue(0);
-  const collapsibleHeight = useSharedValue(0);
-  console.log(isKeyboardVisible.value)
+  const swipeableRef = useRef<SwipeableMethods>(null);
 
   const numberBetAmount = parseFloat(betAmount.replace("$", ""));
 
@@ -66,14 +76,11 @@ export default function BetTab({
     refetch: refetchQuote,
   } = useQuote(betAmount, tradeData);
 
-  //TODO: This is not working
   const onBetSuccess = () => {
     console.log("Bet placed successfully!");
     setUserBetsAtom([]);
-    // Not sure this is right
     isKeyboardVisible.value = false;
     setIsKeyboardVisible(false);
-
     setBetAmount(INITIAL_BET_AMOUNT);
     router.push("/bets");
   };
@@ -96,7 +103,7 @@ export default function BetTab({
             bet.tradeData.line
           )
         )
-        .join(", ") //TODO this could be more detailed but fine fo now
+        .join(", ")
     : getMarketTypeName(firstBet.tradeData.typeId);
 
   const marketOutcomeText = isParlay
@@ -153,33 +160,17 @@ export default function BetTab({
     }
   }
 
-  const isCollapsed = useSharedValue(false);
-
-  const rConatainerStyle = useAnimatedStyle(() => ({
-    overflow: "hidden",
+  const rChevronStyle = useAnimatedStyle(() => ({
     transform: [
       {
-        translateY: withTiming(
-          isCollapsed.value ? collapsibleHeight.value + 24 : -0
-        ),
+        rotate: withTiming(isCollapsed.value ? "180deg" : "0deg"),
       },
     ],
   }));
 
-  const toggleCollapse = () => {
-    isCollapsed.value = !isCollapsed.value;
-  };
-
-  console.log(fullSheetHeight.value);
-  console.log(collapsibleHeight.value);
 
   return (
-    <Animated.View
-      style={[styles.container, rConatainerStyle]}
-      onLayout={(e) => {
-        fullSheetHeight.value = e.nativeEvent.layout.height;
-      }}
-    >
+    <View style={styles.container}>
       <View style={styles.heading}>
         <View
           style={{
@@ -219,31 +210,39 @@ export default function BetTab({
               omitDecimalsForWholeNumbers: true,
             })}
           </SfText>
-          <IconPressable
-            onPress={toggleCollapse}
-            disabled={isKeyboardVisible.value === true}
-          >
-            <Animated.View
-              style={useAnimatedStyle(() => ({
-                transform: [
-                  {
-                    rotate: withTiming(isCollapsed.value ? "180deg" : "0deg"),
-                  },
-                ],
-              }))}
-            >
+          <IconPressable onPress={toggleCollapse} disabled={disableCollapse}>
+            <Animated.View style={rChevronStyle}>
               <Chevron_Down color={"#949595"} strokeWidth={2.5} />
             </Animated.View>
           </IconPressable>
         </View>
       </View>
 
-      <View
-        onLayout={(e) => {
-          collapsibleHeight.value = e.nativeEvent.layout.height;
+      <Swipeable
+        ref={swipeableRef}
+        friction={1}
+        rightThreshold={30}
+        dragOffsetFromRightEdge={30}
+        renderRightActions={renderRightActions}
+        containerStyle={{ marginHorizontal: -PADDING }}
+        onSwipeableWillOpen={(direction) => {
+          if (direction === "right") {
+            triggerImpact(ImpactFeedbackStyle.Medium);
+            console.log("Clear Atom");
+            setUserBetsAtom([]);
+          }
         }}
       >
-        <View style={{ gap: 16 }}>
+        <View
+          style={{
+            gap: 16,
+            paddingHorizontal: PADDING,
+            backgroundColor: "white",
+          }}
+          onLayout={(event) => {
+            onLayout(event.nativeEvent.layout.height);
+          }}
+        >
           {/*Bet Info*/}
           <View style={{ gap: 4 }}>
             <View
@@ -270,7 +269,7 @@ export default function BetTab({
               betAmount={betAmount ?? "$"}
               setBetAmount={setBetAmount}
               onInputPress={() =>
-                setIsKeyboardVisible(!isKeyboardVisible.value)
+                runOnJS(setIsKeyboardVisible)(!isKeyboardVisible.value)
               }
               onButtonPress={handlePlaceBet}
               isLoading={
@@ -296,15 +295,15 @@ export default function BetTab({
             )}
           </View>
         </View>
-      </View>
-    </Animated.View>
+      </Swipeable>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "white",
-    padding: 16,
+    padding: PADDING,
     borderTopWidth: 1,
     borderLeftWidth: 1,
     borderRightWidth: 1,
@@ -329,19 +328,5 @@ const styles = StyleSheet.create({
     height: 24,
     width: 24,
     backgroundColor: "#1A88F8",
-  },
-  leftAction: {
-    flex: 1,
-    backgroundColor: "#ff0000",
-    justifyContent: "center",
-    alignItems: "flex-end",
-    paddingRight: 20,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-  },
-  actionText: {
-    color: "white",
-    fontWeight: "600",
-    padding: 20,
   },
 });
