@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -43,8 +43,17 @@ export default function TabBar({
   const [isKeyboardVisibleState, setIsKeyboardVisibleState] = useState(false);
   const isKeyboardVisible = useSharedValue(false);
   const { height: screenHeight } = useWindowDimensions();
+  const isCollapsed = useSharedValue(false);
+  console.log("isCollapsed:", isCollapsed.value);
+  const betTabHeight = useSharedValue(0);
 
   const numberOfBets = userBetsAtomData.length;
+
+  useEffect(() => {
+    if (numberOfBets === 0) {
+      isCollapsed.value = false;
+    }
+  }, [numberOfBets]);
 
   const onTabBarLayout = useCallback((event: LayoutChangeEvent) => {
     tabBarHeight.value = event.nativeEvent.layout.height;
@@ -73,6 +82,20 @@ export default function TabBar({
     };
   });
 
+  const rBetTabCollapsedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          translateY: withTiming(
+            isCollapsed.value
+              ? betTabHeight.value + 24 - tabBarHeight.value
+              : -tabBarHeight.value
+          ),
+        },
+      ],
+    };
+  });
+
   const rKeyboardStyle = useAnimatedStyle(() => {
     return {
       opacity: withTiming(isKeyboardVisible.value ? 1 : 0),
@@ -93,29 +116,9 @@ export default function TabBar({
     []
   );
 
-  const isCollapsed = useSharedValue(false);
-  const betTabHeight = useSharedValue(0);
-
   const toggleCollapse = useCallback(() => {
     isCollapsed.value = !isCollapsed.value;
   }, []);
-
-  console.log("BetTabH:", betTabHeight.value);
-  console.log("TBH:", tabBarHeight.value);
-
-  const rBetTabContainerStyle = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {
-          translateY: withTiming(
-            isCollapsed.value
-              ? betTabHeight.value + 24 - tabBarHeight.value
-              : -tabBarHeight.value
-          ),
-        },
-      ],
-    };
-  });
 
   return (
     <View style={styles.container}>
@@ -134,7 +137,11 @@ export default function TabBar({
       {/* Might be a better way to do this for animation, but works... It doesn't match the animation of the keyboard */}
       {numberOfBets !== 0 && (
         <Animated.View
-          style={[styles.betTabContainer, rBetTabContainerStyle, rBetTabKeyboardStyle]}
+          style={[
+            styles.betTabContainer,
+            rBetTabCollapsedStyle,
+            rBetTabKeyboardStyle,
+          ]}
           entering={SlideInDown}
           exiting={SlideOutDown}
         >

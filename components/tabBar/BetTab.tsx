@@ -152,9 +152,7 @@ export default function BetTab({
   const rChevronStyle = useAnimatedStyle(() => ({
     transform: [
       {
-        rotate: withTiming(isCollapsed.value ? "180deg" : "0deg", {
-          duration: 300,
-        }),
+        rotate: withTiming(isCollapsed.value ? "180deg" : "0deg"),
       },
     ],
   }));
@@ -214,7 +212,6 @@ export default function BetTab({
       <View
         style={{ gap: 16 }}
         onLayout={(event) => {
-          console.log(event.nativeEvent.layout.height);
           onLayout(event.nativeEvent.layout.height);
         }}
       >
