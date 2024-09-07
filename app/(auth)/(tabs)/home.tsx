@@ -103,8 +103,7 @@ export default function AuthenticatedIndex() {
                       index,
                       marketType
                     );
-                    // console.log("tradeDataWithPosition", tradeDataWithPosition);
-                    // console.log("market", JSON.stringify(market));
+
                     if (tradeDataWithPosition) {
                       handleMarketPress(market, tradeDataWithPosition);
                     }
