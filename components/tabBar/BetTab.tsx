@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Alert, StyleSheet, Text, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
@@ -30,6 +30,12 @@ import { usePlaceBet } from "@/hooks/bets/usePlaceBet";
 import { INITIAL_BET_AMOUNT } from "@/constants/Constants";
 import Chevron_Down from "../icons/Chevron_Down";
 import IconPressable from "../IconPressable";
+import Swipeable, {
+  SwipeableMethods,
+} from "react-native-gesture-handler/ReanimatedSwipeable";
+import { renderRightActions } from "./betTabSwipeable";
+import useHaptics from "@/hooks/useHaptics";
+import { RightActionSwipeable } from './betTabSwipeable';
 
 interface BetTabProps {
   isKeyboardVisible: SharedValue<boolean>;
@@ -42,6 +48,8 @@ interface BetTabProps {
   disableCollapse: boolean;
 }
 
+const PADDING = 16;
+
 export default function BetTab({
   isKeyboardVisible,
   setIsKeyboardVisible,
@@ -52,9 +60,12 @@ export default function BetTab({
   onLayout,
   disableCollapse,
 }: BetTabProps) {
+  const { triggerImpact, ImpactFeedbackStyle } = useHaptics();
+
   const [userBetsAtomData, setUserBetsAtom] = useAtom(userBetsAtom);
   const numberBets = userBetsAtomData.length;
   const tradeData = userBetsAtomData.map((bet) => bet.tradeData);
+  const swipeableRef = useRef<SwipeableMethods>(null);
 
   const numberBetAmount = parseFloat(betAmount.replace("$", ""));
 
@@ -157,6 +168,7 @@ export default function BetTab({
     ],
   }));
 
+
   return (
     <View style={styles.container}>
       <View style={styles.heading}>
@@ -206,62 +218,84 @@ export default function BetTab({
         </View>
       </View>
 
-      <View
-        style={{ gap: 16 }}
-        onLayout={(event) => {
-          onLayout(event.nativeEvent.layout.height);
+      <Swipeable
+        ref={swipeableRef}
+        friction={1}
+        rightThreshold={30}
+        dragOffsetFromRightEdge={30}
+        renderRightActions={renderRightActions}
+        containerStyle={{ marginHorizontal: -PADDING }}
+        onSwipeableWillOpen={(direction) => {
+          if (direction === "right") {
+            triggerImpact(ImpactFeedbackStyle.Medium);
+            console.log("Clear Atom");
+            setUserBetsAtom([]);
+          }
         }}
       >
-        {/*Bet Info*/}
-        <View style={{ gap: 4 }}>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-            }}
-          >
-            <SfText familyType="semibold" style={{ fontSize: 18 }}>
-              {marketOutcomeText}
-            </SfText>
-            <SfText familyType="semibold" style={{ fontSize: 18 }}>
-              {formattedAmericanOdds}
-            </SfText>
+        <View
+          style={{
+            gap: 16,
+            paddingHorizontal: PADDING,
+            backgroundColor: "white",
+          }}
+          onLayout={(event) => {
+            onLayout(event.nativeEvent.layout.height);
+          }}
+        >
+          {/*Bet Info*/}
+          <View style={{ gap: 4 }}>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+              }}
+            >
+              <SfText familyType="semibold" style={{ fontSize: 18 }}>
+                {marketOutcomeText}
+              </SfText>
+              <SfText familyType="semibold" style={{ fontSize: 18 }}>
+                {formattedAmericanOdds}
+              </SfText>
+            </View>
+            <Text>{betTypeName}</Text>
           </View>
-          <Text>{betTypeName}</Text>
-        </View>
 
-        {/*Input*/}
-        <View style={{ gap: 8 }}>
-          <BetInput
-            buttonLabel={buttonText}
-            isLoadingText={buttonLoadingText}
-            betAmount={betAmount ?? "$"}
-            setBetAmount={setBetAmount}
-            onInputPress={() =>
-              runOnJS(setIsKeyboardVisible)(!isKeyboardVisible.value)
-            }
-            onButtonPress={handlePlaceBet}
-            isLoading={writeContractsIsPending || (quoteLoading && !enoughUSDC)}
-            isDisabled={
-              writeContractsIsPending ||
-              quoteLoading ||
-              numberBetAmount === 0 ||
-              enoughUSDC
-            }
-          />
-          {quoteObject && !isSuccessfulQuoteObject(quoteObject.quoteData) && (
-            <SfText familyType="medium" style={{ fontSize: 14 }}>
-              {quoteText}
-            </SfText>
-          )}
+          {/*Input*/}
+          <View style={{ gap: 8 }}>
+            <BetInput
+              buttonLabel={buttonText}
+              isLoadingText={buttonLoadingText}
+              betAmount={betAmount ?? "$"}
+              setBetAmount={setBetAmount}
+              onInputPress={() =>
+                runOnJS(setIsKeyboardVisible)(!isKeyboardVisible.value)
+              }
+              onButtonPress={handlePlaceBet}
+              isLoading={
+                writeContractsIsPending || (quoteLoading && !enoughUSDC)
+              }
+              isDisabled={
+                writeContractsIsPending ||
+                quoteLoading ||
+                numberBetAmount === 0 ||
+                enoughUSDC
+              }
+            />
+            {quoteObject && !isSuccessfulQuoteObject(quoteObject.quoteData) && (
+              <SfText familyType="medium" style={{ fontSize: 14 }}>
+                {quoteText}
+              </SfText>
+            )}
 
-          {writeContractsIsError && (
-            <SfText familyType="medium" style={{ fontSize: 16 }}>
-              {extractFailureReason(writeContractsIsError.toString())}
-            </SfText>
-          )}
+            {writeContractsIsError && (
+              <SfText familyType="medium" style={{ fontSize: 16 }}>
+                {extractFailureReason(writeContractsIsError.toString())}
+              </SfText>
+            )}
+          </View>
         </View>
-      </View>
+      </Swipeable>
     </View>
   );
 }
@@ -269,7 +303,7 @@ export default function BetTab({
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "white",
-    padding: 16,
+    padding: PADDING,
     borderTopWidth: 1,
     borderLeftWidth: 1,
     borderRightWidth: 1,
