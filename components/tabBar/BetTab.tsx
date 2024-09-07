@@ -82,6 +82,8 @@ export default function BetTab({
   const firstBet = userBetsAtomData[0];
   const isParlay = numberBets > 1;
 
+  console.log("User bets Atom:", JSON.stringify(userBetsAtomData))
+
   const betTypeName = isParlay
     ? userBetsAtomData
         .map((bet) =>

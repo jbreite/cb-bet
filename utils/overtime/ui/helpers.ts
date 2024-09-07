@@ -30,19 +30,14 @@ export function getTradeDataFromSportMarket(
   pickedPosition: number,
   marketType: MarketTypeEnum
 ): TradeData | null {
-  let targetMarket: SportMarket = sportMarket;
+  const marketData = findOddsForMarket(sportMarket, marketType);
 
-  // If it's not the main WINNER market, find the corresponding child market
-  if (marketType !== MarketTypeEnum.WINNER) {
-    const childMarket = sportMarket.childMarkets.find(
-      (market) => market.typeId === marketType
-    );
-    if (!childMarket) {
-      console.error(`Child market with typeId ${marketType} not found`);
-      return null;
-    }
-    targetMarket = childMarket;
+  if (!marketData) {
+    console.error(`Market with typeId ${marketType} not found`);
+    return null;
   }
+
+  const targetMarket = marketData;
 
   return {
     gameId: sportMarket.gameId,
@@ -227,35 +222,24 @@ export function findSportMarket({
 export function findOddsForMarket(
   sportMarket: SportMarket,
   marketType: MarketTypeEnum
-) {
-  const targetMarkets = sportMarket.typeId === marketType
-    ? [sportMarket]
-    : sportMarket.childMarkets.filter((market: SportMarket) => market.typeId === marketType);
+): SportMarket | null {
+  const targetMarkets =
+    sportMarket.typeId === marketType
+      ? [sportMarket]
+      : sportMarket.childMarkets.filter(
+          (market: SportMarket) => market.typeId === marketType
+        );
 
   const closestToMinus110 = targetMarkets.reduce((closest, market) => {
-    const diffFromMinus110 = market.odds.map(odd => Math.abs(odd.american + 110));
+    const diffFromMinus110 = market.odds.map((odd) =>
+      Math.abs(odd.american + 110)
+    );
     const minDiff = Math.min(...diffFromMinus110);
     if (!closest || minDiff < closest.minDiff) {
       return { market, minDiff };
     }
     return closest;
-  }, null as { market: SportMarket, minDiff: number } | null);
+  }, null as { market: SportMarket; minDiff: number } | null);
 
-  const targetMarket = closestToMinus110 ? closestToMinus110.market : null;
-
-  if (targetMarket) {
-    const line = targetMarket.line;
-    const odds = targetMarket.odds;
-    const typeId = targetMarket.typeId;
-    const isDrawAvailable = getLeagueIsDrawAvailable(targetMarket.leagueId);
-
-    return {
-      line,
-      odds,
-      typeId,
-      isDrawAvailable,
-    };
-  }
-
-  return null; // Return null if no matching market is found
+  return closestToMinus110 ? closestToMinus110.market : null;
 }
