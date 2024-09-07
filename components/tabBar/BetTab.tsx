@@ -3,8 +3,6 @@ import { Alert, StyleSheet, Text, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   withTiming,
-  useSharedValue,
-  useDerivedValue,
   runOnJS,
   SharedValue,
 } from "react-native-reanimated";
@@ -41,6 +39,7 @@ interface BetTabProps {
   isCollapsed: SharedValue<boolean>;
   toggleCollapse: () => void;
   onLayout: (height: number) => void;
+  disableCollapse: boolean;
 }
 
 export default function BetTab({
@@ -51,6 +50,7 @@ export default function BetTab({
   isCollapsed,
   toggleCollapse,
   onLayout,
+  disableCollapse,
 }: BetTabProps) {
   const [userBetsAtomData, setUserBetsAtom] = useAtom(userBetsAtom);
   const numberBets = userBetsAtomData.length;
@@ -198,10 +198,7 @@ export default function BetTab({
               omitDecimalsForWholeNumbers: true,
             })}
           </SfText>
-          <IconPressable
-            onPress={toggleCollapse}
-            disabled={isKeyboardVisible.value === true}
-          >
+          <IconPressable onPress={toggleCollapse} disabled={disableCollapse}>
             <Animated.View style={rChevronStyle}>
               <Chevron_Down color={"#949595"} strokeWidth={2.5} />
             </Animated.View>

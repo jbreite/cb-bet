@@ -68,31 +68,21 @@ export default function TabBar({
     setIsKeyboardVisibleState(!isKeyboardVisibleState);
   };
 
-  const rBetTabKeyboardStyle = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {
-          translateY: withTiming(
-            isKeyboardVisible.value
-              ? -keyboardHeight.value
-              : -tabBarHeight.value
-          ),
-        },
-      ],
-    };
-  });
+  const rBetTabStyle = useAnimatedStyle(() => {
+    let translateY;
+    if (isKeyboardVisible.value) {
+      // When keyboard is visible, move up by keyboard height
+      translateY = -keyboardHeight.value;
+    } else if (isCollapsed.value) {
+      // When collapsed and keyboard not visible, move down
+      translateY = betTabHeight.value + 24 - tabBarHeight.value;
+    } else {
+      // When not collapsed and keyboard not visible, align with tab bar
+      translateY = -tabBarHeight.value;
+    }
 
-  const rBetTabCollapsedStyle = useAnimatedStyle(() => {
     return {
-      transform: [
-        {
-          translateY: withTiming(
-            isCollapsed.value
-              ? betTabHeight.value + 24 - tabBarHeight.value
-              : -tabBarHeight.value
-          ),
-        },
-      ],
+      transform: [{ translateY: withTiming(translateY) }],
     };
   });
 
@@ -120,6 +110,10 @@ export default function TabBar({
     isCollapsed.value = !isCollapsed.value;
   }, []);
 
+  console.log("isKeyboardVis:", isKeyboardVisible.value);
+  console.log("isKeybordStat:", isKeyboardVisibleState);
+  console.log("Bet Tab Heigth:", betTabHeight.value);
+
   return (
     <View style={styles.container}>
       {isKeyboardVisibleState === true && (
@@ -137,11 +131,7 @@ export default function TabBar({
       {/* Might be a better way to do this for animation, but works... It doesn't match the animation of the keyboard */}
       {numberOfBets !== 0 && (
         <Animated.View
-          style={[
-            styles.betTabContainer,
-            rBetTabCollapsedStyle,
-            rBetTabKeyboardStyle,
-          ]}
+          style={[styles.betTabContainer, rBetTabStyle, ,]}
           entering={SlideInDown}
           exiting={SlideOutDown}
         >
@@ -155,6 +145,7 @@ export default function TabBar({
             onLayout={(height) => {
               betTabHeight.value = height;
             }}
+            disableCollapse={isKeyboardVisibleState === true}
           />
         </Animated.View>
       )}
