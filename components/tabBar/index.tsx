@@ -59,7 +59,7 @@ export default function TabBar({
     setIsKeyboardVisibleState(!isKeyboardVisibleState);
   };
 
-  const rBetTabStyle = useAnimatedStyle(() => {
+  const rBetTabKeyboardStyle = useAnimatedStyle(() => {
     return {
       transform: [
         {
@@ -93,6 +93,30 @@ export default function TabBar({
     []
   );
 
+  const isCollapsed = useSharedValue(false);
+  const betTabHeight = useSharedValue(0);
+
+  const toggleCollapse = useCallback(() => {
+    isCollapsed.value = !isCollapsed.value;
+  }, []);
+
+  console.log("BetTabH:", betTabHeight.value);
+  console.log("TBH:", tabBarHeight.value);
+
+  const rBetTabContainerStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          translateY: withTiming(
+            isCollapsed.value
+              ? betTabHeight.value + 24 - tabBarHeight.value
+              : -tabBarHeight.value
+          ),
+        },
+      ],
+    };
+  });
+
   return (
     <View style={styles.container}>
       {isKeyboardVisibleState === true && (
@@ -110,7 +134,7 @@ export default function TabBar({
       {/* Might be a better way to do this for animation, but works... It doesn't match the animation of the keyboard */}
       {numberOfBets !== 0 && (
         <Animated.View
-          style={[styles.betTabContainer, rBetTabStyle]}
+          style={[styles.betTabContainer, rBetTabContainerStyle, rBetTabKeyboardStyle]}
           entering={SlideInDown}
           exiting={SlideOutDown}
         >
@@ -119,6 +143,11 @@ export default function TabBar({
             setIsKeyboardVisible={toggleKeyboardVisibility}
             betAmount={betAmount}
             setBetAmount={setBetAmount}
+            isCollapsed={isCollapsed}
+            toggleCollapse={toggleCollapse}
+            onLayout={(height) => {
+              betTabHeight.value = height;
+            }}
           />
         </Animated.View>
       )}
@@ -193,6 +222,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
+    overflow: "hidden",
   },
   keyboardContainer: {
     position: "absolute",

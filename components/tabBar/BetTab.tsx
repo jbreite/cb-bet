@@ -1,10 +1,12 @@
-import React, { useCallback, useRef } from "react";
+import React from "react";
 import { Alert, StyleSheet, Text, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   withTiming,
   useSharedValue,
+  useDerivedValue,
   runOnJS,
+  SharedValue,
 } from "react-native-reanimated";
 import { useAtom } from "jotai";
 import { userBetsAtom } from "@/lib/atom/atoms";
@@ -19,7 +21,6 @@ import {
   isSuccessfulQuoteObject,
 } from "@/utils/overtime/ui/beyTabHelpers";
 import { SfText } from "../SfThemedText";
-import { SharedValue } from "react-native-reanimated";
 import {
   getMarketOutcomeText,
   getMarketTypeName,
@@ -32,16 +33,14 @@ import { INITIAL_BET_AMOUNT } from "@/constants/Constants";
 import Chevron_Down from "../icons/Chevron_Down";
 import IconPressable from "../IconPressable";
 
-//TODO: Need a failure reason and show the error message.
-//TODO: When refetching quote or changing input needs to clear the error.
-//TODO: Need to BetTab have two states
-//TODO: Need to clean up error messages after another fetch.
-
 interface BetTabProps {
   isKeyboardVisible: SharedValue<boolean>;
   setIsKeyboardVisible: (visible: boolean) => void;
   betAmount: string;
   setBetAmount: (amount: string) => void;
+  isCollapsed: SharedValue<boolean>;
+  toggleCollapse: () => void;
+  onLayout: (height: number) => void;
 }
 
 export default function BetTab({
@@ -49,13 +48,13 @@ export default function BetTab({
   setIsKeyboardVisible,
   betAmount,
   setBetAmount,
+  isCollapsed,
+  toggleCollapse,
+  onLayout,
 }: BetTabProps) {
   const [userBetsAtomData, setUserBetsAtom] = useAtom(userBetsAtom);
   const numberBets = userBetsAtomData.length;
   const tradeData = userBetsAtomData.map((bet) => bet.tradeData);
-  const fullSheetHeight = useSharedValue(0);
-  const collapsibleHeight = useSharedValue(0);
-  console.log(isKeyboardVisible.value)
 
   const numberBetAmount = parseFloat(betAmount.replace("$", ""));
 
@@ -66,14 +65,11 @@ export default function BetTab({
     refetch: refetchQuote,
   } = useQuote(betAmount, tradeData);
 
-  //TODO: This is not working
   const onBetSuccess = () => {
     console.log("Bet placed successfully!");
     setUserBetsAtom([]);
-    // Not sure this is right
     isKeyboardVisible.value = false;
     setIsKeyboardVisible(false);
-
     setBetAmount(INITIAL_BET_AMOUNT);
     router.push("/bets");
   };
@@ -96,7 +92,7 @@ export default function BetTab({
             bet.tradeData.line
           )
         )
-        .join(", ") //TODO this could be more detailed but fine fo now
+        .join(", ")
     : getMarketTypeName(firstBet.tradeData.typeId);
 
   const marketOutcomeText = isParlay
@@ -153,33 +149,18 @@ export default function BetTab({
     }
   }
 
-  const isCollapsed = useSharedValue(false);
-
-  const rConatainerStyle = useAnimatedStyle(() => ({
-    overflow: "hidden",
+  const rChevronStyle = useAnimatedStyle(() => ({
     transform: [
       {
-        translateY: withTiming(
-          isCollapsed.value ? collapsibleHeight.value + 24 : -0
-        ),
+        rotate: withTiming(isCollapsed.value ? "180deg" : "0deg", {
+          duration: 300,
+        }),
       },
     ],
   }));
 
-  const toggleCollapse = () => {
-    isCollapsed.value = !isCollapsed.value;
-  };
-
-  console.log(fullSheetHeight.value);
-  console.log(collapsibleHeight.value);
-
   return (
-    <Animated.View
-      style={[styles.container, rConatainerStyle]}
-      onLayout={(e) => {
-        fullSheetHeight.value = e.nativeEvent.layout.height;
-      }}
-    >
+    <View style={styles.container}>
       <View style={styles.heading}>
         <View
           style={{
@@ -223,15 +204,7 @@ export default function BetTab({
             onPress={toggleCollapse}
             disabled={isKeyboardVisible.value === true}
           >
-            <Animated.View
-              style={useAnimatedStyle(() => ({
-                transform: [
-                  {
-                    rotate: withTiming(isCollapsed.value ? "180deg" : "0deg"),
-                  },
-                ],
-              }))}
-            >
+            <Animated.View style={rChevronStyle}>
               <Chevron_Down color={"#949595"} strokeWidth={2.5} />
             </Animated.View>
           </IconPressable>
@@ -239,65 +212,63 @@ export default function BetTab({
       </View>
 
       <View
-        onLayout={(e) => {
-          collapsibleHeight.value = e.nativeEvent.layout.height;
+        style={{ gap: 16 }}
+        onLayout={(event) => {
+          console.log(event.nativeEvent.layout.height);
+          onLayout(event.nativeEvent.layout.height);
         }}
       >
-        <View style={{ gap: 16 }}>
-          {/*Bet Info*/}
-          <View style={{ gap: 4 }}>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-              }}
-            >
-              <SfText familyType="semibold" style={{ fontSize: 18 }}>
-                {marketOutcomeText}
-              </SfText>
-              <SfText familyType="semibold" style={{ fontSize: 18 }}>
-                {formattedAmericanOdds}
-              </SfText>
-            </View>
-            <Text>{betTypeName}</Text>
+        {/*Bet Info*/}
+        <View style={{ gap: 4 }}>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+            }}
+          >
+            <SfText familyType="semibold" style={{ fontSize: 18 }}>
+              {marketOutcomeText}
+            </SfText>
+            <SfText familyType="semibold" style={{ fontSize: 18 }}>
+              {formattedAmericanOdds}
+            </SfText>
           </View>
+          <Text>{betTypeName}</Text>
+        </View>
 
-          {/*Input*/}
-          <View style={{ gap: 8 }}>
-            <BetInput
-              buttonLabel={buttonText}
-              isLoadingText={buttonLoadingText}
-              betAmount={betAmount ?? "$"}
-              setBetAmount={setBetAmount}
-              onInputPress={() =>
-                setIsKeyboardVisible(!isKeyboardVisible.value)
-              }
-              onButtonPress={handlePlaceBet}
-              isLoading={
-                writeContractsIsPending || (quoteLoading && !enoughUSDC)
-              }
-              isDisabled={
-                writeContractsIsPending ||
-                quoteLoading ||
-                numberBetAmount === 0 ||
-                enoughUSDC
-              }
-            />
-            {quoteObject && !isSuccessfulQuoteObject(quoteObject.quoteData) && (
-              <SfText familyType="medium" style={{ fontSize: 14 }}>
-                {quoteText}
-              </SfText>
-            )}
+        {/*Input*/}
+        <View style={{ gap: 8 }}>
+          <BetInput
+            buttonLabel={buttonText}
+            isLoadingText={buttonLoadingText}
+            betAmount={betAmount ?? "$"}
+            setBetAmount={setBetAmount}
+            onInputPress={() =>
+              runOnJS(setIsKeyboardVisible)(!isKeyboardVisible.value)
+            }
+            onButtonPress={handlePlaceBet}
+            isLoading={writeContractsIsPending || (quoteLoading && !enoughUSDC)}
+            isDisabled={
+              writeContractsIsPending ||
+              quoteLoading ||
+              numberBetAmount === 0 ||
+              enoughUSDC
+            }
+          />
+          {quoteObject && !isSuccessfulQuoteObject(quoteObject.quoteData) && (
+            <SfText familyType="medium" style={{ fontSize: 14 }}>
+              {quoteText}
+            </SfText>
+          )}
 
-            {writeContractsIsError && (
-              <SfText familyType="medium" style={{ fontSize: 16 }}>
-                {extractFailureReason(writeContractsIsError.toString())}
-              </SfText>
-            )}
-          </View>
+          {writeContractsIsError && (
+            <SfText familyType="medium" style={{ fontSize: 16 }}>
+              {extractFailureReason(writeContractsIsError.toString())}
+            </SfText>
+          )}
         </View>
       </View>
-    </Animated.View>
+    </View>
   );
 }
 
@@ -329,19 +300,5 @@ const styles = StyleSheet.create({
     height: 24,
     width: 24,
     backgroundColor: "#1A88F8",
-  },
-  leftAction: {
-    flex: 1,
-    backgroundColor: "#ff0000",
-    justifyContent: "center",
-    alignItems: "flex-end",
-    paddingRight: 20,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-  },
-  actionText: {
-    color: "white",
-    fontWeight: "600",
-    padding: 20,
   },
 });
