@@ -33,9 +33,9 @@ import IconPressable from "../IconPressable";
 import Swipeable, {
   SwipeableMethods,
 } from "react-native-gesture-handler/ReanimatedSwipeable";
-import { renderRightActions } from "./betTabSwipeable";
+import { renderRightActions, STICKING_THRESHOLD } from "./betTabSwipeable";
 import useHaptics from "@/hooks/useHaptics";
-import { RightActionSwipeable } from './betTabSwipeable';
+import { RightActionSwipeable } from "./betTabSwipeable";
 
 interface BetTabProps {
   isKeyboardVisible: SharedValue<boolean>;
@@ -168,7 +168,6 @@ export default function BetTab({
     ],
   }));
 
-
   return (
     <View style={styles.container}>
       <View style={styles.heading}>
@@ -221,8 +220,7 @@ export default function BetTab({
       <Swipeable
         ref={swipeableRef}
         friction={1}
-        rightThreshold={30}
-        dragOffsetFromRightEdge={30}
+        rightThreshold={STICKING_THRESHOLD}
         renderRightActions={renderRightActions}
         containerStyle={{ marginHorizontal: -PADDING }}
         onSwipeableWillOpen={(direction) => {
