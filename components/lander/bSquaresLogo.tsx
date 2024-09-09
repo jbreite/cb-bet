@@ -6,7 +6,7 @@ export default function BSquaredLogo({ textColor = "#1A88F8", fontSize = 80 }) {
     <View style={{ flexDirection: "row", alignItems: "flex-start" }}>
       <SfText
         familyType="bold"
-        style={{ color: textColor, fontSize: fontSize }}
+        style={{ color: textColor, fontSize: fontSize,  }}
       >
         B
       </SfText>

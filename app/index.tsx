@@ -5,7 +5,7 @@ import { CoinbaseWalletLogo } from "@/components/coinbaseComponents/coinbaseWall
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { SfText } from "@/components/SfThemedText";
 import { StyleSheet } from "react-native";
-import GridBackground from "@/components/lander/gridBackground";
+import GridBackground, { GRID_SIZE } from "@/components/lander/gridBackground";
 import BSquaredLogo from "@/components/lander/bSquaresLogo";
 
 export default function Index() {
@@ -23,11 +23,16 @@ export default function Index() {
       <View />
 
       <View
-        style={{ justifyContent: "center", alignItems: "center", padding: 24 }}
+        style={{ justifyContent: "center", alignItems: "center", padding: GRID_SIZE }}
       >
-        <BSquaredLogo />
+        <BSquaredLogo fontSize={GRID_SIZE* 4} />
         <SfText
-          style={{ textAlign: "center", fontSize: 24, color: "#1A88F8" }}
+          style={{
+            textAlign: "center",
+            fontSize: 24,
+            lineHeight: GRID_SIZE,
+            color: "#1A88F8",
+          }}
           familyType="semibold"
         >
           Onchain sports betting powered by Overtime and the Coinbase Smart

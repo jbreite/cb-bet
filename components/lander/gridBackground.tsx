@@ -1,18 +1,20 @@
 import { View, StyleSheet } from "react-native";
 
+export const GRID_SIZE = 24;
+
 export default function GridBackground() {
   return (
     <View style={styles.gridContainer}>
-      {[...Array(50)].map((_, i) => (
+      {[...Array(100)].map((_, i) => (
         <View
           key={`v${i}`}
-          style={[styles.gridLine, styles.vertical, { left: i * 20 }]}
+          style={[styles.gridLine, styles.vertical, { left: i * GRID_SIZE }]}
         />
       ))}
-      {[...Array(50)].map((_, i) => (
+      {[...Array(100)].map((_, i) => (
         <View
           key={`h${i}`}
-          style={[styles.gridLine, styles.horizontal, { top: i * 20 }]}
+          style={[styles.gridLine, styles.horizontal, { top: i * GRID_SIZE }]}
         />
       ))}
     </View>
