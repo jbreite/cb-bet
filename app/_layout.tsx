@@ -34,7 +34,6 @@ function InitialLayout() {
   });
 
   const { isConnected, status, address } = useAccount();
-  console.log("Status", status);
 
   const router = useRouter();
   const segments = useSegments();
@@ -47,7 +46,7 @@ function InitialLayout() {
     if (loaded && (status === "connected" || status === "disconnected")) {
       setTimeout(() => {
         SplashScreen.hideAsync();
-      }, 1);
+      }, 5);
     }
   }, [loaded, status]);
 

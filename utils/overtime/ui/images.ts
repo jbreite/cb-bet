@@ -16,7 +16,7 @@ const teamLogos: { [key: string]: ImageSourcePropType } = {
   bournemouth: require(`${pathToEplLogos}/bournemouth.webp`),
   "brentford-fc": require(`${pathToEplLogos}/brentford-fc.webp`),
   brentford: require(`${pathToEplLogos}/brentford.webp`),
-  "brighton-&-hove-albion-fc": require(`${pathToEplLogos}/brighton-&-hove-albion-fc.webp`),
+  "brighton": require(`${pathToEplLogos}/brighton-&-hove-albion-fc.webp`),
   burnley: require(`${pathToEplLogos}/burnley.webp`),
   "chelsea-fc": require(`${pathToEplLogos}/chelsea-fc.webp`),
   "crystal-palace-fc": require(`${pathToEplLogos}/crystal-palace-fc.webp`),

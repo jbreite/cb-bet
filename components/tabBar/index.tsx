@@ -44,7 +44,6 @@ export default function TabBar({
   const isKeyboardVisible = useSharedValue(false);
   const { height: screenHeight } = useWindowDimensions();
   const isCollapsed = useSharedValue(false);
-  console.log("isCollapsed:", isCollapsed.value);
   const betTabHeight = useSharedValue(0);
 
   const numberOfBets = userBetsAtomData.length;
@@ -109,10 +108,6 @@ export default function TabBar({
   const toggleCollapse = useCallback(() => {
     isCollapsed.value = !isCollapsed.value;
   }, []);
-
-  console.log("isKeyboardVis:", isKeyboardVisible.value);
-  console.log("isKeybordStat:", isKeyboardVisibleState);
-  console.log("Bet Tab Heigth:", betTabHeight.value);
 
   return (
     <View style={styles.container}>

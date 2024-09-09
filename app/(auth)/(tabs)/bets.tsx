@@ -18,6 +18,7 @@ import { usePaymaster } from "@/hooks/bets/usePaymaster";
 //Example claim transaction - https://optimistic.etherscan.io/tx/0xbc151726cc4b073815449bfe36a07ccc897beaf41878ff3aab964251ad5d6f48
 
 //TODO: Claim All button
+//TODO: Empty Views
 
 export default function Bets() {
   const { address } = useAccount();
@@ -72,6 +73,11 @@ export default function Bets() {
 
   let userHistoryView;
 
+  const noUserHistory =
+    userHistoryData?.claimable.length === 0 &&
+    userHistoryData?.open.length === 0 &&
+    userHistoryData.closed.length === 0;
+
   if (userHistoryIsLoading) {
     userHistoryView = <GeneralSpinningLoader />;
   } else if (userHistoryIsError) {
@@ -84,47 +90,61 @@ export default function Bets() {
           refreshControl={
             <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
           }
-          contentContainerStyle={{
-            gap: 16,
-            paddingHorizontal: 24,
-            paddingBottom: tabBarHeight + bottomPadding,
-          }}
+          contentContainerStyle={
+            noUserHistory
+              ? { flexGrow: 1, justifyContent: "center", alignItems: "center" }
+              : undefined
+          }
         >
-          {userHistoryData.claimable.length !== 0 && (
-            <View style={styles.listContainer}>
-              <SfText style={styles.titleText} familyType="semibold">
-                Claimable
+          {noUserHistory ? (
+            <View style={{ padding: 24, alignItems: "center" }}>
+              <SfText familyType="bold" style={{ fontSize: 24 }}>
+                🎟️
               </SfText>
-              {userHistoryData.claimable.map((ticket) => (
-                <TicketView
-                  key={ticket.id}
-                  ticket={ticket}
-                  onPress={() => handleClaim(ticket.id)}
-                />
-              ))}
-            </View>
-          )}
-
-          {userHistoryData.open.length !== 0 && (
-            <View style={styles.listContainer}>
-              <SfText style={styles.titleText} familyType="semibold">
-                Open
+              <SfText
+                familyType="bold"
+                style={{ fontSize: 24, textAlign: "center" }}
+              >
+                Place bets to populate your history!
               </SfText>
-              {userHistoryData.open.map((ticket) => (
-                <TicketView key={ticket.id} ticket={ticket} />
-              ))}
             </View>
-          )}
-
-          {userHistoryData.closed.length !== 0 && (
-            <View style={styles.listContainer}>
-              <SfText style={styles.titleText} familyType="semibold">
-                Closed
-              </SfText>
-              {userHistoryData.closed.map((ticket) => (
-                <TicketView key={ticket.id} ticket={ticket} />
-              ))}
-            </View>
+          ) : (
+            <>
+              {userHistoryData.claimable.length !== 0 && (
+                <View style={styles.listContainer}>
+                  <SfText style={styles.titleText} familyType="semibold">
+                    Claimable
+                  </SfText>
+                  {userHistoryData.claimable.map((ticket) => (
+                    <TicketView
+                      key={ticket.id}
+                      ticket={ticket}
+                      onPress={() => handleClaim(ticket.id)}
+                    />
+                  ))}
+                </View>
+              )}
+              {userHistoryData.open.length !== 0 && (
+                <View style={styles.listContainer}>
+                  <SfText style={styles.titleText} familyType="semibold">
+                    Open
+                  </SfText>
+                  {userHistoryData.open.map((ticket) => (
+                    <TicketView key={ticket.id} ticket={ticket} />
+                  ))}
+                </View>
+              )}
+              {userHistoryData.closed.length !== 0 && (
+                <View style={styles.listContainer}>
+                  <SfText style={styles.titleText} familyType="semibold">
+                    Closed
+                  </SfText>
+                  {userHistoryData.closed.map((ticket) => (
+                    <TicketView key={ticket.id} ticket={ticket} />
+                  ))}
+                </View>
+              )}
+            </>
           )}
         </ScrollView>
       </View>

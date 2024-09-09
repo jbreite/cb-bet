@@ -27,14 +27,14 @@ export default function TabLayout() {
             <AddressEmoji address={address} />
           </View>
         ),
-        headerRight: () => (
-          <TouchableOpacity
-            onPress={() => console.log("pressed")}
-            style={{ paddingRight: 20 }}
-          >
-            <MORE_HORIZONTAL size={24} />
-          </TouchableOpacity>
-        ),
+        // headerRight: () => (
+        //   <TouchableOpacity
+        //     onPress={() => console.log("pressed")}
+        //     style={{ paddingRight: 20 }}
+        //   >
+        //     <MORE_HORIZONTAL size={24} />
+        //   </TouchableOpacity>
+        // ),
       }}
     />
   );

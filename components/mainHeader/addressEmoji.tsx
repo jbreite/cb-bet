@@ -3,6 +3,7 @@ import { AnimatedPressable } from "../animated/AnimatedPressable";
 import { SfText } from "../SfThemedText";
 import { isAddress } from "viem";
 import { router } from "expo-router";
+import useHaptics from "@/hooks/useHaptics";
 
 //TODO: Add custom emoji for people
 //TODO: Add copy address and toast on address
@@ -16,6 +17,8 @@ export default function AddressEmoji({
 }: {
   address: `0x${string}` | undefined;
 }) {
+  const { triggerImpact, ImpactFeedbackStyle } = useHaptics();
+
   const formattedAddress = address ? shortenEthereumAddress(address) : "";
 
   return (
@@ -30,7 +33,10 @@ export default function AddressEmoji({
           borderRadius: 100,
           borderCurve: "continuous",
         }}
-        onPress={() => router.push("/(auth)/accountModal")}
+        onPress={() => {
+          triggerImpact(ImpactFeedbackStyle.Light);
+          router.push("/(auth)/accountModal");
+        }}
       >
         <SfText
           style={{
