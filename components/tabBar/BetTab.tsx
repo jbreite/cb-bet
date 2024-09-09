@@ -154,9 +154,10 @@ export default function BetTab({
   if (quoteObject && !isSuccessfulQuoteObject(quoteObject.quoteData)) {
     if (quoteObject.quoteData.error.includes("Proof is not valid")) {
       console.log("Received 'Proof is not valid' error. Refetching...");
+      console.log("invalidating..");
       quoteText =
         "Markets are old. Please refresh markets. Better solution coming.";
-      refetchQuote();
+
       queryClient.invalidateQueries({ queryKey: ["markets"] });
     } else {
       quoteText = quoteObject.quoteData.error;
@@ -171,6 +172,9 @@ export default function BetTab({
     ],
   }));
 
+  const handleToggleKeyboard = () => {
+    runOnJS(setIsKeyboardVisible)(!isKeyboardVisible.value);
+  };
   return (
     <View style={styles.container}>
       <View style={styles.heading}>
@@ -212,7 +216,16 @@ export default function BetTab({
               omitDecimalsForWholeNumbers: true,
             })}
           </SfText>
-          <IconPressable onPress={toggleCollapse} disabled={disableCollapse}>
+          <IconPressable
+            onPress={() => {
+              if (isKeyboardVisible.value) {
+                handleToggleKeyboard();
+              } else {
+                toggleCollapse();
+              }
+            }}
+            disabled={disableCollapse}
+          >
             <Animated.View style={rChevronStyle}>
               <Chevron_Down color={"#949595"} strokeWidth={2.5} />
             </Animated.View>
@@ -230,8 +243,7 @@ export default function BetTab({
           if (direction === "right") {
             triggerImpact(ImpactFeedbackStyle.Medium);
             if (isKeyboardVisible.value) {
-              isKeyboardVisible.value = false;
-              setIsKeyboardVisible(false);
+              handleToggleKeyboard();
             }
             setUserBetsAtom([]);
           }
@@ -272,9 +284,7 @@ export default function BetTab({
               isLoadingText={buttonLoadingText}
               betAmount={betAmount ?? "$"}
               setBetAmount={setBetAmount}
-              onInputPress={() =>
-                runOnJS(setIsKeyboardVisible)(!isKeyboardVisible.value)
-              }
+              onInputPress={handleToggleKeyboard}
               onButtonPress={handlePlaceBet}
               isLoading={
                 writeContractsIsPending || (quoteLoading && !enoughUSDC)

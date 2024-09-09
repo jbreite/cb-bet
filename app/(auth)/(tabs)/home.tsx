@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View } from "react-native";
 import GeneralSpinningLoader from "@/components/GeneralSpinningLoader";
 import GeneralErrorMessage from "@/components/GeneralErrorMessage";
@@ -9,12 +9,14 @@ import {
 import { LeagueEnum } from "@/utils/overtime/enums/sport";
 import { getMarkets } from "@/utils/overtime/queries/getMarkets";
 import { useQuery } from "@tanstack/react-query";
-import { FlashList } from "@shopify/flash-list";
-import { userBetsAtom } from "@/lib/atom/atoms";
+import { FlashList } from "@shopify/flash-list";import { userBetsAtom } from "@/lib/atom/atoms";
 import { useAtom } from "jotai";
 import { SportMarket, TradeData } from "@/utils/overtime/types/markets";
 import MainBetCard from "@/components/mainBetCard";
-import { getTradeDataFromSportMarket } from "@/utils/overtime/ui/helpers";
+import {
+  getTradeDataFromSportMarket,
+  updateBetWithNewMarketData,
+} from "@/utils/overtime/ui/helpers";
 import { getGamesInfo } from "@/utils/overtime/queries/getGamesInfo";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { LeagueMap } from "@/constants/sports";
@@ -38,6 +40,20 @@ export default function AuthenticatedIndex() {
     queryKey: ["markets"],
     queryFn: () => getMarkets(CB_BET_SUPPORTED_NETWORK_IDS.OPTIMISM, {}),
   });
+
+  // useEffect(() => {
+  //   if (marketsData) {
+  //     console.log("hihih")
+  //     setUserBets((prevBets) => {
+  //       const allNewMarkets = Object.values(marketsData).flatMap(
+  //         (sportMarkets) => Object.values(sportMarkets).flat()
+  //       );
+  //       return prevBets.map((bet) =>
+  //         updateBetWithNewMarketData(bet, allNewMarkets
+  //       );
+  //     });
+  //   }
+  // }, [marketsData, setUserBets]);
 
   function handleMarketPress(market: SportMarket, tradeData: TradeData) {
     setUserBets((prevBets) => {

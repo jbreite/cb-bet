@@ -106,11 +106,7 @@ export default function TabBar({
   );
 
   const toggleCollapse = useCallback(() => {
-    if (isKeyboardVisible.value) {
-      toggleKeyboardVisibility();
-    } else {
-      isCollapsed.value = !isCollapsed.value;
-    }
+    isCollapsed.value = !isCollapsed.value;
   }, []);
 
   return (

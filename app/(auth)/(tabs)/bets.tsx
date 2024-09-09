@@ -38,6 +38,7 @@ export default function Bets() {
       getUserHistory(CB_BET_SUPPORTED_NETWORK_IDS.OPTIMISM, address),
   });
 
+
   const { writeContracts } = useWriteContracts({
     mutation: {
       onSuccess: (data) => {
