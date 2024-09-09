@@ -5,14 +5,8 @@ import Animated, {
   useAnimatedStyle,
   interpolate,
   Extrapolation,
-  useAnimatedReaction,
-  runOnJS,
 } from "react-native-reanimated";
 import Trash_Full from "../icons/Trash_Full";
-
-const logDragX = (value: number) => {
-  console.log("[R] appliedTranslation:", value);
-};
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 export const STICKING_THRESHOLD = 100;
@@ -24,14 +18,6 @@ export function RightActionSwipeable({
   progress: SharedValue<number>;
   dragX: SharedValue<number>;
 }) {
-  useAnimatedReaction(
-    () => dragX.value,
-    (value) => {
-      runOnJS(logDragX)(value);
-    },
-    [dragX]
-  );
-
   const animatedStyle = useAnimatedStyle(() => {
     const translateX = interpolate(
       dragX.value,
@@ -67,6 +53,19 @@ export function RightActionSwipeable({
     </View>
   );
 }
+
+//HOW TO LOG X VALUE
+// const logDragX = (value: number) => {
+//   console.log("[R] appliedTranslation:", value);
+// };
+
+// useAnimatedReaction(
+//   () => dragX.value,
+//   (value) => {
+//     runOnJS(logDragX)(value);
+//   },
+//   [dragX]
+// );
 
 export const renderRightActions = (
   progress: SharedValue<number>,
