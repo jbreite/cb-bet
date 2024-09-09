@@ -7,13 +7,9 @@ import { useMemo } from "react";
 export const useUSDCBal = () => {
   const { address } = useAccount();
 
-  if (!address) {
-    return { balance: null, isLoading: false, isError: false };
-  }
-
   const { data, isLoading, isError } = useQuery({
     queryKey: ["fungibles", address],
-    queryFn: () => fetchFungibles(address, {}),
+    queryFn: () => (address ? fetchFungibles(address, {}) : null),
     enabled: !!address,
   });
 

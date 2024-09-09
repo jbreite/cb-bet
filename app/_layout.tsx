@@ -13,7 +13,7 @@ import { useAccount, WagmiProvider } from "wagmi";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { usePostHog, PostHogProvider } from "posthog-react-native";
 
-const queryClient = new QueryClient();
+export const queryClient = new QueryClient();
 const POSTHOG_API_KEY = process.env.EXPO_PUBLIC_POSTHOG_API_KEY!;
 
 SplashScreen.preventAutoHideAsync();
@@ -46,7 +46,7 @@ function InitialLayout() {
     if (loaded && (status === "connected" || status === "disconnected")) {
       setTimeout(() => {
         SplashScreen.hideAsync();
-      }, 500);
+      }, 300);
     }
   }, [loaded, status]);
 

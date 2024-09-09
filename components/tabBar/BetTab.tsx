@@ -36,6 +36,7 @@ import Swipeable, {
 import { renderRightActions, STICKING_THRESHOLD } from "./betTabSwipeable";
 import useHaptics from "@/hooks/useHaptics";
 import { RightActionSwipeable } from "./betTabSwipeable";
+import { queryClient } from "@/app/_layout";
 
 interface BetTabProps {
   isKeyboardVisible: SharedValue<boolean>;
@@ -82,6 +83,7 @@ export default function BetTab({
     isKeyboardVisible.value = false;
     setIsKeyboardVisible(false);
     setBetAmount(INITIAL_BET_AMOUNT);
+    queryClient.invalidateQueries({ queryKey: ["userHistory"] });
     router.push("/bets");
   };
 
@@ -153,7 +155,7 @@ export default function BetTab({
     if (quoteObject.quoteData.error.includes("Proof is not valid")) {
       console.log("Received 'Proof is not valid' error. Refetching...");
       quoteText =
-        "Proof not valid. Please refresh bets. Better solution coming.";
+        "Markets are old. Please refresh markets. Better solution coming.";
       refetchQuote();
     } else {
       quoteText = quoteObject.quoteData.error;

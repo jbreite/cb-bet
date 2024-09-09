@@ -20,6 +20,8 @@ export default function Index() {
     <View style={styles.container}>
       <GridBackground />
       <View />
+      <View />
+
       <View
         style={{ justifyContent: "center", alignItems: "center", padding: 24 }}
       >

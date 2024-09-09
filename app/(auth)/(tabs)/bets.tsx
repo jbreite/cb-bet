@@ -93,7 +93,7 @@ export default function Bets() {
           contentContainerStyle={
             noUserHistory
               ? { flexGrow: 1, justifyContent: "center", alignItems: "center" }
-              : undefined
+              : { paddingHorizontal: 24, }
           }
         >
           {noUserHistory ? (
