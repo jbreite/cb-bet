@@ -156,8 +156,7 @@ export default function BetTab({
       console.log("Received 'Proof is not valid' error. Refetching...");
       console.log("invalidating..");
       quoteText =
-        "Markets are old. Please refresh markets. Better solution coming.";
-
+        "Markets are old and are refreshing. If it doesn't work, then reset manually.";
       queryClient.invalidateQueries({ queryKey: ["markets"] });
     } else {
       quoteText = quoteObject.quoteData.error;
@@ -302,11 +301,11 @@ export default function BetTab({
               </SfText>
             )}
 
-            {writeContractsIsError && (
+            {/* {writeContractsIsError && (
               <SfText familyType="medium" style={{ fontSize: 16 }}>
                 {extractFailureReason(writeContractsIsError.toString())}
               </SfText>
-            )}
+            )} */}
           </View>
         </View>
       </Swipeable>

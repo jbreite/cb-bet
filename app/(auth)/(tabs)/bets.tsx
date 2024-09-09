@@ -13,6 +13,7 @@ import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import sportsAMMV2Contract from "@/constants/overtimeContracts";
 import { useWriteContracts } from "wagmi/experimental";
 import { usePaymaster } from "@/hooks/bets/usePaymaster";
+import { useCallback, useState } from "react";
 
 //TODO: Group tickets by gameId
 //TODO: Claim All button
@@ -20,6 +21,7 @@ import { usePaymaster } from "@/hooks/bets/usePaymaster";
 export default function Bets() {
   const { address } = useAccount();
   const [userBets] = useAtom(userBetsAtom);
+  const [isManualRefreshing, setIsManualRefreshing] = useState(false);
 
   const tabBarHeight = useBottomTabBarHeight();
   const bottomPadding = userBets.length > 0 ? 240 : 32; //TODO: Make this dynamic. Shouold be a hook
@@ -38,6 +40,11 @@ export default function Bets() {
       getUserHistory(CB_BET_SUPPORTED_NETWORK_IDS.OPTIMISM, address),
   });
 
+  const handleManualRefresh = useCallback(async () => {
+    setIsManualRefreshing(true);
+    await refetch();
+    setIsManualRefreshing(false);
+  }, [refetch]);
 
   const { writeContracts } = useWriteContracts({
     mutation: {
@@ -86,7 +93,10 @@ export default function Bets() {
       <View style={{ flex: 1, paddingTop: 8 }}>
         <ScrollView
           refreshControl={
-            <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
+            <RefreshControl
+              refreshing={isManualRefreshing}
+              onRefresh={handleManualRefresh}
+            />
           }
           contentContainerStyle={
             noUserHistory

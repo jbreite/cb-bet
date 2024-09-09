@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { View } from "react-native";
 import GeneralSpinningLoader from "@/components/GeneralSpinningLoader";
 import GeneralErrorMessage from "@/components/GeneralErrorMessage";
@@ -9,7 +9,8 @@ import {
 import { LeagueEnum } from "@/utils/overtime/enums/sport";
 import { getMarkets } from "@/utils/overtime/queries/getMarkets";
 import { useQuery } from "@tanstack/react-query";
-import { FlashList } from "@shopify/flash-list";import { userBetsAtom } from "@/lib/atom/atoms";
+import { FlashList } from "@shopify/flash-list";
+import { userBetsAtom } from "@/lib/atom/atoms";
 import { useAtom } from "jotai";
 import { SportMarket, TradeData } from "@/utils/overtime/types/markets";
 import MainBetCard from "@/components/mainBetCard";
@@ -25,35 +26,45 @@ import StickyHeaderMainBetCard from "@/components/mainBetCard/stickeyHeader";
 //TODO: Add Refetching and refreshing the data
 //TODO: Add in game data with getGamesInfo()
 
+const REFETCH_INTERVAL = 60000 * 3;
+
 export default function AuthenticatedIndex() {
   const [userBets, setUserBets] = useAtom(userBetsAtom);
   const tabBarHeight = useBottomTabBarHeight();
   const bottomPadding = userBets.length > 0 ? 240 : 32; //TODO: Make this dynamic. Shouold be a hook
+  const [isManualRefreshing, setIsManualRefreshing] = useState(false);
 
   const {
     data: marketsData,
     isLoading: marketsIsLoading,
     error: marketsIsError,
     refetch,
-    isRefetching,
   } = useQuery({
     queryKey: ["markets"],
     queryFn: () => getMarkets(CB_BET_SUPPORTED_NETWORK_IDS.OPTIMISM, {}),
+    refetchInterval: REFETCH_INTERVAL,
   });
 
-  // useEffect(() => {
-  //   if (marketsData) {
-  //     console.log("hihih")
-  //     setUserBets((prevBets) => {
-  //       const allNewMarkets = Object.values(marketsData).flatMap(
-  //         (sportMarkets) => Object.values(sportMarkets).flat()
-  //       );
-  //       return prevBets.map((bet) =>
-  //         updateBetWithNewMarketData(bet, allNewMarkets
-  //       );
-  //     });
-  //   }
-  // }, [marketsData, setUserBets]);
+  //Not sure there is a better way to do this, but somwething for now
+  useEffect(() => {
+    if (marketsData && userBets.length !== 0) {
+      console.log("Refreshing userBets Atom Data");
+      setUserBets((prevBets) => {
+        const allNewMarkets = Object.values(marketsData).flatMap(
+          (sportMarkets) => Object.values(sportMarkets).flat()
+        );
+        return prevBets.map((bet) =>
+          updateBetWithNewMarketData(bet, allNewMarkets)
+        );
+      });
+    }
+  }, [marketsData, setUserBets]);
+
+  const handleManualRefresh = useCallback(async () => {
+    setIsManualRefreshing(true);
+    await refetch();
+    setIsManualRefreshing(false);
+  }, [refetch]);
 
   function handleMarketPress(market: SportMarket, tradeData: TradeData) {
     setUserBets((prevBets) => {
@@ -106,8 +117,8 @@ export default function AuthenticatedIndex() {
     SportView = (
       <View style={{ flex: 1 }}>
         <FlashList
-          refreshing={isRefetching}
-          onRefresh={refetch}
+          refreshing={isManualRefreshing}
+          onRefresh={handleManualRefresh}
           data={leaguesWithData}
           renderItem={({ item: leagueId }) => (
             <View>
