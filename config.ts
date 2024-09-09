@@ -17,6 +17,7 @@ export const config = createConfig({
       metadata: {
         appName: "B Squared",
         appDeeplinkUrl: PREFIX_URL,
+        appLogoUrl: "https://www.bsquared.world/backupBookIcon.png",
       },
       wallet: Wallets.CoinbaseSmartWallet,
     }),
