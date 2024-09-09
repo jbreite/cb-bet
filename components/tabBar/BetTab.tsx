@@ -226,7 +226,6 @@ export default function BetTab({
         onSwipeableWillOpen={(direction) => {
           if (direction === "right") {
             triggerImpact(ImpactFeedbackStyle.Medium);
-            console.log("Clear Atom");
             setUserBetsAtom([]);
           }
         }}

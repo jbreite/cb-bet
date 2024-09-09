@@ -46,7 +46,7 @@ function InitialLayout() {
     if (loaded && (status === "connected" || status === "disconnected")) {
       setTimeout(() => {
         SplashScreen.hideAsync();
-      }, 5);
+      }, 500);
     }
   }, [loaded, status]);
 

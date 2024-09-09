@@ -1,4 +1,3 @@
-import CopyAddress from "@/components/account/CopyAddress";
 import Button from "@/components/Button";
 import Chat_Circle from "@/components/icons/Chat_Circle";
 import Credit_Card_01 from "@/components/icons/Credit_Card_01";
