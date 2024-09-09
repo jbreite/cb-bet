@@ -106,7 +106,11 @@ export default function TabBar({
   );
 
   const toggleCollapse = useCallback(() => {
-    isCollapsed.value = !isCollapsed.value;
+    if (isKeyboardVisible.value) {
+      toggleKeyboardVisibility();
+    } else {
+      isCollapsed.value = !isCollapsed.value;
+    }
   }, []);
 
   return (
@@ -140,7 +144,7 @@ export default function TabBar({
             onLayout={(height) => {
               betTabHeight.value = height;
             }}
-            disableCollapse={isKeyboardVisibleState === true}
+            // disableCollapse={isKeyboardVisibleState === true}
           />
         </Animated.View>
       )}

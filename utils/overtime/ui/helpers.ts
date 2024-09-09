@@ -3,6 +3,7 @@ import { MarketTypeEnum } from "../enums/marketTypes";
 import { SportMarket, SportMarketOdds, TradeData } from "../types/markets";
 import { getLeagueIsDrawAvailable } from "./sportsHelpers";
 import { GameOdds } from "../types/odds";
+import { UserBet } from "@/lib/atom/atoms";
 
 export function getSpecificMarket(
   market: SportMarket,
@@ -196,27 +197,6 @@ export function getGameOddsTwo(sportMarket: SportMarket): GameOdds {
   }
 
   return result;
-
-  //Return
-  //Line,
-  //Odds, Index
-  //
-}
-
-export function findSportMarket({
-  sportMarket,
-  marketType,
-}: {
-  sportMarket: SportMarket;
-  marketType: MarketTypeEnum;
-}) {
-  if (sportMarket.typeId === marketType) {
-    return sportMarket;
-  } else {
-    return sportMarket.childMarkets.find(
-      (market: SportMarket) => market.typeId === marketType
-    );
-  }
 }
 
 export function findOddsForMarket(
@@ -242,4 +222,27 @@ export function findOddsForMarket(
   }, null as { market: SportMarket; minDiff: number } | null);
 
   return closestToMinus110 ? closestToMinus110.market : null;
+}
+
+export function updateBetWithNewMarketData(
+  bet: UserBet,
+  newMarkets: SportMarket[]
+): UserBet {
+  const updatedMarket = newMarkets.find(
+    (market) => market.gameId === bet.sportMarket.gameId
+  );
+  if (!updatedMarket) return bet;
+
+  const updatedTradeData = getTradeDataFromSportMarket(
+    updatedMarket,
+    bet.tradeData.position,
+    bet.tradeData.typeId
+  );
+
+  if (!updatedTradeData) return bet;
+
+  return {
+    sportMarket: updatedMarket,
+    tradeData: updatedTradeData,
+  };
 }

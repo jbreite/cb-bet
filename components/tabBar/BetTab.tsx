@@ -46,7 +46,7 @@ interface BetTabProps {
   isCollapsed: SharedValue<boolean>;
   toggleCollapse: () => void;
   onLayout: (height: number) => void;
-  disableCollapse: boolean;
+  disableCollapse?: boolean;
 }
 
 const PADDING = 16;
@@ -157,6 +157,7 @@ export default function BetTab({
       quoteText =
         "Markets are old. Please refresh markets. Better solution coming.";
       refetchQuote();
+      queryClient.invalidateQueries({ queryKey: ["markets"] });
     } else {
       quoteText = quoteObject.quoteData.error;
     }
@@ -228,6 +229,10 @@ export default function BetTab({
         onSwipeableWillOpen={(direction) => {
           if (direction === "right") {
             triggerImpact(ImpactFeedbackStyle.Medium);
+            if (isKeyboardVisible.value) {
+              isKeyboardVisible.value = false;
+              setIsKeyboardVisible(false);
+            }
             setUserBetsAtom([]);
           }
         }}

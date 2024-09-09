@@ -15,10 +15,7 @@ import { useWriteContracts } from "wagmi/experimental";
 import { usePaymaster } from "@/hooks/bets/usePaymaster";
 
 //TODO: Group tickets by gameId
-//Example claim transaction - https://optimistic.etherscan.io/tx/0xbc151726cc4b073815449bfe36a07ccc897beaf41878ff3aab964251ad5d6f48
-
 //TODO: Claim All button
-//TODO: Empty Views
 
 export default function Bets() {
   const { address } = useAccount();
@@ -93,7 +90,7 @@ export default function Bets() {
           contentContainerStyle={
             noUserHistory
               ? { flexGrow: 1, justifyContent: "center", alignItems: "center" }
-              : { paddingHorizontal: 24, }
+              : { paddingHorizontal: 24, gap: 32 }
           }
         >
           {noUserHistory ? (
