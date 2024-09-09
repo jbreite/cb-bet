@@ -32,6 +32,8 @@ export default function AuthenticatedIndex() {
     data: marketsData,
     isLoading: marketsIsLoading,
     error: marketsIsError,
+    refetch,
+    isRefetching,
   } = useQuery({
     queryKey: ["markets"],
     queryFn: () => getMarkets(CB_BET_SUPPORTED_NETWORK_IDS.OPTIMISM, {}),
@@ -88,6 +90,8 @@ export default function AuthenticatedIndex() {
     SportView = (
       <View style={{ flex: 1 }}>
         <FlashList
+          refreshing={isRefetching}
+          onRefresh={refetch}
           data={leaguesWithData}
           renderItem={({ item: leagueId }) => (
             <View>

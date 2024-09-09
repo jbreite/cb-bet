@@ -1,4 +1,4 @@
-import { ScrollView, View, StyleSheet } from "react-native";
+import { ScrollView, View, StyleSheet, RefreshControl } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 import { useAccount, useWriteContract } from "wagmi";
 import { getUserHistory } from "@/utils/overtime/queries/getUserHistory";
@@ -33,6 +33,7 @@ export default function Bets() {
     isLoading: userHistoryIsLoading,
     isError: userHistoryIsError,
     refetch,
+    isRefetching,
   } = useQuery({
     queryKey: ["userHistory", address?.toString()],
     queryFn: () =>
@@ -82,6 +83,9 @@ export default function Bets() {
     userHistoryView = (
       <View style={{ flex: 1, paddingTop: 8 }}>
         <ScrollView
+          refreshControl={
+            <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
+          }
           contentContainerStyle={{
             gap: 16,
             paddingHorizontal: 24,
