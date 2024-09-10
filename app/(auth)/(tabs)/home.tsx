@@ -27,7 +27,6 @@ import StickyHeaderMainBetCard from "@/components/mainBetCard/stickeyHeader";
 //TODO: Add in game data with getGamesInfo()
 
 const REFETCH_INTERVAL = 60000 * 3;
-export const PADDING_HORIZONTAL_HOME = 24;
 type FlashListItem = LeagueEnum | SportMarket;
 
 export default function AuthenticatedIndex() {
