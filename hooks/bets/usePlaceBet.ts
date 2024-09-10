@@ -75,7 +75,7 @@ export const usePlaceBet = (onSuccess?: () => void) => {
       functionName: "approve",
       args: [
         sportsAMMV2Contract.addresses[CB_BET_SUPPORTED_NETWORK_IDS.OPTIMISM],
-        buyInAmount + parseUnits("0.01", 6),
+        buyInAmount + parseUnits("0.01", 6), //Add 1 cent
       ],
     };
 

@@ -5,12 +5,6 @@ import { useAccount, useReadContract, useWriteContract } from "wagmi";
 import { ERC_20_ABI } from "@/utils/overtime/abi/ERC20_ABI";
 import { CB_BET_SUPPORTED_NETWORK_IDS } from "@/constants/Constants";
 
-//1. Read that if there is approval to spend USDC.
-
-//2. If there is not an approval then useWriteContracts to approve and send Bet
-
-//3. If there is an approval then useWriteContract to send Bet
-
 export const useReadAllowance = () => {
   const { address } = useAccount();
 
@@ -27,6 +21,8 @@ export const useReadAllowance = () => {
       sportsAMMV2Contract.addresses[CB_BET_SUPPORTED_NETWORK_IDS.OPTIMISM],
     ],
   });
+
+  console.log("Allowance:", allowance?.toString())
 
   const allowanceBigInt = allowance as bigint;
   // console.log("allowanceBigInt", allowanceBigInt);

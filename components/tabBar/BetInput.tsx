@@ -1,5 +1,6 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import Button from "../Button";
+import useHaptics from "@/hooks/useHaptics";
 
 export default function BetInput({
   betAmount,
@@ -19,9 +20,16 @@ export default function BetInput({
   buttonLabel: string;
   isLoadingText: string;
 }) {
+  const { triggerImpact, ImpactFeedbackStyle } = useHaptics();
+
+  const handlePress = () => {
+    triggerImpact(ImpactFeedbackStyle.Light);
+    onInputPress();
+  };
+
   return (
     <View style={styles.container}>
-      <Pressable style={styles.input} onPress={onInputPress}>
+      <Pressable style={styles.input} onPress={handlePress}>
         <Text style={styles.inputText}>{betAmount}</Text>
       </Pressable>
       <Button
