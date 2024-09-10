@@ -22,6 +22,7 @@ import { getGamesInfo } from "@/utils/overtime/queries/getGamesInfo";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { LeagueMap } from "@/constants/sports";
 import StickyHeaderMainBetCard from "@/components/mainBetCard/stickeyHeader";
+import { router } from "expo-router";
 
 //TODO: Add Refetching and refreshing the data
 //TODO: Add in game data with getGamesInfo()
@@ -128,7 +129,15 @@ export default function AuthenticatedIndex() {
                 <MainBetCard
                   key={item.gameId}
                   sportMarket={item}
-                  onPress={() => console.log(JSON.stringify(item))}
+                  onPress={() => {
+                    console.log(JSON.stringify(item));
+                    router.push({
+                      pathname: "/(auth)/(tabs)/(game)/[gameId]",
+                      params: {
+                        gameId: item.gameId,
+                      },
+                    });
+                  }}
                   onPressOddsButton={(index, marketType) => {
                     const tradeDataWithPosition = getTradeDataFromSportMarket(
                       item,

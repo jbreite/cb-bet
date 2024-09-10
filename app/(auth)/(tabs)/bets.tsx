@@ -33,7 +33,6 @@ export default function Bets() {
     isLoading: userHistoryIsLoading,
     isError: userHistoryIsError,
     refetch,
-    isRefetching,
   } = useQuery({
     queryKey: ["userHistory", address?.toString()],
     queryFn: () =>
@@ -88,7 +87,7 @@ export default function Bets() {
   } else if (userHistoryIsError) {
     userHistoryView = <GeneralErrorMessage errorMessage={"Error"} />;
   } else if (userHistoryData) {
-    // console.log(JSON.stringify(userHistoryData));
+    console.log(JSON.stringify(userHistoryData));
     userHistoryView = (
       <View style={{ flex: 1, paddingTop: 8 }}>
         <ScrollView

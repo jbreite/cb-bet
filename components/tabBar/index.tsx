@@ -160,7 +160,13 @@ export default function TabBar({
           style={[styles.lowerTabBarContainer, { paddingBottom: bottom + 20 }]}
         >
           {state.routes.map((route, index) => {
-            if (["_sitemap", "+not-found"].includes(route.name)) return null;
+            console.log(route, index)
+            if (
+              ["_sitemap", "+not-found", "(game)/[gameId]"].includes(
+                route.name
+              )
+            )
+              return null;
 
             const { options } = descriptors[route.key];
             const label = options.tabBarLabel ?? options.title ?? route.name;
