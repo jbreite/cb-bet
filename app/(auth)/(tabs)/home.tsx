@@ -27,6 +27,8 @@ import StickyHeaderMainBetCard from "@/components/mainBetCard/stickeyHeader";
 //TODO: Add in game data with getGamesInfo()
 
 const REFETCH_INTERVAL = 60000 * 3;
+export const PADDING_HORIZONTAL_HOME = 24;
+type FlashListItem = LeagueEnum | SportMarket;
 
 export default function AuthenticatedIndex() {
   const [userBets, setUserBets] = useAtom(userBetsAtom);
@@ -96,58 +98,63 @@ export default function AuthenticatedIndex() {
   } else if (marketsIsError) {
     SportView = <GeneralErrorMessage errorMessage={marketsIsError.message} />;
   } else if (marketsData) {
-    // Transform data into a structure with league IDs as keys and markets as values
-    const transformedData = SUPPORTED_LEAGUES.reduce((acc, league) => {
-      const sport = LeagueMap[league].sport;
-      const leagueData = marketsData[sport]?.[league] || [];
+    const flashListData: FlashListItem[] = SUPPORTED_LEAGUES.reduce(
+      (acc, leagueId) => {
+        const sport = LeagueMap[leagueId].sport;
+        const leagueData = marketsData[sport]?.[leagueId] || [];
 
-      if (leagueData.length > 0) {
-        acc[league] = leagueData;
-      }
+        if (leagueData.length > 0) {
+          acc.push(leagueId);
+          acc.push(...leagueData);
+        }
 
-      return acc;
-    }, {} as Record<LeagueEnum, SportMarket[]>);
-
-    // Filter out leagues with no data
-    const leaguesWithData = SUPPORTED_LEAGUES.filter(
-      (league) => transformedData[league]?.length > 0
+        return acc;
+      },
+      [] as FlashListItem[]
     );
-    // console.log("leagues with data:", JSON.stringify(transformedData[1]));
+
+    const stickyHeaderIndices = flashListData
+      .map((item, index) => (typeof item === "number" ? index : null))
+      .filter((item): item is number => item !== null);
 
     SportView = (
       <View style={{ flex: 1 }}>
         <FlashList
-          refreshing={isManualRefreshing}
-          onRefresh={handleManualRefresh}
-          data={leaguesWithData}
-          renderItem={({ item: leagueId }) => (
-            <View>
-              <StickyHeaderMainBetCard leagueId={leagueId} />
-              {transformedData[leagueId].map((market) => (
+          data={flashListData}
+          renderItem={({ item }) => {
+            if (typeof item === "number") {
+              return <StickyHeaderMainBetCard leagueId={item} />;
+            } else {
+              return (
                 <MainBetCard
-                  key={market.gameId}
-                  sportMarket={market}
-                  onPress={() => console.log(JSON.stringify(market))}
+                  key={item.gameId}
+                  sportMarket={item}
+                  onPress={() => console.log(JSON.stringify(item))}
                   onPressOddsButton={(index, marketType) => {
                     const tradeDataWithPosition = getTradeDataFromSportMarket(
-                      market,
+                      item,
                       index,
                       marketType
                     );
 
                     if (tradeDataWithPosition) {
-                      handleMarketPress(market, tradeDataWithPosition);
+                      handleMarketPress(item, tradeDataWithPosition);
                     }
                   }}
                 />
-              ))}
-            </View>
-          )}
-          estimatedItemSize={200}
-          keyExtractor={(leagueId) => leagueId.toString()}
+              );
+            }
+          }}
+          getItemType={(item) => {
+            return typeof item === "number" ? "sectionHeader" : "row";
+          }}
+          estimatedItemSize={161}
+          stickyHeaderIndices={stickyHeaderIndices}
+          refreshing={isManualRefreshing}
+          onRefresh={handleManualRefresh}
           contentContainerStyle={{
             paddingBottom: tabBarHeight + bottomPadding,
-            paddingHorizontal: 24,
+            //Padding Taken care of on the elemetns itself
           }}
         />
       </View>

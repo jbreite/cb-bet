@@ -14,6 +14,7 @@ import { getMarketTypeName } from "@/utils/overtime/ui/markets";
 import { convertUnixToFormattedDate } from "@/utils/overtime/ui/date";
 import OddsRow, { MAIN_CARD_MARKETS } from "./oddsRow";
 import { PositionEnum } from "@/utils/overtime/enums/markets";
+import { PADDING_HORIZONTAL_HOME } from "@/app/(auth)/(tabs)/home";
 
 const ODDS_GRID_GAP = 4;
 
@@ -37,8 +38,9 @@ export default function MainBetCard({
     <Pressable
       onPress={onPress}
       style={{
-        marginVertical: 12,
+        paddingBottom: 16,
         gap: 8,
+        paddingHorizontal: PADDING_HORIZONTAL_HOME,
       }}
     >
       <View style={{ flex: 1, gap: ODDS_GRID_GAP }}>

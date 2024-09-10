@@ -3,6 +3,7 @@ import { getLeagueIsDrawAvailable } from "@/utils/overtime/ui/sportsHelpers";
 import { StyleSheet, View } from "react-native";
 import { SfText } from "../SfThemedText";
 import { LeagueMap } from "@/constants/sports";
+import { PADDING_HORIZONTAL_HOME } from "@/app/(auth)/(tabs)/home";
 
 //TODO: If font is too big for one line than scale down font for that one
 
@@ -50,7 +51,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingTop: 8,
+    paddingVertical: 8,
+    paddingHorizontal: PADDING_HORIZONTAL_HOME,
+    backgroundColor: "white",
   },
   leageTitleText: {
     fontSize: 24,
