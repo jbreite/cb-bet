@@ -12,6 +12,7 @@ import { config } from "@/config";
 import { useAccount, WagmiProvider } from "wagmi";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { usePostHog, PostHogProvider } from "posthog-react-native";
+import { useCheckWalletInDatabase } from "@/utils/supabase/queries/checkWalletInWallets";
 
 export const queryClient = new QueryClient();
 const POSTHOG_API_KEY = process.env.EXPO_PUBLIC_POSTHOG_API_KEY!;
@@ -20,6 +21,7 @@ SplashScreen.preventAutoHideAsync();
 
 function InitialLayout() {
   const posthog = usePostHog();
+  const { data: isInDatabase, isLoading, isError } = useCheckWalletInDatabase();
 
   const [loaded, error] = useFonts({
     "SF-Pro-Rounded-Black": require("../assets/fonts/SF-Pro-Rounded-Black.otf"),
@@ -54,28 +56,29 @@ function InitialLayout() {
   useEffect(() => {
     if (status === "connecting" || status === "reconnecting") return;
 
-    const inAuthGroup = segments[0] === "(auth)";
-    console.log("🪨 ~ useEffect ~ inAuthGroup", inAuthGroup);
-    console.log("🪨 ~ useEffect ~ isConnected", isConnected);
-
-    if (isConnected && !inAuthGroup) {
-      // Bring the user inside the auth group
-      router.replace("/(auth)/(tabs)/home");
-
-      // Identify the user with PostHog
+    if (isConnected && !isLoading && !isError) {
+      // Identify the user with PostHog as soon as they're connected
       if (address) {
         posthog?.identify(address, {
           wallet_address: address,
         });
       }
-    } else if (!isConnected && inAuthGroup) {
+
+      if (isInDatabase) {
+        // User is in the database, proceed to (auth)
+        router.replace("/(auth)/(tabs)/home");
+      } else {
+        // User is not in the database, redirect to onboarding
+        router.replace("/onboarding");
+      }
+    } else if (!isConnected) {
       // Kick the user out of the auth group
       router.replace("/");
 
-      //Reset Posthog instance
-      posthog.reset();
+      // Reset PostHog instance
+      posthog?.reset();
     }
-  }, [isConnected, status]);
+  }, [isConnected, isInDatabase, isLoading, isError, status, address, posthog]);
 
   useEffect(() => {
     const subscription = Linking.addEventListener("url", ({ url }) => {
@@ -100,6 +103,12 @@ function InitialLayout() {
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen
         name="(auth)"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="onboarding/index"
         options={{
           headerShown: false,
         }}
