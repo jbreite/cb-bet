@@ -14,6 +14,9 @@ import * as Burnt from "burnt";
 const EMOJI_SIZE = 20;
 const EMOJI_PADDING = 12;
 
+export const EMOJI_SYMBOL = "😀";
+export const EMOJI_BACKGROUND_COLOR = "#FF8947";
+
 export default function AddressEmoji({
   address,
 }: {
@@ -47,7 +50,7 @@ export default function AddressEmoji({
         style={{
           width: EMOJI_SIZE + EMOJI_PADDING,
           height: EMOJI_SIZE + EMOJI_PADDING,
-          backgroundColor: "red",
+          backgroundColor: EMOJI_BACKGROUND_COLOR,
           justifyContent: "center",
           alignItems: "center",
           borderRadius: 100,
@@ -64,7 +67,7 @@ export default function AddressEmoji({
             textAlign: "center",
           }}
         >
-          😀
+          {EMOJI_SYMBOL}
         </SfText>
       </AnimatedPressable>
 
@@ -77,7 +80,7 @@ export default function AddressEmoji({
   );
 }
 
-function shortenEthereumAddress(address: `0x${string}`): string {
+export function shortenEthereumAddress(address: `0x${string}`): string {
   if (!isAddress(address)) {
     throw new Error("Invalid Ethereum address");
   }

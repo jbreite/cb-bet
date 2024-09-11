@@ -1,3 +1,5 @@
+import AccountCard from "@/components/account/accountCard";
+import { AccountRow } from "@/components/account/accountRow";
 import Button from "@/components/Button";
 import Chat_Circle from "@/components/icons/Chat_Circle";
 import Credit_Card_01 from "@/components/icons/Credit_Card_01";
@@ -5,6 +7,10 @@ import External_Link from "@/components/icons/External_Link";
 import Farcaster_Logo from "@/components/icons/Farcaster_Logo";
 import Mail from "@/components/icons/Mail";
 import Twitter_Logo from "@/components/icons/Twitter_Logo";
+import {
+  EMOJI_BACKGROUND_COLOR,
+  EMOJI_SYMBOL,
+} from "@/components/mainHeader/addressEmoji";
 import { SfText } from "@/components/SfThemedText";
 import { useUSDCBal } from "@/hooks/tokens/useUSDCBal";
 import { formatCurrency } from "@/utils/overtime/ui/beyTabHelpers";
@@ -33,23 +39,25 @@ export default function AccountModal() {
     <View
       style={{
         flex: 1,
-        padding: 16,
+        paddingHorizontal: 16,
+        paddingTop: 32,
         justifyContent: "space-between",
         marginBottom: bottom,
+        gap: 32,
       }}
     >
-      <View style={{ gap: 16 }}>
-        <AccountRow
-          icon={<Credit_Card_01 color={ICON_COLOR} />}
-          label="USDC Balance"
-          rightValue={
-            usdcBalLoading
-              ? "Loading..."
-              : usdcBalError
-              ? "Error loading balance"
-              : `${formatCurrency({ amount: usdcBalance?.value ?? 0 })}`
-          }
-        />
+      <AccountCard
+        backgroundColor={EMOJI_BACKGROUND_COLOR}
+        emoji={EMOJI_SYMBOL}
+        usdcValue={
+          usdcBalLoading
+            ? "Loading..."
+            : usdcBalError
+            ? "Error loading balance"
+            : `${formatCurrency({ amount: usdcBalance?.value ?? 0 })}`
+        }
+      />
+      <View style={{ flex: 1 }}>
         <AccountRow
           icon={<Chat_Circle color={ICON_COLOR} />}
           label="Feedback"
@@ -77,42 +85,5 @@ export default function AccountModal() {
       </View>
       <Button label="Disconnect Wallet" onPress={() => disconnect()} />
     </View>
-  );
-}
-
-function AccountRow({
-  icon,
-  label,
-  rightValue,
-  onPress,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  rightValue: string | React.ReactNode;
-  onPress?: () => void;
-}) {
-  return (
-    <Pressable
-      style={{
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-      }}
-      onPress={onPress}
-    >
-      <View style={{ gap: 8, flexDirection: "row", alignItems: "center" }}>
-        {icon}
-        <SfText familyType="medium" style={{ fontSize: 16 }}>
-          {label}
-        </SfText>
-      </View>
-      {typeof rightValue === "string" ? (
-        <SfText familyType="medium" style={{ fontSize: 16, color: ICON_COLOR }}>
-          {rightValue}
-        </SfText>
-      ) : (
-        rightValue
-      )}
-    </Pressable>
   );
 }
