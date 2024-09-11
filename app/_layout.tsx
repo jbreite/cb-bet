@@ -13,6 +13,8 @@ import { useAccount, WagmiProvider } from "wagmi";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { usePostHog, PostHogProvider } from "posthog-react-native";
 import { useCheckWalletInDatabase } from "@/utils/supabase/queries/checkWalletInWallets";
+import IconPressable from "@/components/IconPressable";
+import Chevron_Left from "@/components/icons/Chevron_Left";
 
 export const queryClient = new QueryClient();
 const POSTHOG_API_KEY = process.env.EXPO_PUBLIC_POSTHOG_API_KEY!;
@@ -99,7 +101,7 @@ function InitialLayout() {
   }
 
   return (
-    <Stack>
+    <Stack screenOptions={{ contentStyle: { backgroundColor: "white" } }}>
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen
         name="(auth)"
@@ -111,6 +113,14 @@ function InitialLayout() {
         name="onboarding/index"
         options={{
           headerShown: false,
+          headerTitle: "",
+          headerShadowVisible: false,
+          headerLeft: () =>
+            router.canGoBack() && (
+              <IconPressable onPress={() => router.back()}>
+                <Chevron_Left />
+              </IconPressable>
+            ),
         }}
       />
     </Stack>

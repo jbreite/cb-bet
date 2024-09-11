@@ -2,6 +2,8 @@ import React from "react";
 import { View, StyleSheet, Pressable } from "react-native";
 import { AnimatedPressable } from "../animated/AnimatedPressable";
 import Animated, {
+    FadeIn,
+    FadeOut,
   runOnJS,
   useAnimatedStyle,
   useSharedValue,
@@ -80,9 +82,8 @@ export default function PickColor({
     };
 
     return (
-      <View style={{ width: "20%", aspectRatio: 1 }}>
+      <View style={{ width: "20%", aspectRatio: 1 }} key={hexColor}>
         <AnimatedPressable
-          key={hexColor}
           style={[
             styles.colorItem,
             { backgroundColor: hexColor },
@@ -101,9 +102,12 @@ export default function PickColor({
   };
 
   return (
-    <View style={styles.container}>
+    <Animated.View style={styles.container}
+    entering={FadeIn}
+    exiting={FadeOut}
+    >
       {EMOJI_BG_COLORS.map(createColorButton)}
-    </View>
+    </Animated.View>
   );
 }
 const styles = StyleSheet.create({
