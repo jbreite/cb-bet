@@ -6,15 +6,20 @@ import { useEffect } from "react";
 import * as Linking from "expo-linking";
 import { handleResponse } from "@mobile-wallet-protocol/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Provider as JotaiProvider } from "jotai";
+import { Provider as JotaiProvider, useSetAtom } from "jotai";
 import { defaultStore } from "@/lib/atom/store";
 import { config } from "@/config";
 import { useAccount, WagmiProvider } from "wagmi";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { usePostHog, PostHogProvider } from "posthog-react-native";
-import { useCheckWalletInDatabase } from "@/utils/supabase/queries/checkWalletInWallets";
 import IconPressable from "@/components/IconPressable";
 import Chevron_Left from "@/components/icons/Chevron_Left";
+import {
+  checkProfile,
+  checkProfileSetUp,
+  getWalletProfile,
+} from "@/utils/local/localStoreProfile";
+import { walletProfileAtom } from "@/lib/atom/atoms";
 
 export const queryClient = new QueryClient();
 const POSTHOG_API_KEY = process.env.EXPO_PUBLIC_POSTHOG_API_KEY!;
@@ -23,7 +28,7 @@ SplashScreen.preventAutoHideAsync();
 
 function InitialLayout() {
   const posthog = usePostHog();
-  const { data: isInDatabase, isLoading, isError } = useCheckWalletInDatabase();
+  // const { data: isInDatabase, isLoading, isError } = useCheckWalletInDatabase();
 
   const [loaded, error] = useFonts({
     "SF-Pro-Rounded-Black": require("../assets/fonts/SF-Pro-Rounded-Black.otf"),
@@ -38,6 +43,7 @@ function InitialLayout() {
   });
 
   const { isConnected, status, address } = useAccount();
+  const setWalletProfile = useSetAtom(walletProfileAtom);
 
   const router = useRouter();
   const segments = useSegments();
@@ -58,29 +64,31 @@ function InitialLayout() {
   useEffect(() => {
     if (status === "connecting" || status === "reconnecting") return;
 
-    if (isConnected && !isLoading && !isError) {
-      // Identify the user with PostHog as soon as they're connected
-      if (address) {
-        posthog?.identify(address, {
-          wallet_address: address,
-        });
-      }
+    const checkAndRoute = async () => {
+      if (isConnected) {
+        if (address) {
+          posthog?.identify(address, {
+            wallet_address: address,
+          });
+        }
+        const profile = await getWalletProfile(address);
+        console.log("Profile after get wallet Profile:", profile);
+        setWalletProfile(profile || null);
 
-      if (isInDatabase) {
-        // User is in the database, proceed to (auth)
-        router.replace("/(auth)/(tabs)/home");
-      } else {
-        // User is not in the database, redirect to onboarding
-        router.replace("/onboarding");
+        const checkProfileBool = await checkProfileSetUp(profile);
+        console.log("checkProfileSetUp result:", checkProfileBool);
+        if (checkProfileBool) {
+          router.replace("/(auth)/(tabs)/home");
+        } else {
+          router.replace("/onboarding");
+        }
+      } else if (!isConnected) {
+        router.replace("/");
+        posthog?.reset();
       }
-    } else if (!isConnected) {
-      // Kick the user out of the auth group
-      router.replace("/");
-
-      // Reset PostHog instance
-      posthog?.reset();
-    }
-  }, [isConnected, isInDatabase, isLoading, isError, status, address, posthog]);
+    };
+    checkAndRoute();
+  }, [isConnected, status, address, posthog]);
 
   useEffect(() => {
     const subscription = Linking.addEventListener("url", ({ url }) => {

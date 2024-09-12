@@ -1,16 +1,24 @@
-import { View, Text, Image } from "react-native";
-import { useAccount, useConnect } from "wagmi";
+import { View } from "react-native";
+import { useConnect } from "wagmi";
 import Button from "@/components/Button";
-import { CoinbaseWalletLogo } from "@/components/coinbaseComponents/coinbaseWalletLogo";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { SfText } from "@/components/SfThemedText";
 import { StyleSheet } from "react-native";
 import GridBackground, { GRID_SIZE } from "@/components/lander/gridBackground";
 import BSquaredLogo from "@/components/lander/bSquaresLogo";
+import { addOrUpdateWalletProfile } from "@/utils/local/localStoreProfile";
 
 export default function Index() {
-  const { connect, connectors, isPending } = useConnect();
-  const { bottom, top } = useSafeAreaInsets();
+  const { connect, connectors, isPending } = useConnect({
+    mutation: {
+      onSuccess: (data) => {
+        //Create wallet profile in local storage
+        //TODO: Check if works of multiple accounts.
+        addOrUpdateWalletProfile({ address: data.accounts[0] });
+      },
+    },
+  });
+  const { bottom } = useSafeAreaInsets();
 
   const handleConnect = () => {
     connect({ connector: connectors[0] });
@@ -23,9 +31,13 @@ export default function Index() {
       <View />
 
       <View
-        style={{ justifyContent: "center", alignItems: "center", padding: GRID_SIZE }}
+        style={{
+          justifyContent: "center",
+          alignItems: "center",
+          padding: GRID_SIZE,
+        }}
       >
-        <BSquaredLogo fontSize={GRID_SIZE* 4} />
+        <BSquaredLogo fontSize={GRID_SIZE * 4} />
         <SfText
           style={{
             textAlign: "center",

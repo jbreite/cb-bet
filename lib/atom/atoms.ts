@@ -1,3 +1,4 @@
+import { WalletProfile } from "@/utils/local/localStoreProfile";
 import { SportMarket, TradeData } from "@/utils/overtime/types/markets";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { atom } from "jotai";
@@ -14,3 +15,5 @@ export const userBetsAtom = atom<UserBet[]>([]);
 export const BottomSheetMapAtom = atom<Map<string, BottomSheetModal | null>>(
   new Map()
 );
+
+export const walletProfileAtom = atom<WalletProfile | null>(null);

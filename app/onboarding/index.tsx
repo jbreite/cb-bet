@@ -4,11 +4,18 @@ import OnboardingIntro from "@/components/onboarding/onboardingIntro";
 import PickColor from "@/components/onboarding/pickColor";
 import PickEmoji from "@/components/onboarding/pickEmoji";
 import TopText from "@/components/onboarding/topText";
+import { walletProfileAtom } from "@/lib/atom/atoms";
+import {
+  addOrUpdateWalletProfile,
+  WalletProfile,
+} from "@/utils/local/localStoreProfile";
 import { router } from "expo-router";
+import { useSetAtom } from "jotai";
 import { useState } from "react";
 import { View } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useAccount } from "wagmi";
 
 const ONBOARDING_ROUTES = [
   {
@@ -42,6 +49,8 @@ const ONBOARDING_ROUTES = [
 ];
 
 export default function Page() {
+  const { address } = useAccount();
+  const setWalletProfile = useSetAtom(walletProfileAtom);
   const { bottom, top } = useSafeAreaInsets();
   const [selectedColor, setSelectedColor] = useState("");
   const [selectedEmoji, setSelectedEmoji] = useState("");
@@ -57,10 +66,24 @@ export default function Page() {
     setSelectedEmoji(emoji);
   };
 
+  const handleSetProfile = async (profile: WalletProfile) => {
+    await addOrUpdateWalletProfile(profile);
+    setWalletProfile(profile);
+    console.log("PROFILE ON ONBOARDING AFTER:", profile);
+    // ... navigate to next screen or home
+  };
+
   const handleForward = () => {
     const onboardingRouteLength = ONBOARDING_ROUTES.length;
 
     if (index === onboardingRouteLength - 1) {
+      if (address) {
+        handleSetProfile({
+          address: address,
+          emoji: selectedEmoji,
+          emojiBackground: selectedColor,
+        });
+      }
       router.replace("/(auth)/(tabs)/home");
     } else {
       setIndex(index + 1);
@@ -72,7 +95,8 @@ export default function Page() {
   };
 
   const isButtonDisabled =
-    selectedColor === "" || (selectedColor === "" && selectedEmoji === "");
+    (route.path === "emoji-bg" && selectedColor === "") ||
+    (route.path === "emoji" && selectedEmoji === "");
 
   return (
     <Animated.View style={{ flex: 1, marginTop: top, marginBottom: bottom }}>
@@ -87,9 +111,12 @@ export default function Page() {
           heading={route.text.heading}
           subHeading={route.text.subHeading}
         />
-        <View style={{ flex: 1, 
-            zIndex: 1 //This is hacky but works for now...
-            }}>
+        <View
+          style={{
+            flex: 1,
+            zIndex: 1, //This is hacky but works for now...
+          }}
+        >
           {route.path === "emoji-bg" && (
             <PickColor
               selectedColor={selectedColor}
