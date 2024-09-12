@@ -15,7 +15,6 @@ import { usePostHog, PostHogProvider } from "posthog-react-native";
 import IconPressable from "@/components/IconPressable";
 import Chevron_Left from "@/components/icons/Chevron_Left";
 import {
-  checkProfile,
   checkProfileSetUp,
   getWalletProfile,
 } from "@/utils/local/localStoreProfile";
@@ -56,7 +55,8 @@ function InitialLayout() {
     if (loaded && (status === "connected" || status === "disconnected")) {
       setTimeout(() => {
         SplashScreen.hideAsync();
-      }, 300);
+      }, 500);
+      //Still need a better way to do this
     }
   }, [loaded, status]);
 
