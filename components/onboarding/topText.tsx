@@ -9,7 +9,7 @@ export default function TopText({
   subHeading: string;
 }) {
   return (
-    <View style={{ flex: 1, gap: 16 }}>
+    <View style={{ flex: 1, gap: 16, justifyContent: "center" }}>
       <SfText familyType="bold" style={{ fontSize: 24 }}>
         {heading}
       </SfText>

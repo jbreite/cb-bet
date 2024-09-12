@@ -1,5 +1,6 @@
 import Button from "@/components/Button";
 import OnboardingHeader from "@/components/onboarding/onboardingHeader";
+import OnboardingIntro from "@/components/onboarding/onboardingIntro";
 import PickColor from "@/components/onboarding/pickColor";
 import PickEmoji from "@/components/onboarding/pickEmoji";
 import TopText from "@/components/onboarding/topText";
@@ -43,12 +44,17 @@ const ONBOARDING_ROUTES = [
 export default function Page() {
   const { bottom, top } = useSafeAreaInsets();
   const [selectedColor, setSelectedColor] = useState("");
+  const [selectedEmoji, setSelectedEmoji] = useState("");
   const [index, setIndex] = useState(0);
 
   const route = ONBOARDING_ROUTES[index];
 
   const handleColorSelect = (color: string) => {
     setSelectedColor(color);
+  };
+
+  const handleEmojiSelect = (emoji: string) => {
+    setSelectedEmoji(emoji);
   };
 
   const handleForward = () => {
@@ -65,6 +71,9 @@ export default function Page() {
     setIndex(index - 1);
   };
 
+  const isButtonDisabled =
+    selectedColor === "" || (selectedColor === "" && selectedEmoji === "");
+
   return (
     <Animated.View style={{ flex: 1, marginTop: top, marginBottom: bottom }}>
       <OnboardingHeader backShown={index !== 0} backPress={handleBack} />
@@ -72,14 +81,15 @@ export default function Page() {
         style={{
           flex: 1,
           paddingHorizontal: 48,
-          paddingTop: 48,
         }}
       >
         <TopText
           heading={route.text.heading}
           subHeading={route.text.subHeading}
         />
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, 
+            zIndex: 1 //This is hacky but works for now...
+            }}>
           {route.path === "emoji-bg" && (
             <PickColor
               selectedColor={selectedColor}
@@ -87,12 +97,19 @@ export default function Page() {
             />
           )}
 
-          {route.path === "emoji" && <PickEmoji />}
+          {route.path === "emoji" && (
+            <PickEmoji
+              selectedEmoji={selectedEmoji}
+              onEmojiSelect={handleEmojiSelect}
+              backgroundColor={selectedColor}
+            />
+          )}
+          {route.path === "intro" && <OnboardingIntro />}
         </View>
         <View style={{ flex: 1, justifyContent: "flex-end" }}>
           <Button
             label="Continue"
-            disabled={selectedColor === ""}
+            disabled={isButtonDisabled}
             onPress={handleForward}
           />
         </View>
