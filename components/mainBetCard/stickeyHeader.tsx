@@ -31,13 +31,13 @@ export default function StickyHeaderMainBetCard({
         }}
       >
         <SfText style={styles.betTypeText} familyType="semibold">
-          {isLeagueDrawAvailable ? "Win" : "Winner"}
+          {"Winner"}
         </SfText>
         <SfText style={styles.betTypeText} familyType="semibold">
-          {isLeagueDrawAvailable ? "Loss" : "Spread"}
+          {"Spread"}
         </SfText>
         <SfText style={styles.betTypeText} familyType="semibold">
-          {isLeagueDrawAvailable ? "Draw" : "Total"}
+          {"Total"}
         </SfText>
       </View>
     </View>

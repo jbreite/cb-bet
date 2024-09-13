@@ -27,7 +27,6 @@ SplashScreen.preventAutoHideAsync();
 
 function InitialLayout() {
   const posthog = usePostHog();
-  // const { data: isInDatabase, isLoading, isError } = useCheckWalletInDatabase();
 
   const [loaded, error] = useFonts({
     "SF-Pro-Rounded-Black": require("../assets/fonts/SF-Pro-Rounded-Black.otf"),
