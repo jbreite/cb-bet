@@ -6,12 +6,19 @@ import { useEffect } from "react";
 import * as Linking from "expo-linking";
 import { handleResponse } from "@mobile-wallet-protocol/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Provider as JotaiProvider } from "jotai";
+import { Provider as JotaiProvider, useSetAtom } from "jotai";
 import { defaultStore } from "@/lib/atom/store";
 import { config } from "@/config";
 import { useAccount, WagmiProvider } from "wagmi";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { usePostHog, PostHogProvider } from "posthog-react-native";
+import IconPressable from "@/components/IconPressable";
+import Chevron_Left from "@/components/icons/Chevron_Left";
+import {
+  checkProfileSetUp,
+  getWalletProfile,
+} from "@/utils/local/localStoreProfile";
+import { walletProfileAtom } from "@/lib/atom/atoms";
 
 export const queryClient = new QueryClient();
 const POSTHOG_API_KEY = process.env.EXPO_PUBLIC_POSTHOG_API_KEY!;
@@ -20,6 +27,7 @@ SplashScreen.preventAutoHideAsync();
 
 function InitialLayout() {
   const posthog = usePostHog();
+  // const { data: isInDatabase, isLoading, isError } = useCheckWalletInDatabase();
 
   const [loaded, error] = useFonts({
     "SF-Pro-Rounded-Black": require("../assets/fonts/SF-Pro-Rounded-Black.otf"),
@@ -34,6 +42,7 @@ function InitialLayout() {
   });
 
   const { isConnected, status, address } = useAccount();
+  const setWalletProfile = useSetAtom(walletProfileAtom);
 
   const router = useRouter();
   const segments = useSegments();
@@ -46,36 +55,40 @@ function InitialLayout() {
     if (loaded && (status === "connected" || status === "disconnected")) {
       setTimeout(() => {
         SplashScreen.hideAsync();
-      }, 300);
+      }, 350);
+      //Still need a better way to do this
     }
   }, [loaded, status]);
 
   //For some reason still goes to login first adn not just loggedd in
   useEffect(() => {
     if (status === "connecting" || status === "reconnecting") return;
-
     const inAuthGroup = segments[0] === "(auth)";
-    console.log("🪨 ~ useEffect ~ inAuthGroup", inAuthGroup);
-    console.log("🪨 ~ useEffect ~ isConnected", isConnected);
 
-    if (isConnected && !inAuthGroup) {
-      // Bring the user inside the auth group
-      router.replace("/(auth)/(tabs)/home");
+    const checkAndRoute = async () => {
+      if (isConnected && !inAuthGroup) {
+        if (address) {
+          posthog?.identify(address, {
+            wallet_address: address,
+          });
+        }
+        //Get the right profile in local storage from address
+        const profile = await getWalletProfile(address);
+        setWalletProfile(profile || null);
 
-      // Identify the user with PostHog
-      if (address) {
-        posthog?.identify(address, {
-          wallet_address: address,
-        });
+        const checkProfileBool = await checkProfileSetUp(profile);
+        if (checkProfileBool) {
+          router.replace("/(auth)/(tabs)/home");
+        } else {
+          router.replace("/onboarding");
+        }
+      } else if (!isConnected && inAuthGroup) {
+        router.replace("/");
+        posthog?.reset();
       }
-    } else if (!isConnected && inAuthGroup) {
-      // Kick the user out of the auth group
-      router.replace("/");
-
-      //Reset Posthog instance
-      posthog.reset();
-    }
-  }, [isConnected, status]);
+    };
+    checkAndRoute();
+  }, [isConnected, status, address, posthog]);
 
   useEffect(() => {
     const subscription = Linking.addEventListener("url", ({ url }) => {
@@ -96,12 +109,26 @@ function InitialLayout() {
   }
 
   return (
-    <Stack>
+    <Stack screenOptions={{ contentStyle: { backgroundColor: "white" } }}>
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen
         name="(auth)"
         options={{
           headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="onboarding/index"
+        options={{
+          headerShown: false,
+          headerTitle: "",
+          headerShadowVisible: false,
+          headerLeft: () =>
+            router.canGoBack() && (
+              <IconPressable onPress={() => router.back()}>
+                <Chevron_Left />
+              </IconPressable>
+            ),
         }}
       />
     </Stack>

@@ -2,7 +2,6 @@ import AccountCard from "@/components/account/accountCard";
 import { AccountRow } from "@/components/account/accountRow";
 import Button from "@/components/Button";
 import Chat_Circle from "@/components/icons/Chat_Circle";
-import Credit_Card_01 from "@/components/icons/Credit_Card_01";
 import External_Link from "@/components/icons/External_Link";
 import Farcaster_Logo from "@/components/icons/Farcaster_Logo";
 import Mail from "@/components/icons/Mail";
@@ -11,9 +10,10 @@ import {
   EMOJI_BACKGROUND_COLOR,
   EMOJI_SYMBOL,
 } from "@/components/mainHeader/addressEmoji";
-import { SfText } from "@/components/SfThemedText";
 import { useUSDCBal } from "@/hooks/tokens/useUSDCBal";
+import { walletProfileAtom } from "@/lib/atom/atoms";
 import { formatCurrency } from "@/utils/overtime/ui/beyTabHelpers";
+import { useAtomValue } from "jotai";
 import { Linking, Pressable, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAccount, useDisconnect } from "wagmi";
@@ -26,6 +26,7 @@ const EMAIL_LINK = "mailto:joshbreite@gmail.com";
 
 export default function AccountModal() {
   const { bottom } = useSafeAreaInsets();
+  const profile = useAtomValue(walletProfileAtom);
 
   const { disconnect } = useDisconnect();
 
@@ -47,8 +48,8 @@ export default function AccountModal() {
       }}
     >
       <AccountCard
-        backgroundColor={EMOJI_BACKGROUND_COLOR}
-        emoji={EMOJI_SYMBOL}
+        backgroundColor={profile?.emojiBackground || EMOJI_BACKGROUND_COLOR}
+        emoji={profile?.emoji || EMOJI_SYMBOL}
         usdcValue={
           usdcBalLoading
             ? "Loading..."

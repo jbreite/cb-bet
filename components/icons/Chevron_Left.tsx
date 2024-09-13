@@ -1,15 +1,15 @@
 import { Path } from "react-native-svg";
 import Icon, { IconProps } from "./DefaultIcon";
 
-const MORE_HORIZONTAL = (props: IconProps) => (
+const Chevron_Left: React.FC<IconProps> = (props) => (
   <Icon {...props}>
     <Path
       stroke={props.color || "#fff"}
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={props.strokeWidth || 2}
-      d="M17 12a1 1 0 1 0 2 0 1 1 0 0 0-2 0ZM11 12a1 1 0 1 0 2 0 1 1 0 0 0-2 0ZM5 12a1 1 0 1 0 2 0 1 1 0 0 0-2 0Z"
+      d="m15 19-7-7 7-7"
     />
   </Icon>
 );
-export default MORE_HORIZONTAL;
+export default Chevron_Left;

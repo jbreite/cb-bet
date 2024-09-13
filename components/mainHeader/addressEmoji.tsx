@@ -7,6 +7,8 @@ import useHaptics from "@/hooks/useHaptics";
 import * as Clipboard from "expo-clipboard";
 import { useState } from "react";
 import * as Burnt from "burnt";
+import { walletProfileAtom } from "@/lib/atom/atoms";
+import { useAtomValue } from "jotai";
 
 //TODO: Add custom emoji for people
 //TODO: Resolve to ENS, basename, or Farcaster
@@ -24,6 +26,7 @@ export default function AddressEmoji({
 }) {
   const [, setCopied] = useState(false);
   const { triggerImpact, ImpactFeedbackStyle } = useHaptics();
+  const profile = useAtomValue(walletProfileAtom);
 
   const copyToClipboard = async () => {
     if (address) {
@@ -50,7 +53,7 @@ export default function AddressEmoji({
         style={{
           width: EMOJI_SIZE + EMOJI_PADDING,
           height: EMOJI_SIZE + EMOJI_PADDING,
-          backgroundColor: EMOJI_BACKGROUND_COLOR,
+          backgroundColor: profile?.emojiBackground || EMOJI_BACKGROUND_COLOR,
           justifyContent: "center",
           alignItems: "center",
           borderRadius: 100,
@@ -63,11 +66,11 @@ export default function AddressEmoji({
       >
         <SfText
           style={{
-            fontSize: EMOJI_SIZE,
+            fontSize: EMOJI_SIZE - 4,
             textAlign: "center",
           }}
         >
-          {EMOJI_SYMBOL}
+          {profile?.emoji || EMOJI_SYMBOL}
         </SfText>
       </AnimatedPressable>
 
