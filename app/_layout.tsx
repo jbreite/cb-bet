@@ -55,7 +55,7 @@ function InitialLayout() {
     if (loaded && (status === "connected" || status === "disconnected")) {
       setTimeout(() => {
         SplashScreen.hideAsync();
-      }, 500);
+      }, 300);
       //Still need a better way to do this
     }
   }, [loaded, status]);
@@ -63,9 +63,10 @@ function InitialLayout() {
   //For some reason still goes to login first adn not just loggedd in
   useEffect(() => {
     if (status === "connecting" || status === "reconnecting") return;
+    const inAuthGroup = segments[0] === "(auth)";
 
     const checkAndRoute = async () => {
-      if (isConnected) {
+      if (isConnected && !inAuthGroup) {
         if (address) {
           posthog?.identify(address, {
             wallet_address: address,
@@ -82,7 +83,7 @@ function InitialLayout() {
         } else {
           router.replace("/onboarding");
         }
-      } else if (!isConnected) {
+      } else if (!isConnected && inAuthGroup) {
         router.replace("/");
         posthog?.reset();
       }
