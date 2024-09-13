@@ -13,6 +13,7 @@ import {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import { isColorLight } from "../onboarding/pickEmoji";
 
 export default function AccountCard({
   emoji,
@@ -71,6 +72,12 @@ export default function AccountCard({
     };
   });
 
+  const isLightColorBool = isColorLight(backgroundColor);
+
+  const secondaryTextColor = isLightColorBool
+    ? "rgba(0, 0, 0, 0.2)"
+    : "rgba(255, 255, 255, 0.3)";
+
   return (
     <View
       style={{
@@ -99,7 +106,7 @@ export default function AccountCard({
           <SfText familyType="bold" style={[styles.baseText]}>
             Copy Address
           </SfText>
-          <Copy color={"rgba(0, 0, 0, 0.2)"} />
+          <Copy color={secondaryTextColor} />
         </AnimatedPressable>
       </View>
 
@@ -108,7 +115,7 @@ export default function AccountCard({
           {formattedName}
         </SfText>
         <SfText
-          style={[styles.baseText, { color: "rgba(0, 0, 0, 0.2)" }]}
+          style={[styles.baseText, { color: secondaryTextColor }]}
           familyType="bold"
         >
           {usdcValue}

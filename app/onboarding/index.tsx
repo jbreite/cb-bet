@@ -106,10 +106,15 @@ export default function Page() {
     (route.path === "emoji-bg" && selectedColor === "") ||
     (route.path === "emoji" && selectedEmoji === "");
 
+  if (usdcBalance) {
+    console.log(usdcBalance);
+  }
+
   const formattedFundsText = usdcBalLoading
     ? "Loading..."
+    : usdcBalance === null || usdcBalError
+    ? "$0.00"
     : formatCurrency({ amount: usdcBalance.value });
-
   return (
     <Animated.View style={{ flex: 1, marginTop: top, marginBottom: bottom }}>
       <OnboardingHeader backShown={index !== 0} backPress={handleBack} />
