@@ -78,7 +78,6 @@ export default function Page() {
   const handleSetProfile = async (profile: WalletProfile) => {
     await addOrUpdateWalletProfile(profile);
     setWalletProfile(profile);
-    console.log("PROFILE ON ONBOARDING AFTER:", profile);
     // ... navigate to next screen or home
   };
 

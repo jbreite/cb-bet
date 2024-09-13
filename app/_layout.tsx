@@ -72,12 +72,11 @@ function InitialLayout() {
             wallet_address: address,
           });
         }
+        //Get the right profile in local storage from address
         const profile = await getWalletProfile(address);
-        console.log("Profile after get wallet Profile:", profile);
         setWalletProfile(profile || null);
 
         const checkProfileBool = await checkProfileSetUp(profile);
-        console.log("checkProfileSetUp result:", checkProfileBool);
         if (checkProfileBool) {
           router.replace("/(auth)/(tabs)/home");
         } else {

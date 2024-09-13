@@ -26,9 +26,7 @@ export default function AddressEmoji({
 }) {
   const [, setCopied] = useState(false);
   const { triggerImpact, ImpactFeedbackStyle } = useHaptics();
-    const profile = useAtomValue(walletProfileAtom);
-    console.log("profile", profile)
-
+  const profile = useAtomValue(walletProfileAtom);
 
   const copyToClipboard = async () => {
     if (address) {
@@ -68,7 +66,7 @@ export default function AddressEmoji({
       >
         <SfText
           style={{
-            fontSize: EMOJI_SIZE,
+            fontSize: EMOJI_SIZE - 4,
             textAlign: "center",
           }}
         >
