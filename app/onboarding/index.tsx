@@ -1,6 +1,6 @@
 import Button from "@/components/Button";
 import OnboardingHeader from "@/components/onboarding/onboardingHeader";
-import OnboardingIntro from "@/components/onboarding/onboardingIntro";
+import OnboardingIntro from "@/components/onboarding/intro/onboardingIntro";
 import PickColor from "@/components/onboarding/pickColor";
 import PickEmoji from "@/components/onboarding/pickEmoji";
 import TopText from "@/components/onboarding/topText";
@@ -16,6 +16,9 @@ import { View } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAccount } from "wagmi";
+import { useUSDCBal } from "@/hooks/tokens/useUSDCBal";
+import OnboardingFunds from "@/components/onboarding/onboardinFunds";
+import { formatCurrency } from "@/utils/overtime/ui/beyTabHelpers";
 
 const ONBOARDING_ROUTES = [
   {
@@ -42,14 +45,20 @@ const ONBOARDING_ROUTES = [
   {
     path: "funding",
     text: {
-      heading: "Set a Display Image",
-      subHeading: "Choose an avatar for your wallet - Only you can see this.",
+      heading: "Powered by Stables",
+      subHeading: "You will need USDC on Optimism to bet on games.",
     },
   },
 ];
 
 export default function Page() {
   const { address } = useAccount();
+  const {
+    balance: usdcBalance,
+    isLoading: usdcBalLoading,
+    isError: usdcBalError,
+  } = useUSDCBal();
+
   const setWalletProfile = useSetAtom(walletProfileAtom);
   const { bottom, top } = useSafeAreaInsets();
   const [selectedColor, setSelectedColor] = useState("");
@@ -98,6 +107,10 @@ export default function Page() {
     (route.path === "emoji-bg" && selectedColor === "") ||
     (route.path === "emoji" && selectedEmoji === "");
 
+  const formattedFundsText = usdcBalLoading
+    ? "Loading..."
+    : formatCurrency({ amount: usdcBalance.value });
+
   return (
     <Animated.View style={{ flex: 1, marginTop: top, marginBottom: bottom }}>
       <OnboardingHeader backShown={index !== 0} backPress={handleBack} />
@@ -132,6 +145,9 @@ export default function Page() {
             />
           )}
           {route.path === "intro" && <OnboardingIntro />}
+          {route.path === "funding" && (
+            <OnboardingFunds balance={formattedFundsText} />
+          )}
         </View>
         <View style={{ flex: 1, justifyContent: "flex-end" }}>
           <Button
