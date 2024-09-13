@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { Alert, StyleSheet, Text, View } from "react-native";
+import { Alert, Platform, StyleSheet, Text, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   withTiming,
@@ -144,7 +144,9 @@ export default function BetTab({
     return "To Win";
   };
 
-  const enoughUSDC = usdcBalance && numberBetAmount > usdcBalance.value;
+  const enoughUSDC =
+    (usdcBalance && numberBetAmount > usdcBalance.value) ||
+    (usdcBalance === null && numberBetAmount !== 0);
 
   const buttonText = enoughUSDC ? "Not enough Funds" : getWinText(quoteObject);
 
@@ -174,6 +176,9 @@ export default function BetTab({
   const handleToggleKeyboard = () => {
     runOnJS(setIsKeyboardVisible)(!isKeyboardVisible.value);
   };
+
+  const androidLineHeight = Platform.OS === "android" ? 18 : undefined;
+
   return (
     <View style={styles.container}>
       <View style={styles.heading}>
@@ -190,7 +195,9 @@ export default function BetTab({
               familyType={"bold"}
               style={{
                 fontSize: 16,
+                lineHeight: androidLineHeight,
                 color: "white",
+                textAlign: "center",
               }}
             >
               {numberBets}

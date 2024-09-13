@@ -12,7 +12,7 @@ import {
 import { router } from "expo-router";
 import { useSetAtom } from "jotai";
 import { useState } from "react";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAccount } from "wagmi";
@@ -67,6 +67,9 @@ export default function Page() {
 
   const route = ONBOARDING_ROUTES[index];
 
+  const bottomMarginForPlatform =
+    Platform.OS === "android" ? bottom + 24 : bottom;
+
   const handleColorSelect = (color: string) => {
     setSelectedColor(color);
   };
@@ -116,7 +119,7 @@ export default function Page() {
     ? "$0.00"
     : formatCurrency({ amount: usdcBalance.value });
   return (
-    <Animated.View style={{ flex: 1, marginTop: top, marginBottom: bottom }}>
+    <Animated.View style={{ flex: 1, marginTop: top, marginBottom: bottomMarginForPlatform }}>
       <OnboardingHeader backShown={index !== 0} backPress={handleBack} />
       <View
         style={{

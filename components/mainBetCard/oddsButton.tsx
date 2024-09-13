@@ -1,4 +1,4 @@
-import { Pressable, View } from "react-native";
+import { Platform, Pressable, View } from "react-native";
 import { SfText } from "../SfThemedText";
 import Lock from "../icons/Lock";
 import useHaptics from "@/hooks/useHaptics";
@@ -24,6 +24,8 @@ export default function OddsButton({
     onPress();
   };
 
+  const androidLineHeight = Platform.OS === 'android' ? 18 : undefined
+
   return (
     <Pressable
       onPress={handlePress}
@@ -46,11 +48,17 @@ export default function OddsButton({
       ) : (
         <View style={{ justifyContent: "center", alignItems: "center" }}>
           {label && (
-            <SfText familyType="semibold" style={{ fontSize: 14 }}>
+            <SfText
+              familyType="semibold"
+              style={{ fontSize: 14, lineHeight: androidLineHeight }}
+            >
               {label}
             </SfText>
           )}
-          <SfText familyType="semibold" style={{ fontSize: 14 }}>
+          <SfText
+            familyType="semibold"
+            style={{ fontSize: 14, lineHeight: androidLineHeight }}
+          >
             {line}
           </SfText>
         </View>

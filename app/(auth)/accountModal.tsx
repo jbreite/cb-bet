@@ -14,7 +14,7 @@ import { useUSDCBal } from "@/hooks/tokens/useUSDCBal";
 import { walletProfileAtom } from "@/lib/atom/atoms";
 import { formatCurrency } from "@/utils/overtime/ui/beyTabHelpers";
 import { useAtomValue } from "jotai";
-import { Linking, Pressable, View } from "react-native";
+import { Linking, Platform, Pressable, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAccount, useDisconnect } from "wagmi";
 
@@ -36,6 +36,9 @@ export default function AccountModal() {
     isError: usdcBalError,
   } = useUSDCBal();
 
+  const bottomMarginForPlatform =
+    Platform.OS === "android" ? bottom + 24 : bottom;
+
   return (
     <View
       style={{
@@ -43,7 +46,7 @@ export default function AccountModal() {
         paddingHorizontal: 16,
         paddingTop: 32,
         justifyContent: "space-between",
-        marginBottom: bottom,
+        marginBottom: bottomMarginForPlatform,
         gap: 32,
       }}
     >

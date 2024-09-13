@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import { useConnect } from "wagmi";
 import Button from "@/components/Button";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -23,6 +23,9 @@ export default function Index() {
   const handleConnect = () => {
     connect({ connector: connectors[0] });
   };
+
+  const bottomMarginForPlatform =
+    Platform.OS === "android" ? bottom + 24 : bottom;
 
   return (
     <View style={styles.container}>
@@ -57,7 +60,7 @@ export default function Index() {
         isLoadingText="Connecting..."
         onPress={handleConnect}
         disabled={isPending}
-        style={{ width: "90%", marginBottom: bottom }}
+        style={{ width: "90%", marginBottom: bottomMarginForPlatform }}
       />
     </View>
   );
