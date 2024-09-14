@@ -20,4 +20,4 @@ export const SUPPORTED_LEAGUES = [
   LeagueEnum.EPL,
 ];
 
-export const INITIAL_BET_AMOUNT = "$0";
+export const INITIAL_BET_AMOUNT = "0";

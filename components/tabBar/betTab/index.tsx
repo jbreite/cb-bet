@@ -67,7 +67,8 @@ export default function BetTab({
   const tradeData = userBetsAtomData.map((bet) => bet.tradeData);
   const swipeableRef = useRef<SwipeableMethods>(null);
 
-  const numberBetAmount = parseFloat(betAmount.replace("$", ""));
+  // const numberBetAmount = parseFloat(betAmount.replace("$", ""));
+  const numberBetAmount = parseFloat(betAmount)
 
   const {
     data: quoteObject,
@@ -260,7 +261,7 @@ export default function BetTab({
           betTypeName={betTypeName}
           buttonText={buttonText}
           buttonLoadingText={buttonLoadingText}
-          betAmount={betAmount ?? "$"}
+          betAmount={betAmount ?? "0"}
           setBetAmount={setBetAmount}
           handleToggleKeyboard={handleToggleKeyboard}
           handlePlaceBet={handlePlaceBet}

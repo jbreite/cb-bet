@@ -1,6 +1,8 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import Button from "../../Button";
 import useHaptics from "@/hooks/useHaptics";
+import { AnimatedRollingNumber } from "react-native-animated-rolling-numbers";
+import { Easing } from "react-native-reanimated";
 
 export default function BetInput({
   betAmount,
@@ -27,10 +29,22 @@ export default function BetInput({
     onInputPress();
   };
 
+  console.log("Number Bet Amoutn Inside:", parseFloat(betAmount));
+
   return (
     <View style={styles.container}>
       <Pressable style={styles.input} onPress={handlePress}>
-        <Text style={styles.inputText}>{betAmount}</Text>
+        {/* <Text style={styles.inputText}>{betAmount}</Text> */}
+        <AnimatedRollingNumber
+          value={233}
+          useGrouping
+          compactToFixed={2}
+          textStyle={styles.inputText}
+          spinningAnimationConfig={{ duration: 500, easing: Easing.bounce }}
+          containerStyle={{
+            alignItems: "flex-start",
+          }}
+        />
       </Pressable>
       <Button
         label={buttonLabel}
@@ -58,10 +72,12 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    justifyContent: "center",
   },
   inputText: {
+    flex: 1,
+    textAlign: "left",
     fontSize: 18,
     fontWeight: "bold",
+    fontFamily: "SF-Pro-Rounded-Bold",
   },
 });
