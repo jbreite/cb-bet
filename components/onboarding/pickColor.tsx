@@ -10,29 +10,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import useHaptics from "@/hooks/useHaptics";
-
-const EMOJI_BG_COLORS = [
-  "#FF2C5F",
-  "#FF339B",
-  "#EC33F7",
-  "#9F4FFF",
-  "#5946F9",
-  "#0082FF",
-  "#00A8EF",
-  "#00B2FF",
-  "#00BEC9",
-  "#00BC7C",
-  "#00CA47",
-  "#6BCE00",
-  "#F4B000",
-  "#FF9900",
-  "#FF6700",
-  "#FF2A39",
-  "#D2B24E",
-  "#CE8949",
-  "#003468",
-  "#1A1A1A",
-];
+import { EMOJI_BG_COLORS } from "@/constants/onboarding";
 
 export default function PickColor({
   selectedColor,

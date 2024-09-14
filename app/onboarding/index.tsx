@@ -19,37 +19,7 @@ import { useAccount } from "wagmi";
 import { useUSDCBal } from "@/hooks/tokens/useUSDCBal";
 import OnboardingFunds from "@/components/onboarding/onboardinFunds";
 import { formatCurrency } from "@/utils/overtime/ui/beyTabHelpers";
-
-const ONBOARDING_ROUTES = [
-  {
-    path: "emoji-bg",
-    text: {
-      heading: "Choose a Color",
-      subHeading: "Choose a color for your wallet - You can update this later.",
-    },
-  },
-  {
-    path: "emoji",
-    text: {
-      heading: "Set a Display Image",
-      subHeading: "Choose an avatar for your wallet - Only you can see this.",
-    },
-  },
-  {
-    path: "intro",
-    text: {
-      heading: "Set a Display Image",
-      subHeading: "Choose an avatar for your wallet - Only you can see this.",
-    },
-  },
-  {
-    path: "funding",
-    text: {
-      heading: "Powered by Stables",
-      subHeading: "You will need USDC on Optimism to bet on games.",
-    },
-  },
-];
+import { ONBOARDING_ROUTES } from "@/constants/onboarding";
 
 export default function Page() {
   const { address } = useAccount();
@@ -119,7 +89,9 @@ export default function Page() {
     ? "$0.00"
     : formatCurrency({ amount: usdcBalance.value });
   return (
-    <Animated.View style={{ flex: 1, marginTop: top, marginBottom: bottomMarginForPlatform }}>
+    <Animated.View
+      style={{ flex: 1, marginTop: top, marginBottom: bottomMarginForPlatform }}
+    >
       <OnboardingHeader backShown={index !== 0} backPress={handleBack} />
       <View
         style={{

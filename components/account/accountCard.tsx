@@ -13,7 +13,7 @@ import {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { isColorLight } from "../onboarding/pickEmoji";
+import { isColorLight } from "@/utils/uiGeneralHelpers";
 
 export default function AccountCard({
   emoji,

@@ -10,25 +10,8 @@ import Animated, {
 } from "react-native-reanimated";
 import useHaptics from "@/hooks/useHaptics";
 import { AnimatedPressable } from "../animated/AnimatedPressable";
-
-const EMOJIS = [
-  "🏈",
-  "🏌️",
-  "🏟️",
-  "🏅",
-  "⚽",
-  "⚾",
-  "🥎",
-  "🏀",
-  "🏐",
-  "🏉",
-  "🎾",
-  "🏒",
-  "🥊",
-  "🥅",
-  "⛳",
-  "🏄‍♂️",
-];
+import { EMOJIS } from "@/constants/onboarding";
+import { isColorLight } from "@/utils/uiGeneralHelpers";
 
 export default function PickEmoji({
   selectedEmoji,
@@ -148,12 +131,3 @@ const styles = StyleSheet.create({
     borderWidth: 5,
   },
 });
-
-export const isColorLight = (hexColor: string) => {
-  const hex = hexColor.replace("#", "");
-  const r = parseInt(hex.slice(0, 2), 16);
-  const g = parseInt(hex.slice(2, 2), 16);
-  const b = parseInt(hex.slice(4, 2), 16);
-  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-  return luminance > 0.5;
-};
