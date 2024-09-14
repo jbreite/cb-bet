@@ -83,6 +83,7 @@ export default function BetTab({
     setIsKeyboardVisible(false);
     setBetAmount(INITIAL_BET_AMOUNT);
     queryClient.invalidateQueries({ queryKey: ["userHistory"] });
+    queryClient.invalidateQueries({ queryKey: ["fungibles"] });
     router.push("/bets");
   };
 
