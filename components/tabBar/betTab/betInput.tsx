@@ -1,5 +1,5 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
-import Button from "../Button";
+import Button from "../../Button";
 import useHaptics from "@/hooks/useHaptics";
 
 export default function BetInput({

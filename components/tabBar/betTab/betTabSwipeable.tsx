@@ -1,3 +1,4 @@
+import Trash_Full from "@/components/icons/Trash_Full";
 import React from "react";
 import { Dimensions, View } from "react-native";
 import Animated, {
@@ -6,7 +7,6 @@ import Animated, {
   interpolate,
   Extrapolation,
 } from "react-native-reanimated";
-import Trash_Full from "../icons/Trash_Full";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 export const STICKING_THRESHOLD = 100;

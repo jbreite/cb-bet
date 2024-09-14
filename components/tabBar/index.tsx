@@ -20,7 +20,7 @@ import Animated, {
   SlideOutDown,
 } from "react-native-reanimated";
 import TabButton from "./TabButton";
-import BetTab from "./BetTab";
+import BetTab from "./betTab";
 import { ButtonGrid, KeyboardButtonItemType } from "../keyboard";
 import { handleBetAmountChange } from "../keyboard/handleKeyboardInput";
 import { INITIAL_BET_AMOUNT } from "@/constants/Constants";

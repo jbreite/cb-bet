@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { Alert, Platform, StyleSheet, Text, View } from "react-native";
+import { Alert, Platform, StyleSheet, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   withTiming,
@@ -9,7 +9,6 @@ import Animated, {
 import { useAtom } from "jotai";
 import { userBetsAtom } from "@/lib/atom/atoms";
 import { QuoteData } from "@/utils/overtime/queries/getQuote";
-import BetInput from "./BetInput";
 import {
   calculateBetOutcome,
   extractAmericanOddsFromBets,
@@ -18,7 +17,7 @@ import {
   formatCurrency,
   isSuccessfulQuoteObject,
 } from "@/utils/overtime/ui/beyTabHelpers";
-import { SfText } from "../SfThemedText";
+import { SfText } from "../../SfThemedText";
 import {
   getMarketOutcomeText,
   getMarketTypeName,
@@ -28,15 +27,17 @@ import { useUSDCBal } from "@/hooks/tokens/useUSDCBal";
 import { useQuote } from "@/hooks/bets/useQuote";
 import { usePlaceBet } from "@/hooks/bets/usePlaceBet";
 import { INITIAL_BET_AMOUNT } from "@/constants/Constants";
-import Chevron_Down from "../icons/Chevron_Down";
-import IconPressable from "../IconPressable";
+import Chevron_Down from "../../icons/Chevron_Down";
+import IconPressable from "../../IconPressable";
 import Swipeable, {
   SwipeableMethods,
 } from "react-native-gesture-handler/ReanimatedSwipeable";
 import { renderRightActions, STICKING_THRESHOLD } from "./betTabSwipeable";
 import useHaptics from "@/hooks/useHaptics";
-import { RightActionSwipeable } from "./betTabSwipeable";
 import { queryClient } from "@/app/_layout";
+import BetTabBody from "./betTabBody";
+
+const PADDING = 16;
 
 interface BetTabProps {
   isKeyboardVisible: SharedValue<boolean>;
@@ -48,8 +49,6 @@ interface BetTabProps {
   onLayout: (height: number) => void;
   disableCollapse?: boolean;
 }
-
-const PADDING = 16;
 
 export default function BetTab({
   isKeyboardVisible,
@@ -255,66 +254,24 @@ export default function BetTab({
           }
         }}
       >
-        <View
-          style={{
-            gap: 16,
-            paddingHorizontal: PADDING,
-            backgroundColor: "white",
-          }}
-          onLayout={(event) => {
-            onLayout(event.nativeEvent.layout.height);
-          }}
-        >
-          {/*Bet Info*/}
-          <View style={{ gap: 4 }}>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-              }}
-            >
-              <SfText familyType="semibold" style={{ fontSize: 18 }}>
-                {marketOutcomeText}
-              </SfText>
-              <SfText familyType="semibold" style={{ fontSize: 18 }}>
-                {formattedAmericanOdds}
-              </SfText>
-            </View>
-            <Text>{betTypeName}</Text>
-          </View>
-
-          {/*Input*/}
-          <View style={{ gap: 8 }}>
-            <BetInput
-              buttonLabel={buttonText}
-              isLoadingText={buttonLoadingText}
-              betAmount={betAmount ?? "$"}
-              setBetAmount={setBetAmount}
-              onInputPress={handleToggleKeyboard}
-              onButtonPress={handlePlaceBet}
-              isLoading={
-                writeContractsIsPending || (quoteLoading && !enoughUSDC)
-              }
-              isDisabled={
-                writeContractsIsPending ||
-                quoteLoading ||
-                numberBetAmount === 0 ||
-                enoughUSDC
-              }
-            />
-            {quoteObject && !isSuccessfulQuoteObject(quoteObject.quoteData) && (
-              <SfText familyType="medium" style={{ fontSize: 14 }}>
-                {quoteText}
-              </SfText>
-            )}
-
-            {/* {writeContractsIsError && (
-              <SfText familyType="medium" style={{ fontSize: 16 }}>
-                {extractFailureReason(writeContractsIsError.toString())}
-              </SfText>
-            )} */}
-          </View>
-        </View>
+        <BetTabBody
+          marketOutcomeText={marketOutcomeText}
+          formattedAmericanOdds={formattedAmericanOdds}
+          betTypeName={betTypeName}
+          buttonText={buttonText}
+          buttonLoadingText={buttonLoadingText}
+          betAmount={betAmount ?? "$"}
+          setBetAmount={setBetAmount}
+          handleToggleKeyboard={handleToggleKeyboard}
+          handlePlaceBet={handlePlaceBet}
+          writeContractsIsPending={writeContractsIsPending}
+          quoteLoading={quoteLoading}
+          enoughUSDC={enoughUSDC}
+          numberBetAmount={numberBetAmount}
+          quoteObject={quoteObject}
+          quoteText={quoteText}
+          onLayout={onLayout}
+        />
       </Swipeable>
     </View>
   );
