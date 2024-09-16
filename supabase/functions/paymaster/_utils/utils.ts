@@ -147,7 +147,7 @@ export async function willSponsor({
 
     let callToCheckIndex = 0;
     // if (calls.length > 1) {
-    //   // if there is more than one call, check if the first is a magic spend call
+      // if there is more than one call, check if the first is a magic spend call
     //   if (calls[0].target.toLowerCase() !== magicSpendAddress.toLowerCase()) {
     //     console.log(
     //       "First call is not to magic spend address. Expected:",
@@ -159,44 +159,34 @@ export async function willSponsor({
     //   }
     //   callToCheckIndex = 1;
     // }
+    for (const call of calls) {
+      const isValidSportsAMMCall = call.target.toLowerCase() === sportsAMMV2Contract.addresses[10].toLowerCase();
+      const isValidUSDCCall = call.target.toLowerCase() === DEFAULT_USDC_OPTIMISM.toLowerCase();
+      
+      if (!isValidSportsAMMCall && !isValidUSDCCall) {
+        console.log("Invalid target address:", call.target.toLowerCase());
+        return false;
+      }
 
-    // console.log("Call to check index:", callToCheckIndex);
-    // console.log(
-    //   "Target address:",
-    //   calls[callToCheckIndex].target.toLowerCase()
-    // );
-    // console.log(
-    //   "SportsAMM address:",
-    //   sportsAMMV2Contract.addresses[10].toLowerCase()
-    // );
-    // console.log("USDC address:", DEFAULT_USDC_OPTIMISM.toLowerCase());
+      if (isValidSportsAMMCall) {
+        const innerCalldata = decodeFunctionData({
+          abi: sportsAMMV2Contract.abi,
+          data: call.data,
+        });
+        
+        if (
+          innerCalldata.functionName !== "trade" &&
+          innerCalldata.functionName !== "exerciseTicket" &&
+          innerCalldata.functionName !== "approve"
+        ) {
+          console.log("Invalid function name for SportsAMM:", innerCalldata.functionName);
+          return false;
+        }
+      }
+    }
 
-    // if (
-    //   calls[callToCheckIndex].target.toLowerCase() !==
-    //     sportsAMMV2Contract.addresses[10].toLowerCase() &&
-    //   calls[callToCheckIndex].target.toLowerCase() !==
-    //     DEFAULT_USDC_OPTIMISM.toLowerCase()
-    // ) {
-    //   console.log("Target address mismatch");
-    //   return false;
-    // }
+    console.log("All calls in batch are valid");
 
-    // const innerCalldata = decodeFunctionData({
-    //   abi: sportsAMMV2Contract.abi,
-    //   data: calls[callToCheckIndex].data,
-    // });
-    // console.log("Inner calldata function name:", innerCalldata.functionName);
-
-    // if (
-    //   innerCalldata.functionName !== "trade" &&
-    //   innerCalldata.functionName !== "exerciseTicket" &&
-    //   innerCalldata.functionName !== "approve"
-    // ) {
-    //   console.log("Function name not allowed:", innerCalldata.functionName);
-    //   return false;
-    // }
-
-    // console.log("willSponsor check passed");
     return true;
   } catch (e) {
     console.error(`willSponsor check failed: ${e}`);
