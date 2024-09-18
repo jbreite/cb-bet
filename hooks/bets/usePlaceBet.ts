@@ -69,13 +69,18 @@ export const usePlaceBet = (onSuccess?: () => void) => {
       6
     );
 
+    const approvalAmount = buyInAmount + buyInAmount / BigInt(2);
+
+    console.log("APPROVAL AMOUNT:", approvalAmount);
+    console.log("APPROVAL INT:", parseUnits(approvalAmount.toString(), 6));
+
     const approvalContractInput = {
       abi: ERC_20_ABI,
       address: DEFAULT_USDC_OPTIMISM,
       functionName: "approve",
       args: [
         sportsAMMV2Contract.addresses[CB_BET_SUPPORTED_NETWORK_IDS.OPTIMISM],
-        buyInAmount + parseUnits("0.01", 6), //Add 1 cent
+        approvalAmount,
       ],
     };
 
