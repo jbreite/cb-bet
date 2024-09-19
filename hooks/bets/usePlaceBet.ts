@@ -69,10 +69,8 @@ export const usePlaceBet = (onSuccess?: () => void) => {
       6
     );
 
-    const approvalAmount = buyInAmount + buyInAmount / BigInt(2);
-
-    console.log("APPROVAL AMOUNT:", approvalAmount);
-    console.log("APPROVAL INT:", parseUnits(approvalAmount.toString(), 6));
+    const approvalAmount = buyInAmount;
+    //Just do actual amount since gets taken away anyway from contract
 
     const approvalContractInput = {
       abi: ERC_20_ABI,
