@@ -87,8 +87,8 @@ export default function PickEmoji({
             ]}
           />
           <SfText
+            fontSize={32}
             style={{
-              fontSize: 32,
               textAlign: "center",
               position: "absolute",
             }}

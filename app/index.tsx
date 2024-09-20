@@ -42,9 +42,10 @@ export default function Index() {
       >
         <BSquaredLogo fontSize={GRID_SIZE * 4} />
         <SfText
+          fontSize={24}
           style={{
             textAlign: "center",
-            fontSize: 24,
+
             lineHeight: GRID_SIZE,
             color: "#1A88F8",
           }}

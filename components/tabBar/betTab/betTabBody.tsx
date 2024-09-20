@@ -58,10 +58,10 @@ const BetTabBody: React.FC<BetTabBodyProps> = ({
             justifyContent: "space-between",
           }}
         >
-          <SfText familyType="semibold" style={{ fontSize: 18 }}>
+          <SfText familyType="semibold" fontSize={18}>
             {marketOutcomeText}
           </SfText>
-          <SfText familyType="semibold" style={{ fontSize: 18 }}>
+          <SfText familyType="semibold" fontSize={18}>
             {formattedAmericanOdds}
           </SfText>
         </View>
@@ -86,9 +86,7 @@ const BetTabBody: React.FC<BetTabBodyProps> = ({
           }
         />
         {quoteObject && !isSuccessfulQuoteObject(quoteObject.quoteData) && (
-          <SfText familyType="medium" style={{ fontSize: 14 }}>
-            {quoteText}
-          </SfText>
+          <SfText familyType="medium">{quoteText}</SfText>
         )}
       </View>
     </View>

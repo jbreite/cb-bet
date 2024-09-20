@@ -193,9 +193,8 @@ export default function BetTab({
           <View style={styles.betslipNumber}>
             <SfText
               familyType={"bold"}
+              fontSize={16}
               style={{
-                fontSize: 16,
-                lineHeight: androidLineHeight,
                 color: "white",
                 textAlign: "center",
               }}
@@ -205,8 +204,8 @@ export default function BetTab({
           </View>
           <SfText
             familyType={"bold"}
+            fontSize={16}
             style={{
-              fontSize: 16,
               color: "#1A88F8",
             }}
           >
@@ -215,7 +214,7 @@ export default function BetTab({
         </View>
 
         <View style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
-          <SfText familyType="medium" style={{ fontSize: 16 }}>
+          <SfText familyType="medium" fontSize={16}>
             $10 to win{" "}
             {formatCurrency({
               amount: tenDollarBetOutcome.profit,

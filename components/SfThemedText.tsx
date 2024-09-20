@@ -1,4 +1,4 @@
-import { Text, type TextProps, StyleSheet } from "react-native";
+import { Text, type TextProps, StyleSheet, Platform } from "react-native";
 
 import { useThemeColor } from "@/hooks/useThemeColor";
 
@@ -19,14 +19,19 @@ export type sfTextProps = TextProps & {
     | "semibold"
     | "thin"
     | "ultralight";
+  fontSize?: number;
 };
 
 export function SfText({
   style,
   familyType = "regular",
+  fontSize = 14,
   ...rest
 }: sfTextProps) {
   // const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
+
+  const calculatedLineHeight =
+    Platform.OS === "android" ? fontSize * 1.25 : undefined;
 
   return (
     <Text
@@ -41,6 +46,8 @@ export function SfText({
         familyType === "semibold" ? styles.semibold : undefined,
         familyType === "thin" ? styles.thin : undefined,
         familyType === "ultralight" ? styles.ultralight : undefined,
+        { fontSize: fontSize },
+        { lineHeight: calculatedLineHeight },
         style,
       ]}
       {...rest}

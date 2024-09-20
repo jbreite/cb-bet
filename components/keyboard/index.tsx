@@ -2,6 +2,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 
 import TouchableFeedback from "./TouchableFeedback";
+import { SfText } from "../SfThemedText";
 
 const KeyboardButtonItems = [
   1,
@@ -38,7 +39,9 @@ export const ButtonGrid: React.FC<ButtonGridProps> = ({ onButtonPressed }) => {
               onPress={() => onButtonPressed(item)}
             >
               {(typeof item === "number" || item === ".") && (
-                <Text style={styles.text}>{item}</Text>
+                <SfText style={styles.text} fontSize={30} familyType="bold">
+                  {item}
+                </SfText>
               )}
               {item === "backspace" && (
                 <FontAwesome5 name="backspace" size={24} color="#000" />
@@ -67,7 +70,5 @@ const styles = StyleSheet.create({
   },
   text: {
     color: "#000",
-    fontSize: 30,
-    fontFamily: "SF-Pro-Rounded-Bold",
   },
 });

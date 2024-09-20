@@ -1,6 +1,7 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import Button from "../../Button";
 import useHaptics from "@/hooks/useHaptics";
+import { SfText } from "@/components/SfThemedText";
 
 export default function BetInput({
   betAmount,
@@ -30,7 +31,9 @@ export default function BetInput({
   return (
     <View style={styles.container}>
       <Pressable style={styles.input} onPress={handlePress}>
-        <Text style={styles.inputText}>{betAmount}</Text>
+        <SfText familyType="bold" fontSize={18}>
+          {betAmount}
+        </SfText>
       </Pressable>
       <Button
         label={buttonLabel}
@@ -59,9 +62,5 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     justifyContent: "center",
-  },
-  inputText: {
-    fontSize: 18,
-    fontWeight: "bold",
   },
 });

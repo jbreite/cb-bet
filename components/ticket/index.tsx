@@ -6,13 +6,10 @@ import {
   formatCurrency,
 } from "@/utils/overtime/ui/beyTabHelpers";
 import { negativePlusHelper } from "@/utils/overtime/ui/helpers";
-import {
-  getMarketOutcomeText,
-} from "@/utils/overtime/ui/markets";
+import { getMarketOutcomeText } from "@/utils/overtime/ui/markets";
 import { getImage } from "@/utils/overtime/ui/images";
 import TeamMatchup from "./teamMatchup";
 import { convertUnixToFormattedDate } from "@/utils/overtime/ui/date";
-import { Link } from "expo-router";
 import Button from "../Button";
 
 const OPTIMISTIC_ETHERERSCAN_BASE_URL =
@@ -70,7 +67,8 @@ export default function TicketView({
         <View style={styles.indHeadingTextContainer}>
           <SfText
             familyType="semibold"
-            style={{ flex: 1, fontSize: 18 }}
+            fontSize={18}
+            style={{ flex: 1 }}
             numberOfLines={1}
             ellipsizeMode="middle"
           >
@@ -79,7 +77,8 @@ export default function TicketView({
 
           <SfText
             familyType="medium"
-            style={{ fontSize: 16, color: "#9B9B9B" }}
+            fontSize={16}
+            style={{ color: "#9B9B9B" }}
           >
             {ticketStatusSummary}
           </SfText>
@@ -88,13 +87,15 @@ export default function TicketView({
         <View style={styles.indHeadingTextContainer}>
           <SfText
             familyType="medium"
-            style={{ fontSize: 18, textAlign: "right" }}
+            fontSize={18}
+            style={{ textAlign: "right" }}
           >
             {formattedBuyInAmount} To win {formattedPayout}
           </SfText>
 
           <SfText
-            style={{ fontSize: 16, color: "#9B9B9B", textAlign: "right" }}
+            fontSize={16}
+            style={{ color: "#9B9B9B", textAlign: "right" }}
           >
             {americanOdds}
           </SfText>
@@ -122,10 +123,10 @@ export default function TicketView({
                   justifyContent: "space-between",
                 }}
               >
-                <SfText familyType="semibold" style={{ fontSize: 16 }}>
+                <SfText familyType="semibold" fontSize={16}>
                   {marketOutcomeText}
                 </SfText>
-                <SfText familyType="semibold" style={{ fontSize: 16 }}>
+                <SfText familyType="semibold" fontSize={16}>
                   {marketOdds}
                 </SfText>
               </View>
@@ -140,7 +141,7 @@ export default function TicketView({
                   teamName={market.homeTeam}
                   teamImage={getImage(market.homeTeam, market.leagueId)}
                 />
-                <SfText familyType="semibold" style={{ fontSize: 16 }}>
+                <SfText familyType="semibold" fontSize={16}>
                   -
                 </SfText>
                 <TeamMatchup
@@ -175,12 +176,3 @@ const styles = StyleSheet.create({
     gap: 4,
   },
 });
-
-// const betTypeName =
-// numberOfMarkets > 1
-//   ? ticket.sportMarkets
-//       .map((bet) =>
-//         getMarketOutcomeText(bet, bet.position, bet.typeId, bet.line)
-//       )
-//       .join(", ") //TODO this could be more detailed but fine fo now
-//   : getMarketTypeName(ticket.sportMarkets[0].typeId);

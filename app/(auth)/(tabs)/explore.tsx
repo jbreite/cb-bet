@@ -12,10 +12,10 @@ export default function Explore() {
       }}
     >
       <View style={{ alignItems: "center" }}>
-        <SfText familyType="bold" style={{ fontSize: 24 }}>
+        <SfText familyType="bold" fontSize={24}>
           👀
         </SfText>
-        <SfText familyType="bold" style={{ fontSize: 24 }}>
+        <SfText familyType="bold" fontSize={24}>
           Coming Soon
         </SfText>
       </View>

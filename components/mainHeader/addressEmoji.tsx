@@ -65,8 +65,8 @@ export default function AddressEmoji({
         }}
       >
         <SfText
+          fontSize={EMOJI_SIZE - 4}
           style={{
-            fontSize: EMOJI_SIZE - 4,
             textAlign: "center",
           }}
         >
@@ -75,7 +75,7 @@ export default function AddressEmoji({
       </AnimatedPressable>
 
       <AnimatedPressable onPress={copyToClipboard}>
-        <SfText familyType="bold" style={{ fontSize: 20 }}>
+        <SfText familyType="bold" fontSize={20}>
           {formattedAddress}
         </SfText>
       </AnimatedPressable>
