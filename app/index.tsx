@@ -41,7 +41,7 @@ export default function Index() {
         }}
       >
         <BSquaredLogo fontSize={GRID_SIZE * 4} />
-        <SfText
+        {/* <SfText
           fontSize={24}
           style={{
             textAlign: "center",
@@ -53,7 +53,7 @@ export default function Index() {
         >
           Onchain sports betting powered by Overtime and the Coinbase Smart
           Wallet
-        </SfText>
+        </SfText> */}
       </View>
       <Button
         label="Login"
