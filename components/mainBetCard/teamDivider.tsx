@@ -11,7 +11,7 @@ export default function TeamDivider() {
         top: "42.5%",
       }}
     >
-      <SfText familyType="bold" style={{ fontSize: 14, color: "#E3E3E3" }}>
+      <SfText familyType="bold" style={{ color: "#E3E3E3" }}>
         @
       </SfText>
       <View

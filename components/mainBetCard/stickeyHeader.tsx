@@ -20,7 +20,7 @@ export default function StickyHeaderMainBetCard({
 
   return (
     <View style={styles.container}>
-      <SfText familyType="semibold" style={styles.leageTitleText}>
+      <SfText familyType="semibold" style={styles.leageTitleText} fontSize={24}>
         {leagueLabel}
       </SfText>
       <View
@@ -55,7 +55,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   leageTitleText: {
-    fontSize: 24,
     flex: 2 / 3,
   },
   betTypeText: {

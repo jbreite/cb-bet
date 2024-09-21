@@ -20,7 +20,8 @@ export default function TeamInfo({
       <Image source={teamImage} style={styles.imageStyle} />
       <SfText
         familyType="medium"
-        style={{ flex: 1, fontSize: 14 }}
+        fontSize={14}
+        style={{ flex: 1 }}
         numberOfLines={2}
       >
         {teamName}

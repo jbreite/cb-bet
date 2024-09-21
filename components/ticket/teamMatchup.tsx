@@ -24,7 +24,8 @@ export default function TeamMatchup({
       />
       <SfText
         familyType="semibold"
-        style={{ fontSize: 16, flex: 1, textAlign: "center" }}
+        fontSize={16}
+        style={{  flex: 1, textAlign: "center" }}
       >
         {teamName}
       </SfText>

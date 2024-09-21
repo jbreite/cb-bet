@@ -10,10 +10,10 @@ export default function OnboardingFunds({ balance }: { balance: string }) {
       exiting={FadeOut}
     >
       <View style={{ width: "100%", gap: 8 }}>
-        <SfText familyType="bold" style={{ fontSize: 80 }}>
+        <SfText familyType="bold" fontSize={80}>
           {balance}
         </SfText>
-        <SfText familyType="semibold" style={{ fontSize: 16 }}>
+        <SfText familyType="semibold" fontSize={16}>
           Current USDC on Optimism in your wallet
         </SfText>
       </View>

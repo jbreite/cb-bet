@@ -20,10 +20,10 @@ export default function IntroCard({
         <SfText style={styles.emojiText}>{emoji}</SfText>
       </View>
       <View style={{ flex: 1, gap: 8 }}>
-        <SfText familyType="bold" style={{ fontSize: 18 }}>
+        <SfText familyType="bold" fontSize={18}>
           {heading}
         </SfText>
-        <SfText familyType="medium" style={{ fontSize: 14, color: "#999999" }}>
+        <SfText familyType="medium" style={{ color: "#999999" }} fontSize={14}>
           {subheading}
         </SfText>
       </View>

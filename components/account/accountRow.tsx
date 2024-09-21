@@ -56,14 +56,15 @@ export function AccountRow({
           }}
         >
           {icon}
-          <SfText familyType="semibold" style={{ fontSize: 16 }}>
+          <SfText familyType="semibold" fontSize={16}>
             {label}
           </SfText>
         </View>
         {typeof rightValue === "string" ? (
           <SfText
             familyType="medium"
-            style={{ fontSize: 16, color: "#949595" }}
+            fontSize={16}
+            style={{ color: "#949595" }}
           >
             {rightValue}
           </SfText>

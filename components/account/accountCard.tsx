@@ -96,14 +96,14 @@ export default function AccountCard({
           justifyContent: "space-between",
         }}
       >
-        <SfText style={{ fontSize: 40 }}>{emoji}</SfText>
+        <SfText fontSize={40}>{emoji}</SfText>
         <AnimatedPressable
           onPress={copyToClipboard}
           onPressIn={handleCopyPressIn}
           onPressOut={handleCopyPressOut}
           style={[{ flexDirection: "row", gap: 8 }, rCopyButtonStyle]}
         >
-          <SfText familyType="bold" style={[styles.baseText]}>
+          <SfText familyType="bold" style={[styles.baseText]} fontSize={18}>
             Copy Address
           </SfText>
           <Copy color={secondaryTextColor} />
@@ -111,11 +111,12 @@ export default function AccountCard({
       </View>
 
       <View style={{ gap: 4 }}>
-        <SfText style={styles.baseText} familyType="bold">
+        <SfText style={styles.baseText} familyType="bold" fontSize={18}>
           {formattedName}
         </SfText>
         <SfText
           style={[styles.baseText, { color: secondaryTextColor }]}
+          fontSize={18}
           familyType="bold"
         >
           {usdcValue}
@@ -128,6 +129,5 @@ export default function AccountCard({
 const styles = StyleSheet.create({
   baseText: {
     color: "white",
-    fontSize: 18,
   },
 });

@@ -106,12 +106,13 @@ export default function Bets() {
         >
           {noUserHistory ? (
             <View style={{ padding: 24, alignItems: "center" }}>
-              <SfText familyType="bold" style={{ fontSize: 24 }}>
+              <SfText familyType="bold" fontSize={24}>
                 🎟️
               </SfText>
               <SfText
                 familyType="bold"
-                style={{ fontSize: 24, textAlign: "center" }}
+                fontSize={24}
+                style={{ textAlign: "center" }}
               >
                 Place bets to populate your history!
               </SfText>
@@ -120,7 +121,7 @@ export default function Bets() {
             <>
               {userHistoryData.claimable.length !== 0 && (
                 <View style={styles.listContainer}>
-                  <SfText style={styles.titleText} familyType="semibold">
+                  <SfText familyType="semibold" fontSize={24}>
                     Claimable
                   </SfText>
                   {userHistoryData.claimable.map((ticket) => (
@@ -134,7 +135,7 @@ export default function Bets() {
               )}
               {userHistoryData.open.length !== 0 && (
                 <View style={styles.listContainer}>
-                  <SfText style={styles.titleText} familyType="semibold">
+                  <SfText fontSize={24} familyType="semibold">
                     Open
                   </SfText>
                   {userHistoryData.open.map((ticket) => (
@@ -144,7 +145,7 @@ export default function Bets() {
               )}
               {userHistoryData.closed.length !== 0 && (
                 <View style={styles.listContainer}>
-                  <SfText style={styles.titleText} familyType="semibold">
+                  <SfText fontSize={24} familyType="semibold">
                     Closed
                   </SfText>
                   {userHistoryData.closed.map((ticket) => (
@@ -173,8 +174,5 @@ const styles = StyleSheet.create({
   listContainer: {
     flex: 1,
     gap: 8,
-  },
-  titleText: {
-    fontSize: 24,
   },
 });

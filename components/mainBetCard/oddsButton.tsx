@@ -24,7 +24,7 @@ export default function OddsButton({
     onPress();
   };
 
-  const androidLineHeight = Platform.OS === 'android' ? 18 : undefined
+  const androidLineHeight = Platform.OS === "android" ? 18 : undefined;
 
   return (
     <Pressable
@@ -47,20 +47,8 @@ export default function OddsButton({
         <Lock size={18} color={"black"} />
       ) : (
         <View style={{ justifyContent: "center", alignItems: "center" }}>
-          {label && (
-            <SfText
-              familyType="semibold"
-              style={{ fontSize: 14, lineHeight: androidLineHeight }}
-            >
-              {label}
-            </SfText>
-          )}
-          <SfText
-            familyType="semibold"
-            style={{ fontSize: 14, lineHeight: androidLineHeight }}
-          >
-            {line}
-          </SfText>
+          {label && <SfText familyType="semibold">{label}</SfText>}
+          <SfText familyType="semibold">{line}</SfText>
         </View>
       )}
     </Pressable>

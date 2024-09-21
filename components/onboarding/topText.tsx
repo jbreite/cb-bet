@@ -10,10 +10,10 @@ export default function TopText({
 }) {
   return (
     <View style={{ flex: 1, gap: 16, justifyContent: "center" }}>
-      <SfText familyType="bold" style={{ fontSize: 24 }}>
+      <SfText familyType="bold" fontSize={24}>
         {heading}
       </SfText>
-      <SfText familyType="semibold" style={{ fontSize: 18, color: "#999999" }}>
+      <SfText familyType="semibold" style={{ color: "#999999" }} fontSize={18}>
         {subHeading}
       </SfText>
     </View>
