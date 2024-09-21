@@ -21,7 +21,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/backupBookIcon.png",
+        "foregroundImage": "./assets/images/bSquared-adaptive-icon.png",
         "backgroundColor": "#1A88F8"
       },
       "package": "com.jbreite.cbbet",
