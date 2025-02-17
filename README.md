@@ -71,7 +71,7 @@ A cross-platform sports betting application built on Overtime Markets and the Co
 
 ## APIs Used
 
-- [Zeroion](https://www.zerion.io/) - Used to get the user's assets and balances.
+- [Zerion](https://www.zerion.io/) - Used to get the user's assets and balances.
 - [Pimlico](https://pimlico.io/) - Used to pay for the user's gas (optional with a couple of changes).
 - [Supabase](https://supabase.com/) - Used to call edge functions.
 - [PostHog](https://posthog.com/) - Used to track the user's events (optional).
@@ -92,11 +92,12 @@ If you encounter build issues:
    ```
 
 ## Video Demo
-#Betting on a game
-https://www.joshbreite.com/bsquared/kcOverOpendingDaySquare.mov
 
-#Bet tab interaction states
-https://www.joshbreite.com/bsquared/betTabInteractionStates.mov
+### Betting on a Game
+[![Betting on a game](https://img.youtube.com/vi/kcOverOpendingDaySquare/0.jpg)](https://www.joshbreite.com/bsquared/kcOverOpendingDaySquare.mov)
 
-#Onboarding flow
-https://www.joshbreite.com/bsquared/bsquaredIosOnboarding.mov
+### Bet Tab Interaction States
+[![Bet tab interaction states](https://img.youtube.com/vi/betTabInteractionStates/0.jpg)](https://www.joshbreite.com/bsquared/betTabInteractionStates.mov)
+
+### Onboarding Flow
+[![Onboarding flow](https://img.youtube.com/vi/bsquaredIosOnboarding/0.jpg)](https://www.joshbreite.com/bsquared/bsquaredIosOnboarding.mov)
