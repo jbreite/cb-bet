@@ -94,10 +94,10 @@ If you encounter build issues:
 ## Video Demo
 
 ### Betting on a Game
-[![Betting on a game](https://img.youtube.com/vi/kcOverOpendingDaySquare/0.jpg)](https://www.joshbreite.com/bsquared/kcOverOpendingDaySquare.mov)
+[Watch Betting on a Game](https://www.joshbreite.com/bsquared/kcOverOpendingDaySquare.mov)
 
 ### Bet Tab Interaction States
-[![Bet tab interaction states](https://img.youtube.com/vi/betTabInteractionStates/0.jpg)](https://www.joshbreite.com/bsquared/betTabInteractionStates.mov)
+[Watch Bet Tab Interaction States](https://www.joshbreite.com/bsquared/betTabInteractionStates.mov)
 
 ### Onboarding Flow
-[![Onboarding flow](https://img.youtube.com/vi/bsquaredIosOnboarding/0.jpg)](https://www.joshbreite.com/bsquared/bsquaredIosOnboarding.mov)
+[Watch Onboarding Flow](https://www.joshbreite.com/bsquared/bsquaredIosOnboarding.mov)
