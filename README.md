@@ -94,10 +94,12 @@ If you encounter build issues:
 ## Video Demo
 
 ### Betting on a Game
-[Watch Betting on a Game](https://www.joshbreite.com/bsquared/kcOverOpendingDaySquare.mov)
+https://github.com/user-attachments/assets/797517dd-6970-4ce4-96ec-ac9785596086
+
 
 ### Bet Tab Interaction States
-[Watch Bet Tab Interaction States](https://www.joshbreite.com/bsquared/betTabInteractionStates.mov)
+https://github.com/user-attachments/assets/f62bf0d5-ab23-4a1d-ab0c-d928d2e202bc
+
 
 ### Onboarding Flow
-[Watch Onboarding Flow](https://www.joshbreite.com/bsquared/bsquaredIosOnboarding.mov)
+https://github.com/user-attachments/assets/7cf0ad65-9e6c-4ed2-8208-36fce273fd9b
