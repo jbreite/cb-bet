@@ -71,7 +71,7 @@ export default function Bets() {
     };
 
     writeContracts({
-      contracts: [claimTicketInput],
+      contracts: [claimTicketInput], //TODO: fix types
       capabilities,
     });
   };

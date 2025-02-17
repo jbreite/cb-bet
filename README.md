@@ -1,50 +1,102 @@
-# Welcome to your Expo app 👋
+# Your Native Expo App 👋
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+This is an [Expo](https://expo.dev) project that utilizes native capabilities, requiring a development build to run properly.
 
-## Get started
+## Table of Contents
 
-1. Install dependencies
+- [Prerequisites](#prerequisites)
+- [Getting Started](#getting-started)
+- [Running the App](#running-the-app)
+- [Development](#development)
+- [What is this?](#what-is-this)
+- [APIs Used](#apis-used)
+- [Troubleshooting](#troubleshooting)
+- [Video Demo](#video-demo)
 
+## Prerequisites
+
+- [Node.js](https://nodejs.org/) (LTS version recommended)
+- [Git](https://git-scm.com/)
+- For iOS development:
+  - Mac computer
+  - [Xcode](https://apps.apple.com/us/app/xcode/id497799835)
+  - iOS Simulator
+- For Android development:
+  - [Android Studio](https://developer.android.com/studio)
+  - Android Emulator
+
+## Getting Started
+
+1. Install dependencies:
    ```bash
    npm install
    ```
 
-2. Start the app
-
+2. Create a development build:
    ```bash
-    npx expo start
+   npx expo prebuild
    ```
 
-In the output, you'll find options to open the app in a
+3. Start the development server:
+   ```bash
+   npx expo start --dev-client
+   ```
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Running the App
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+Since this app uses native features, you'll need to run it using one of these methods:
 
-## Get a fresh project
-
-When you're ready, run:
-
+### iOS
 ```bash
-npm run reset-project
+npx expo run:ios
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### Android
+```bash
+npx expo run:android
+```
 
-## Learn more
+> **Note**: This project cannot run in Expo Go due to its native dependencies.
 
-To learn more about developing your project with Expo, look at the following resources:
+## Development
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+- The main application code lives in the **app** directory.
+- This project uses [Expo Router](https://docs.expo.dev/router/introduction/) for file-based routing.
+- Edit files in the **app** directory to start developing your application.
+- Ensure to use development builds to test native features effectively.
 
-## Join the community
+## What is this?
 
-Join our community of developers creating universal apps.
+A cross-platform sports betting application built on Overtime Markets and the Coinbase Smart Wallet.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## APIs Used
+
+- [Zeroion](https://www.zerion.io/) - Used to get the user's assets and balances.
+- [Pimlico](https://pimlico.io/) - Used to pay for the user's gas (optional with a couple of changes).
+- [Supabase](https://supabase.com/) - Used to call edge functions.
+- [PostHog](https://posthog.com/) - Used to track the user's events (optional).
+
+## Troubleshooting
+
+If you encounter build issues:
+
+1. Clear the build cache:
+   ```bash
+   npx expo prebuild --clean
+   ```
+
+2. Remove node_modules and reinstall:
+   ```bash
+   rm -rf node_modules
+   npm install
+   ```
+
+## Video Demo
+#Betting on a game
+https://www.joshbreite.com/bsquared/kcOverOpendingDaySquare.mov
+
+#Bet tab interaction states
+https://www.joshbreite.com/bsquared/betTabInteractionStates.mov
+
+#Onboarding flow
+https://www.joshbreite.com/bsquared/bsquaredIosOnboarding.mov
